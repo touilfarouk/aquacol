@@ -289,11 +289,13 @@
         let currentMarker = null;
         let currentSquare = null;
         let currentFormat = 'decimal';
+        let savedMarkers = []; // Array to store all saved concession markers
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
             initMap();
             setupFormListeners();
+            loadSavedConcessions(); // Load existing concessions on page load
         });
 
         // Initialiser la carte
@@ -701,6 +703,7 @@
                 if (result.response === "true") {
                     alert('✅ ' + result.message + '\nID: ' + result.id);
                     clearAll(); // Vider le formulaire après sauvegarde réussie
+                    refreshConcessions(); // Refresh the map to show the new concession
                 } else {
                     alert('❌ Erreur: ' + result.message);
                 }
@@ -732,6 +735,122 @@
 
             // Masquer l'affichage des coordonnées
             document.getElementById('current-coordinates').classList.add('d-none');
+        }
+
+        // Charger toutes les concessions sauvegardées
+        async function loadSavedConcessions() {
+            try {
+                const response = await fetch('http://localhost/aquaculture/get_coordinates.php');
+                const result = await response.json();
+                
+                if (result.response === "true" && result.data) {
+                    // Clear existing saved markers
+                    clearSavedMarkers();
+                    
+                    // Display each saved concession
+                    result.data.forEach(concession => {
+                        displaySavedConcession(concession);
+                    });
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des concessions:', error);
+            }
+        }
+
+        // Afficher une concession sauvegardée sur la carte
+        function displaySavedConcession(concession) {
+            // Parse coordinates
+            const coords = [
+                parseCoordinateString(concession.coordonnee_a),
+                parseCoordinateString(concession.coordonnee_b),
+                parseCoordinateString(concession.coordonnee_c),
+                parseCoordinateString(concession.coordonnee_d)
+            ];
+
+            // Calculate center
+            const centerLat = coords.reduce((sum, coord) => sum + coord[0], 0) / 4;
+            const centerLng = coords.reduce((sum, coord) => sum + coord[1], 0) / 4;
+
+            // Create custom icon
+            const customIcon = L.icon({
+                iconUrl: 'icon.png',
+                iconSize: [40, 60],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            });
+
+            // Create marker with custom icon
+            const marker = L.marker([centerLat, centerLng], {
+                icon: customIcon
+            }).addTo(map);
+
+            // Create square polygon
+            const square = L.polygon(coords, {
+                color: '#28a745',
+                weight: 2,
+                fillOpacity: 0.1
+            }).addTo(map);
+
+            // Create popup content
+            const popupContent = createSavedConcessionPopup(concession, coords);
+            marker.bindPopup(popupContent);
+
+            // Store references
+            savedMarkers.push({ marker, square, data: concession });
+        }
+
+        // Parse coordinate string (handles both space and comma separated)
+        function parseCoordinateString(coordStr) {
+            const parts = coordStr.split(/[\s,]+/);
+            return [parseFloat(parts[0]), parseFloat(parts[1])];
+        }
+
+        // Create popup content for saved concessions
+        function createSavedConcessionPopup(concession, coords) {
+            const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
+            let content = `
+                <div style="min-width: 280px;">
+                    <h6 style="margin-bottom: 10px; color: #28a745;">
+                        <i class="fas fa-fish"></i> ${concession.nom_zone || 'Concession'}
+                    </h6>
+                    <div style="margin-bottom: 10px;">
+                        <strong>Description:</strong><br>
+                        <small>${concession.description || 'Aucune description'}</small>
+                    </div>
+                    <div style="font-family: 'Courier New', monospace; font-size: 0.75rem; margin-bottom: 10px;">
+                        <strong>Coordonnées (50m x 50m):</strong><br>
+            `;
+            
+            coords.forEach((coord, index) => {
+                const formatted = formatCoordinate(coord[0], coord[1], concession.format_coordonnees || 'decimal');
+                content += `<div>${labels[index]}: ${formatted}</div>`;
+            });
+            
+            content += `
+                    </div>
+                    <div style="font-size: 0.7rem; color: #666;">
+                        <i class="fas fa-calendar"></i> ${new Date(concession.created_at).toLocaleDateString('fr-FR')}
+                        <span style="margin-left: 10px;">
+                            <i class="fas fa-hashtag"></i> ID: ${concession.id}
+                        </span>
+                    </div>
+                </div>
+            `;
+            return content;
+        }
+
+        // Clear all saved markers from map
+        function clearSavedMarkers() {
+            savedMarkers.forEach(item => {
+                map.removeLayer(item.marker);
+                map.removeLayer(item.square);
+            });
+            savedMarkers = [];
+        }
+
+        // Refresh concessions (call after saving new one)
+        function refreshConcessions() {
+            loadSavedConcessions();
         }
     </script>
 </body>
