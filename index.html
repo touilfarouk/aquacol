@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Concessions Aquaculture</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            background-color: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 76px);
+        }
+
+        .sidebar {
+            width: 400px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            overflow-y: auto;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .form-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .form-section h6 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-section h6 i {
+            margin-right: 0.5rem;
+        }
+
+        .coordinate-input {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .coordinate-help {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .instructions {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .instructions h6 {
+            color: #0369a1;
+            margin-bottom: 0.5rem;
+        }
+
+        .instructions ol {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6b4c93 100%);
+        }
+
+        .square-marker {
+            background-color: #667eea;
+            border: 2px solid white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .coordinate-display {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .coordinate-display h6 {
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        .coordinate-item {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            padding: 0.25rem;
+            background: white;
+            border-radius: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 50vh;
+            }
+            
+            .map-container {
+                height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-fish me-2"></i>
+                Gestion des Concessions Aquaculture
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Instructions -->
+            <div class="form-section">
+                <div class="instructions">
+                    <h6><i class="fas fa-info-circle"></i>Instructions</h6>
+                    <ol>
+                        <li>Cliquez sur la carte pour placer un marqueur</li>
+                        <li>Le marqueur génère automatiquement un carré de 50m x 50m</li>
+                        <li>Ou saisissez manuellement les coordonnées dans les champs</li>
+                        <li>Cliquez sur le marqueur pour voir les coordonnées du carré</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Formulaire de coordonnées -->
+            <div class="form-section">
+                <h6><i class="fas fa-map-marker-alt"></i>Coordonnées de la Zone</h6>
+                
+                <form id="coordinate-form">
+                    <!-- Coordonnées -->
+                    <div class="mb-3">
+                        <label class="form-label">Coordonnées du carré (50m x 50m)</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label small">Point A (Nord-Ouest)</label>
+                                <input type="text" class="form-control coordinate-input" name="coordonnee_a" 
+                                       placeholder="36.7538,3.0588">
+                                <div class="coordinate-help">Latitude, Longitude</div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Point B (Nord-Est)</label>
+                                <input type="text" class="form-control coordinate-input" name="coordonnee_b" 
+                                       placeholder="36.7548,3.0598">
+                                <div class="coordinate-help">Latitude, Longitude</div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Point C (Sud-Est)</label>
+                                <input type="text" class="form-control coordinate-input" name="coordonnee_c" 
+                                       placeholder="36.7528,3.0608">
+                                <div class="coordinate-help">Latitude, Longitude</div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Point D (Sud-Ouest)</label>
+                                <input type="text" class="form-control coordinate-input" name="coordonnee_d" 
+                                       placeholder="36.7518,3.0578">
+                                <div class="coordinate-help">Latitude, Longitude</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations supplémentaires -->
+                    <div class="mb-3">
+                        <label class="form-label">Nom de la zone</label>
+                        <input type="text" class="form-control" name="nom_zone" placeholder="Ex: Zone A1">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3" 
+                                  placeholder="Description de la zone..."></textarea>
+                    </div>
+
+                    <!-- Boutons -->
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary" onclick="displayMarkerFromForm()">
+                            <i class="fas fa-map-marker-alt me-2"></i>Afficher sur la carte
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="clearAll()">
+                            <i class="fas fa-times me-2"></i>Effacer tout
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Affichage des coordonnées actuelles -->
+            <div class="form-section">
+                <div id="current-coordinates" class="coordinate-display d-none">
+                    <h6><i class="fas fa-crosshairs"></i>Coordonnées actuelles</h6>
+                    <div id="coordinates-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte -->
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // Variables globales
+        let map;
+        let currentMarker = null;
+        let currentSquare = null;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+            setupFormListeners();
+        });
+
+        // Initialiser la carte
+        function initMap() {
+            // Créer la carte centrée sur l'Algérie
+            map = L.map('map').setView([28.0339, 1.6596], 6);
+
+            // Ajouter les tuiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Événement de clic sur la carte
+            map.on('click', function(e) {
+                placeMarkerAndGenerateSquare(e.latlng);
+            });
+        }
+
+        // Placer un marqueur et générer un carré de 50m x 50m
+        function placeMarkerAndGenerateSquare(latlng) {
+            // Supprimer le marqueur et carré précédents
+            if (currentMarker) {
+                map.removeLayer(currentMarker);
+            }
+            if (currentSquare) {
+                map.removeLayer(currentSquare);
+            }
+
+            // Calculer les coordonnées du carré de 50m x 50m
+            const squareCoords = calculateSquareCoordinates(latlng.lat, latlng.lng, 50);
+
+            // Créer le marqueur
+            currentMarker = L.marker([latlng.lat, latlng.lng], {
+                icon: L.divIcon({
+                    className: 'square-marker',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                })
+            }).addTo(map);
+
+            // Créer le carré
+            currentSquare = L.polygon(squareCoords, {
+                color: '#667eea',
+                weight: 2,
+                fillOpacity: 0.2
+            }).addTo(map);
+
+            // Popup avec les coordonnées
+            const popupContent = createPopupContent(squareCoords);
+            currentMarker.bindPopup(popupContent).openPopup();
+
+            // Mettre à jour les champs du formulaire
+            updateFormInputs(squareCoords);
+
+            // Afficher les coordonnées dans la sidebar
+            displayCoordinates(squareCoords);
+        }
+
+        // Calculer les coordonnées d'un carré de 50m x 50m
+        function calculateSquareCoordinates(centerLat, centerLng, sideLength) {
+            // Conversion approximative : 1 degré ≈ 111320 mètres
+            const metersPerDegree = 111320;
+            const halfSide = sideLength / 2;
+            
+            const deltaLat = halfSide / metersPerDegree;
+            const deltaLng = halfSide / (metersPerDegree * Math.cos(centerLat * Math.PI / 180));
+
+            return [
+                [centerLat + deltaLat, centerLng - deltaLng], // Nord-Ouest (A)
+                [centerLat + deltaLat, centerLng + deltaLng], // Nord-Est (B)
+                [centerLat - deltaLat, centerLng + deltaLng], // Sud-Est (C)
+                [centerLat - deltaLat, centerLng - deltaLng]  // Sud-Ouest (D)
+            ];
+        }
+
+        // Créer le contenu du popup
+        function createPopupContent(coords) {
+            return `
+                <div style="min-width: 200px;">
+                    <h6 style="margin-bottom: 10px; color: #667eea;">
+                        <i class="fas fa-square"></i> Carré de 50m x 50m
+                    </h6>
+                    <div style="font-family: 'Courier New', monospace; font-size: 0.8rem;">
+                        <div><strong>A (NO):</strong> ${coords[0][0].toFixed(6)}, ${coords[0][1].toFixed(6)}</div>
+                        <div><strong>B (NE):</strong> ${coords[1][0].toFixed(6)}, ${coords[1][1].toFixed(6)}</div>
+                        <div><strong>C (SE):</strong> ${coords[2][0].toFixed(6)}, ${coords[2][1].toFixed(6)}</div>
+                        <div><strong>D (SO):</strong> ${coords[3][0].toFixed(6)}, ${coords[3][1].toFixed(6)}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Mettre à jour les champs du formulaire
+        function updateFormInputs(coords) {
+            const fields = ['coordonnee_a', 'coordonnee_b', 'coordonnee_c', 'coordonnee_d'];
+            
+            coords.forEach((coord, index) => {
+                const input = document.querySelector(`input[name="${fields[index]}"]`);
+                if (input) {
+                    input.value = `${coord[0].toFixed(6)},${coord[1].toFixed(6)}`;
+                }
+            });
+        }
+
+        // Afficher les coordonnées dans la sidebar
+        function displayCoordinates(coords) {
+            const container = document.getElementById('current-coordinates');
+            const list = document.getElementById('coordinates-list');
+            
+            const labels = ['A (Nord-Ouest)', 'B (Nord-Est)', 'C (Sud-Est)', 'D (Sud-Ouest)'];
+            
+            let html = '';
+            coords.forEach((coord, index) => {
+                html += `
+                    <div class="coordinate-item">
+                        <strong>${labels[index]}:</strong> ${coord[0].toFixed(6)}, ${coord[1].toFixed(6)}
+                    </div>
+                `;
+            });
+            
+            list.innerHTML = html;
+            container.classList.remove('d-none');
+        }
+
+        // Configurer les écouteurs du formulaire
+        function setupFormListeners() {
+            // Écouteurs pour les champs de coordonnées
+            const coordinateInputs = document.querySelectorAll('.coordinate-input');
+            coordinateInputs.forEach(input => {
+                input.addEventListener('blur', validateAndUpdateMap);
+            });
+        }
+
+        // Valider et mettre à jour la carte depuis le formulaire
+        function validateAndUpdateMap() {
+            const coords = getCoordinatesFromForm();
+            if (coords && coords.length === 4) {
+                displaySquareFromCoordinates(coords);
+            }
+        }
+
+        // Obtenir les coordonnées depuis le formulaire
+        function getCoordinatesFromForm() {
+            const fields = ['coordonnee_a', 'coordonnee_b', 'coordonnee_c', 'coordonnee_d'];
+            const coords = [];
+            
+            for (let field of fields) {
+                const input = document.querySelector(`input[name="${field}"]`);
+                const value = input.value.trim();
+                
+                if (value) {
+                    const [lat, lng] = value.split(',').map(parseFloat);
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        coords.push([lat, lng]);
+                    } else {
+                        return null; // Coordonnée invalide
+                    }
+                } else {
+                    return null; // Champ vide
+                }
+            }
+            
+            return coords;
+        }
+
+        // Afficher le carré depuis les coordonnées du formulaire
+        function displaySquareFromCoordinates(coords) {
+            // Supprimer les éléments précédents
+            if (currentMarker) {
+                map.removeLayer(currentMarker);
+            }
+            if (currentSquare) {
+                map.removeLayer(currentSquare);
+            }
+
+            // Calculer le centre du carré
+            const centerLat = (coords[0][0] + coords[1][0] + coords[2][0] + coords[3][0]) / 4;
+            const centerLng = (coords[0][1] + coords[1][1] + coords[2][1] + coords[3][1]) / 4;
+
+            // Créer le marqueur au centre
+            currentMarker = L.marker([centerLat, centerLng], {
+                icon: L.divIcon({
+                    className: 'square-marker',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                })
+            }).addTo(map);
+
+            // Créer le carré
+            currentSquare = L.polygon(coords, {
+                color: '#667eea',
+                weight: 2,
+                fillOpacity: 0.2
+            }).addTo(map);
+
+            // Popup avec les coordonnées
+            const popupContent = createPopupContent(coords);
+            currentMarker.bindPopup(popupContent);
+
+            // Centrer la carte sur le carré
+            map.fitBounds(currentSquare.getBounds(), { padding: [20, 20] });
+
+            // Afficher les coordonnées dans la sidebar
+            displayCoordinates(coords);
+        }
+
+        // Afficher le marqueur depuis le formulaire
+        function displayMarkerFromForm() {
+            const coords = getCoordinatesFromForm();
+            if (coords && coords.length === 4) {
+                displaySquareFromCoordinates(coords);
+            } else {
+                alert('Veuillez saisir des coordonnées valides dans tous les champs.');
+            }
+        }
+
+        // Effacer tout
+        function clearAll() {
+            // Supprimer les éléments de la carte
+            if (currentMarker) {
+                map.removeLayer(currentMarker);
+                currentMarker = null;
+            }
+            if (currentSquare) {
+                map.removeLayer(currentSquare);
+                currentSquare = null;
+            }
+
+            // Vider le formulaire
+            document.getElementById('coordinate-form').reset();
+
+            // Masquer l'affichage des coordonnées
+            document.getElementById('current-coordinates').classList.add('d-none');
+        }
+    </script>
+</body>
+</html>
