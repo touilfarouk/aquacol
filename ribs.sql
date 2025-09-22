@@ -1,0 +1,128 @@
+-- phpMyAdmin SQL Dump
+-- version 4.9.7
+-- https://www.phpmyadmin.net/
+--
+-- Hôte : localhost
+-- Généré le : lun. 22 sep. 2025 à 14:21
+-- Version du serveur :  10.3.39-MariaDB-0+deb10u2-log
+-- Version de PHP : 7.3.33-14+0~20230902.114+debian10~1.gbp764b27
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de données : `onta`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `ribs`
+--
+
+CREATE TABLE `ribs` (
+  `id` int(11) NOT NULL,
+  `code_wilaya` varchar(10) NOT NULL,
+  `structure_onta` varchar(14) DEFAULT NULL,
+  `rib` varchar(22) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Déchargement des données de la table `ribs`
+--
+
+INSERT INTO `ribs` (`id`, `code_wilaya`, `structure_onta`, `rib`) VALUES
+(1, '01', 'ADRAR', '252-000260730093'),
+(2, '02', 'CHLEF', '261-000153430086'),
+(3, '03', 'LAGHOUAT', '297-000179630023'),
+(4, '04', 'OMB', '324-000384330004'),
+(5, '05', 'BATNA', '336-000070230018'),
+(6, '06', 'BEJAIA', '357-000071530029'),
+(7, '07', 'BISKRA', '393-000229030039'),
+(8, '08', 'BECHAR', '409-000173130079'),
+(9, '09', 'BLIDA', '447-000046230063'),
+(10, '10', 'BOUIRA', '458-000160430038'),
+(11, '11', 'TAMENRASSET', '298-000026030085'),
+(12, '12', 'TEBESSA', '488-000124930030'),
+(13, '13', 'TLEMCEN', '513-000179730094'),
+(14, '14', 'TIARET', '554-000044630033'),
+(15, '15', 'TIZI OUZOU', '580-000022130068'),
+(16, '16', 'ALGER', '060-001755300043'),
+(17, '17', 'DJELFA', '651-000363430039'),
+(18, '18', 'JIJEL', '676-000268930031'),
+(19, '19', 'SETIF', '697-000032730004'),
+(20, '20', 'SAIDA', '725-000290730077'),
+(21, '21', 'SKIKDA', '744-000112430032'),
+(22, '22', 'SIDI BEL ABBES', '763-000148130029'),
+(23, '23', 'ANNABA', '802-000026030008'),
+(24, '24', 'GUELMA', '821-000104330077'),
+(25, '25', 'CONSTANTINE', '831-000045230096'),
+(26, '26', 'MEDEA', '846-000172530012'),
+(27, '27', 'MOSTAGANEM', '866-000283630096'),
+(28, '28', 'MSILA', '904-000437030010'),
+(29, '29', 'MASCARA', '921-000167530083'),
+(30, '30', 'OUARGLA', '943-000060730043'),
+(31, '31', 'ORAN', '949-000003230083'),
+(32, '32', 'EL BAYADH', '003-00730-000088130001'),
+(33, '33', 'ILLIZI', '946-000014430047'),
+(34, '34', 'B.B.ARREIDJ', '696-000177830026'),
+(35, '35', 'BOUMERDES', '623-000071130087'),
+(36, '36', 'EL TARF', '811-000067230017'),
+(37, '37', 'Tindouf', '/'),
+(38, '38', 'TISSEMSILT', '544-000119630060'),
+(39, '39', 'EL OUED', '388-000184230063'),
+(40, '40', 'KHENCHELA', '326-000455730052'),
+(41, '41', 'SOUK-AHRAS', '822-000077130063'),
+(42, '42', 'TIPAZA', '448-000065430096'),
+(43, '43', 'MILA', '834-000171220045'),
+(44, '44', 'AIN DEFLA', '265-000209830051'),
+(45, '45', 'NAAMA', '728-000147930019'),
+(46, '46', 'A-TEMOUCHENT', '772-000057730041'),
+(47, '47', 'GHARDAIA', '292-000090630057'),
+(48, '48', 'RELIZANE', '870-000110830022'),
+(49, '49', 'TIMIMOUN', '253-000119930081'),
+(50, '50', 'BBM', '252-000260730093'),
+(51, '51', 'Ouled Djellal', '387-000285230005'),
+(52, '52', 'BNI ABBES', '408-000081530022'),
+(53, '53', 'In Salah', '474-000215230067'),
+(54, '54', 'In Guezzam', '298-000026030085'),
+(55, '55', 'Touggourt', '944-000274330007'),
+(56, '56', 'DJANET', '941-000053230006'),
+(57, '57', 'MEGHAIR', '932-000180830013'),
+(58, '58', 'El Meniaa', '003-00293-000115930032'),
+(60, '01', 'Structure 1', '1234567891234567'),
+(61, '01', 'Structure 1', '1234567891234567'),
+(62, '01', 'Structure 1', '1234567891234567');
+
+--
+-- Index pour les tables déchargées
+--
+
+--
+-- Index pour la table `ribs`
+--
+ALTER TABLE `ribs`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `ribs`
+--
+ALTER TABLE `ribs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
