@@ -244,12 +244,14 @@
                             <select class="form-select" name="wilaya_name_ascii" id="wilaya-select" onchange="loadCommunes()">
                                 <option value="">Sélectionner une wilaya</option>
                             </select>
+                            <input type="hidden" name="code_wilaya" id="code-wilaya">
                         </div>
                         <div class="col-6">
                             <label class="form-label">Commune</label>
-                            <select class="form-select" name="commune_name_ascii" id="commune-select">
+                            <select class="form-select" name="commune_name_ascii" id="commune-select" onchange="updateCommuneCode()">
                                 <option value="">Sélectionner une commune</option>
                             </select>
+                            <input type="hidden" name="code_commune" id="code-commune">
                         </div>
                     </div>
 
@@ -257,6 +259,19 @@
                     <div class="mb-3">
                         <label class="form-label">Nom de la zone</label>
                         <input type="text" class="form-control" name="nom_zone" placeholder="Ex: Zone A1">
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Superficie (m²)</label>
+                            <input type="number" class="form-control" name="superficie" step="0.01" min="0" placeholder="2500.00">
+                            <div class="form-text"></div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Distance voie d'accès</label>
+                            <input type="number" class="form-control" name="distance_voi_acces" min="0" placeholder="100">
+                            <div class="form-text"></div>
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -827,14 +842,45 @@
         function createSavedConcessionPopup(concession, coords) {
             const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
             let content = `
-                <div style="min-width: 280px;">
+                <div style="min-width: 320px;">
                     <h6 style="margin-bottom: 10px; color: #28a745;">
                         <i class="fas fa-fish"></i> ${concession.nom_zone || 'Concession'}
-                    </h6>
+                    </h6>`;
+            
+            // Show concession code if available
+            if (concession.code_concession) {
+                content += `
+                    <div style="margin-bottom: 8px; font-size: 0.8rem;">
+                        <strong><i class="fas fa-barcode"></i> Code:</strong> 
+                        <span style="font-family: monospace; background: #f8f9fa; padding: 2px 4px; border-radius: 3px;">
+                            ${concession.code_concession}
+                        </span>
+                    </div>`;
+            }
+            
+            content += `
                     <div style="margin-bottom: 10px; font-size: 0.85rem;">
                         <strong><i class="fas fa-map-marker-alt"></i> Localisation:</strong><br>
                         <small>${concession.wilaya_name_ascii || 'N/A'} - ${concession.commune_name_ascii || 'N/A'}</small>
-                    </div>
+                    </div>`;
+            
+            // Show superficie if available
+            if (concession.superficie) {
+                content += `
+                    <div style="margin-bottom: 8px; font-size: 0.8rem;">
+                        <strong><i class="fas fa-expand-arrows-alt"></i> Superficie:</strong> ${concession.superficie} m²
+                    </div>`;
+            }
+            
+            // Show distance if available
+            if (concession.distance_voi_acces) {
+                content += `
+                    <div style="margin-bottom: 8px; font-size: 0.8rem;">
+                        <strong><i class="fas fa-road"></i> Distance d'accès:</strong> ${concession.distance_voi_acces}m
+                    </div>`;
+            }
+            
+            content += `
                     <div style="margin-bottom: 10px;">
                         <strong>Description:</strong><br>
                         <small>${concession.description || 'Aucune description'}</small>
@@ -937,11 +983,29 @@
             console.log('Wilaya dropdown populated with', uniqueWilayas.length, 'options');
         }
 
+        // Get wilaya code from communes data
+        function getWilayaCode(wilayaName) {
+            const commune = communesData.find(item => item.wilaya_name_ascii === wilayaName);
+            return commune ? commune.wilaya_code : '';
+        }
+
+        // Get commune code from communes data
+        function getCommuneCode(communeName, wilayaName) {
+            const commune = communesData.find(item => 
+                item.commune_name_ascii === communeName && item.wilaya_name_ascii === wilayaName
+            );
+            return commune ? commune.commune_code : '';
+        }
+
         // Load communes based on selected wilaya
         function loadCommunes() {
             const wilayaSelect = document.getElementById('wilaya-select');
             const communeSelect = document.getElementById('commune-select');
             const selectedWilaya = wilayaSelect.value;
+            
+            // Update hidden wilaya code
+            const wilayaCode = getWilayaCode(selectedWilaya);
+            document.getElementById('code-wilaya').value = wilayaCode;
             
             // Clear commune dropdown
             communeSelect.innerHTML = '<option value="">Sélectionner une commune</option>';
@@ -962,6 +1026,22 @@
                     option.textContent = commune;
                     communeSelect.appendChild(option);
                 });
+            }
+            
+            // Clear commune code when wilaya changes
+            document.getElementById('code-commune').value = '';
+        }
+
+        // Update commune code when commune is selected
+        function updateCommuneCode() {
+            const communeSelect = document.getElementById('commune-select');
+            const wilayaSelect = document.getElementById('wilaya-select');
+            const selectedCommune = communeSelect.value;
+            const selectedWilaya = wilayaSelect.value;
+            
+            if (selectedCommune && selectedWilaya) {
+                const communeCode = getCommuneCode(selectedCommune, selectedWilaya);
+                document.getElementById('code-commune').value = communeCode;
             }
         }
     </script>

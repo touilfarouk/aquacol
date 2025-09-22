@@ -8,6 +8,12 @@ CREATE TABLE IF NOT EXISTS coordinates (
     nom_zone VARCHAR(255),
     wilaya_name_ascii VARCHAR(255),
     commune_name_ascii VARCHAR(255),
+        code_wilaya VARCHAR(5),
+    code_commune VARCHAR(5),
+    visible TINYINT(1) DEFAULT 1,
+    distance_voi_acces INT,
+    code_concession VARCHAR(255), -- code_wilaya + code_commune + code_concession = unique
+    superficie DECIMAL(10,2),
     description TEXT,
     coordonnee_a VARCHAR(100) NOT NULL,
     coordonnee_b VARCHAR(100) NOT NULL,

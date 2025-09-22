@@ -21,15 +21,26 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
 
+    // Generate concession code
+    $codeWilaya = $data['code_wilaya'] ?? '';
+    $codeCommune = $data['code_commune'] ?? '';
+    $codeConcession = $codeWilaya . $codeCommune . str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT);
+
     // Insert Query 
-    $query = "INSERT INTO coordinates (nom_zone, wilaya_name_ascii, commune_name_ascii, description, coordonnee_a, coordonnee_b, coordonnee_c, coordonnee_d, format_coordonnees, created_at) 
-              VALUES (:nom_zone, :wilaya_name_ascii, :commune_name_ascii, :description, :coordonnee_a, :coordonnee_b, :coordonnee_c, :coordonnee_d, :format_coordonnees, NOW())";
+    $query = "INSERT INTO coordinates (nom_zone, wilaya_name_ascii, commune_name_ascii, code_wilaya, code_commune, visible, distance_voi_acces, code_concession, superficie, description, coordonnee_a, coordonnee_b, coordonnee_c, coordonnee_d, format_coordonnees, created_at) 
+              VALUES (:nom_zone, :wilaya_name_ascii, :commune_name_ascii, :code_wilaya, :code_commune, :visible, :distance_voi_acces, :code_concession, :superficie, :description, :coordonnee_a, :coordonnee_b, :coordonnee_c, :coordonnee_d, :format_coordonnees, NOW())";
 
     $stmt = $pdo->prepare($query);
     $stmt->execute([
         ':nom_zone' => $data['nom_zone'] ?? '',
         ':wilaya_name_ascii' => $data['wilaya_name_ascii'] ?? '',
         ':commune_name_ascii' => $data['commune_name_ascii'] ?? '',
+        ':code_wilaya' => $codeWilaya,
+        ':code_commune' => $data['code_commune'] ?? '',
+        ':visible' => 1, // Default to visible
+        ':distance_voi_acces' => $data['distance_voi_acces'] ?? null,
+        ':code_concession' => $codeConcession,
+        ':superficie' => $data['superficie'] ?? null,
         ':description' => $data['description'] ?? '',
         ':coordonnee_a' => $data['coordonnee_a'] ?? '',
         ':coordonnee_b' => $data['coordonnee_b'] ?? '',
