@@ -237,6 +237,22 @@
                         </div>
                     </div>
 
+                    <!-- Localisation -->
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Wilaya</label>
+                            <select class="form-select" name="wilaya_name_ascii" id="wilaya-select" onchange="loadCommunes()">
+                                <option value="">Sélectionner une wilaya</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Commune</label>
+                            <select class="form-select" name="commune_name_ascii" id="commune-select">
+                                <option value="">Sélectionner une commune</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- Informations supplémentaires -->
                     <div class="mb-3">
                         <label class="form-label">Nom de la zone</label>
@@ -290,11 +306,13 @@
         let currentSquare = null;
         let currentFormat = 'decimal';
         let savedMarkers = []; // Array to store all saved concession markers
+        let communesData = []; // Array to store communes data
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
             initMap();
             setupFormListeners();
+            loadCommunesData(); // Load communes data
             loadSavedConcessions(); // Load existing concessions on page load
         });
 
@@ -813,6 +831,10 @@
                     <h6 style="margin-bottom: 10px; color: #28a745;">
                         <i class="fas fa-fish"></i> ${concession.nom_zone || 'Concession'}
                     </h6>
+                    <div style="margin-bottom: 10px; font-size: 0.85rem;">
+                        <strong><i class="fas fa-map-marker-alt"></i> Localisation:</strong><br>
+                        <small>${concession.wilaya_name_ascii || 'N/A'} - ${concession.commune_name_ascii || 'N/A'}</small>
+                    </div>
                     <div style="margin-bottom: 10px;">
                         <strong>Description:</strong><br>
                         <small>${concession.description || 'Aucune description'}</small>
@@ -851,6 +873,96 @@
         // Refresh concessions (call after saving new one)
         function refreshConcessions() {
             loadSavedConcessions();
+        }
+
+        // Load communes data from JSON file
+        async function loadCommunesData() {
+            try {
+                const response = await fetch('communes.json');
+                const jsonData = await response.json();
+                
+                console.log('JSON Data structure:', jsonData); // Debug log
+                
+                // Find the table data in the JSON structure
+                let tableData = null;
+                for (let item of jsonData) {
+                    if (item.type === 'table' && item.name === 'communes' && item.data) {
+                        tableData = item.data;
+                        break;
+                    }
+                }
+                
+                if (tableData) {
+                    communesData = tableData;
+                    console.log('Loaded communes data:', communesData.length, 'items'); // Debug log
+                    
+                    // Populate wilaya dropdown
+                    populateWilayaDropdown();
+                } else {
+                    console.error('Could not find communes table data in JSON');
+                }
+                
+            } catch (error) {
+                console.error('Erreur lors du chargement des communes:', error);
+            }
+        }
+
+        // Populate wilaya dropdown with unique wilayas
+        function populateWilayaDropdown() {
+            const wilayaSelect = document.getElementById('wilaya-select');
+            
+            if (!communesData || communesData.length === 0) {
+                console.error('No communes data available');
+                return;
+            }
+            
+            console.log('Sample commune data:', communesData[0]); // Debug log
+            
+            const uniqueWilayas = [...new Set(communesData.map(item => item.wilaya_name_ascii))].sort();
+            
+            console.log('Unique wilayas found:', uniqueWilayas); // Debug log
+            
+            // Clear existing options except the first one
+            wilayaSelect.innerHTML = '<option value="">Sélectionner une wilaya</option>';
+            
+            uniqueWilayas.forEach(wilaya => {
+                if (wilaya) { // Only add non-empty wilayas
+                    const option = document.createElement('option');
+                    option.value = wilaya;
+                    option.textContent = wilaya;
+                    wilayaSelect.appendChild(option);
+                }
+            });
+            
+            console.log('Wilaya dropdown populated with', uniqueWilayas.length, 'options');
+        }
+
+        // Load communes based on selected wilaya
+        function loadCommunes() {
+            const wilayaSelect = document.getElementById('wilaya-select');
+            const communeSelect = document.getElementById('commune-select');
+            const selectedWilaya = wilayaSelect.value;
+            
+            // Clear commune dropdown
+            communeSelect.innerHTML = '<option value="">Sélectionner une commune</option>';
+            
+            if (selectedWilaya) {
+                // Filter communes for selected wilaya
+                const communesForWilaya = communesData
+                    .filter(item => item.wilaya_name_ascii === selectedWilaya)
+                    .map(item => item.commune_name_ascii)
+                    .sort();
+                
+                // Remove duplicates
+                const uniqueCommunes = [...new Set(communesForWilaya)];
+                
+                uniqueCommunes.forEach(commune => {
+                    const option = document.createElement('option');
+                    option.value = commune;
+                    option.textContent = commune;
+                    communeSelect.appendChild(option);
+                });
+            }
         }
     </script>
 </body>

@@ -6,6 +6,8 @@ USE aquacole;
 CREATE TABLE IF NOT EXISTS coordinates (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom_zone VARCHAR(255),
+    wilaya_name_ascii VARCHAR(255),
+    commune_name_ascii VARCHAR(255),
     description TEXT,
     coordonnee_a VARCHAR(100) NOT NULL,
     coordonnee_b VARCHAR(100) NOT NULL,

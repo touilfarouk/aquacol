@@ -22,12 +22,14 @@ try {
     ]);
 
     // Insert Query 
-    $query = "INSERT INTO coordinates (nom_zone, description, coordonnee_a, coordonnee_b, coordonnee_c, coordonnee_d, format_coordonnees, created_at) 
-              VALUES (:nom_zone, :description, :coordonnee_a, :coordonnee_b, :coordonnee_c, :coordonnee_d, :format_coordonnees, NOW())";
+    $query = "INSERT INTO coordinates (nom_zone, wilaya_name_ascii, commune_name_ascii, description, coordonnee_a, coordonnee_b, coordonnee_c, coordonnee_d, format_coordonnees, created_at) 
+              VALUES (:nom_zone, :wilaya_name_ascii, :commune_name_ascii, :description, :coordonnee_a, :coordonnee_b, :coordonnee_c, :coordonnee_d, :format_coordonnees, NOW())";
 
     $stmt = $pdo->prepare($query);
     $stmt->execute([
         ':nom_zone' => $data['nom_zone'] ?? '',
+        ':wilaya_name_ascii' => $data['wilaya_name_ascii'] ?? '',
+        ':commune_name_ascii' => $data['commune_name_ascii'] ?? '',
         ':description' => $data['description'] ?? '',
         ':coordonnee_a' => $data['coordonnee_a'] ?? '',
         ':coordonnee_b' => $data['coordonnee_b'] ?? '',
