@@ -842,7 +842,7 @@
         function createSavedConcessionPopup(concession, coords) {
             const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
             let content = `
-                <div style="min-width: 320px;">
+                <div style="min-width: 400px;">
                     <h6 style="margin-bottom: 10px; color: #28a745;">
                         <i class="fas fa-fish"></i> ${concession.nom_zone || 'Concession'}
                     </h6>`;
@@ -910,6 +910,10 @@
                         <button onclick="generateTechnicalSheet(${concession.id})" 
                                 style="flex: 1; padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
                             <i class="fas fa-file-pdf"></i> Fiche PDF
+                        </button>
+                        <button onclick="generatePaymentStatement(${concession.id})" 
+                                style="flex: 1; padding: 6px 12px; background: #6f42c1; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                            <i class="fas fa-file-invoice-dollar"></i> Paiement
                         </button>
                     </div>
                 </div>
@@ -1114,6 +1118,26 @@
                 console.error('Error capturing map screenshot:', error);
             }
             return null;
+        }
+
+        // Generate payment statement PDF
+        function generatePaymentStatement(concessionId) {
+            // Create a form to submit to payment PDF generator
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'generate_payment_statement.php';
+            form.target = '_blank';
+
+            // Add concession ID
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'concession_id';
+            idInput.value = concessionId;
+            form.appendChild(idInput);
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
         }
     </script>
 </body>
