@@ -196,6 +196,16 @@
                 <h6><i class="fas fa-map-marker-alt"></i>Coordonnées de la Zone</h6>
                 
                 <form id="coordinate-form">
+                    <!-- Format de coordonnées -->
+                    <div class="mb-3">
+                        <label class="form-label">Format des coordonnées</label>
+                        <select class="form-select" id="coordinate-format" onchange="changeCoordinateFormat()">
+                            <option value="decimal">Degrés décimaux (DD)</option>
+                            <option value="dms">Degrés Minutes Secondes (DMS)</option>
+                            <option value="utm">UTM (Universal Transverse Mercator)</option>
+                        </select>
+                    </div>
+
                     <!-- Coordonnées -->
                     <div class="mb-3">
                         <label class="form-label">Coordonnées du carré (50m x 50m)</label>
@@ -203,26 +213,26 @@
                             <div class="col-6">
                                 <label class="form-label small">Point A (Nord-Ouest)</label>
                                 <input type="text" class="form-control coordinate-input" name="coordonnee_a" 
-                                       placeholder="36.7538,3.0588">
-                                <div class="coordinate-help">Latitude, Longitude</div>
+                                       placeholder="36.7538 3.0588">
+                                <div class="coordinate-help" id="help-a">Latitude Longitude</div>
                             </div>
                             <div class="col-6">
                                 <label class="form-label small">Point B (Nord-Est)</label>
                                 <input type="text" class="form-control coordinate-input" name="coordonnee_b" 
-                                       placeholder="36.7548,3.0598">
-                                <div class="coordinate-help">Latitude, Longitude</div>
+                                       placeholder="36.7548 3.0598">
+                                <div class="coordinate-help" id="help-b">Latitude Longitude</div>
                             </div>
                             <div class="col-6">
                                 <label class="form-label small">Point C (Sud-Est)</label>
                                 <input type="text" class="form-control coordinate-input" name="coordonnee_c" 
-                                       placeholder="36.7528,3.0608">
-                                <div class="coordinate-help">Latitude, Longitude</div>
+                                       placeholder="36.7528 3.0608">
+                                <div class="coordinate-help" id="help-c">Latitude Longitude</div>
                             </div>
                             <div class="col-6">
                                 <label class="form-label small">Point D (Sud-Ouest)</label>
                                 <input type="text" class="form-control coordinate-input" name="coordonnee_d" 
-                                       placeholder="36.7518,3.0578">
-                                <div class="coordinate-help">Latitude, Longitude</div>
+                                       placeholder="36.7518 3.0578">
+                                <div class="coordinate-help" id="help-d">Latitude Longitude</div>
                             </div>
                         </div>
                     </div>
@@ -275,6 +285,7 @@
         let map;
         let currentMarker = null;
         let currentSquare = null;
+        let currentFormat = 'decimal';
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
@@ -284,8 +295,8 @@
 
         // Initialiser la carte
         function initMap() {
-            // Créer la carte centrée sur l'Algérie
-            map = L.map('map').setView([28.0339, 1.6596], 6);
+            // Créer la carte centrée sur l'Algérie avec un zoom plus proche
+            map = L.map('map').setView([36.7538, 3.0588], 12);
 
             // Ajouter les tuiles
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -355,21 +366,112 @@
             ];
         }
 
+        // Fonctions de conversion de coordonnées
+        function decimalToDMS(decimal, isLatitude) {
+            const degrees = Math.floor(Math.abs(decimal));
+            const minutes = Math.floor((Math.abs(decimal) - degrees) * 60);
+            const seconds = ((Math.abs(decimal) - degrees) * 60 - minutes) * 60;
+            
+            let direction;
+            if (isLatitude) {
+                direction = decimal >= 0 ? 'N' : 'S';
+            } else {
+                direction = decimal >= 0 ? 'E' : 'W';
+            }
+            
+            return `${degrees}°${minutes}'${seconds.toFixed(2)}"${direction}`;
+        }
+
+        function decimalToUTM(lat, lng) {
+            // Simplification UTM pour l'Algérie (Zone 31N principalement)
+            const zone = Math.floor((lng + 180) / 6) + 1;
+            const easting = ((lng + 3) * 111320 * Math.cos(lat * Math.PI / 180)).toFixed(0);
+            const northing = (lat * 111320).toFixed(0);
+            return `${zone}N ${easting} ${northing}`;
+        }
+
+        function formatCoordinate(lat, lng, format) {
+            switch(format) {
+                case 'dms':
+                    return `${decimalToDMS(lat, true)} ${decimalToDMS(lng, false)}`;
+                case 'utm':
+                    return decimalToUTM(lat, lng);
+                default:
+                    return `${lat.toFixed(6)} ${lng.toFixed(6)}`;
+            }
+        }
+
+        function parseCoordinateInput(input, format) {
+            const trimmed = input.trim();
+            
+            switch(format) {
+                case 'decimal':
+                    const parts = trimmed.split(/[\s,]+/);
+                    if (parts.length >= 2) {
+                        return [parseFloat(parts[0]), parseFloat(parts[1])];
+                    }
+                    break;
+                case 'dms':
+                    // Parsing DMS - simplified
+                    const dmsRegex = /(\d+)°(\d+)'([\d.]+)"([NSEW])/g;
+                    const matches = [...trimmed.matchAll(dmsRegex)];
+                    if (matches.length >= 2) {
+                        const lat = convertDMSToDecimal(matches[0]);
+                        const lng = convertDMSToDecimal(matches[1]);
+                        return [lat, lng];
+                    }
+                    break;
+                case 'utm':
+                    // Parsing UTM - simplified
+                    const utmParts = trimmed.split(/\s+/);
+                    if (utmParts.length >= 3) {
+                        const easting = parseFloat(utmParts[1]);
+                        const northing = parseFloat(utmParts[2]);
+                        return convertUTMToDecimal(easting, northing);
+                    }
+                    break;
+            }
+            return null;
+        }
+
+        function convertDMSToDecimal(match) {
+            const degrees = parseInt(match[1]);
+            const minutes = parseInt(match[2]);
+            const seconds = parseFloat(match[3]);
+            const direction = match[4];
+            
+            let decimal = degrees + minutes/60 + seconds/3600;
+            if (direction === 'S' || direction === 'W') {
+                decimal = -decimal;
+            }
+            return decimal;
+        }
+
+        function convertUTMToDecimal(easting, northing) {
+            // Conversion simplifiée UTM vers décimal pour l'Algérie
+            const lat = northing / 111320;
+            const lng = (easting / (111320 * Math.cos(lat * Math.PI / 180))) - 3;
+            return [lat, lng];
+        }
+
         // Créer le contenu du popup
         function createPopupContent(coords) {
-            return `
-                <div style="min-width: 200px;">
+            const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
+            let content = `
+                <div style="min-width: 250px;">
                     <h6 style="margin-bottom: 10px; color: #667eea;">
                         <i class="fas fa-square"></i> Carré de 50m x 50m
                     </h6>
-                    <div style="font-family: 'Courier New', monospace; font-size: 0.8rem;">
-                        <div><strong>A (NO):</strong> ${coords[0][0].toFixed(6)}, ${coords[0][1].toFixed(6)}</div>
-                        <div><strong>B (NE):</strong> ${coords[1][0].toFixed(6)}, ${coords[1][1].toFixed(6)}</div>
-                        <div><strong>C (SE):</strong> ${coords[2][0].toFixed(6)}, ${coords[2][1].toFixed(6)}</div>
-                        <div><strong>D (SO):</strong> ${coords[3][0].toFixed(6)}, ${coords[3][1].toFixed(6)}</div>
-                    </div>
-                </div>
+                    <div style="font-family: 'Courier New', monospace; font-size: 0.75rem;">
             `;
+            
+            coords.forEach((coord, index) => {
+                const formatted = formatCoordinate(coord[0], coord[1], currentFormat);
+                content += `<div><strong>${labels[index]}:</strong> ${formatted}</div>`;
+            });
+            
+            content += `</div></div>`;
+            return content;
         }
 
         // Mettre à jour les champs du formulaire
@@ -379,7 +481,7 @@
             coords.forEach((coord, index) => {
                 const input = document.querySelector(`input[name="${fields[index]}"]`);
                 if (input) {
-                    input.value = `${coord[0].toFixed(6)},${coord[1].toFixed(6)}`;
+                    input.value = formatCoordinate(coord[0], coord[1], currentFormat);
                 }
             });
         }
@@ -393,9 +495,10 @@
             
             let html = '';
             coords.forEach((coord, index) => {
+                const formatted = formatCoordinate(coord[0], coord[1], currentFormat);
                 html += `
                     <div class="coordinate-item">
-                        <strong>${labels[index]}:</strong> ${coord[0].toFixed(6)}, ${coord[1].toFixed(6)}
+                        <strong>${labels[index]}:</strong> ${formatted}
                     </div>
                 `;
             });
@@ -431,9 +534,9 @@
                 const value = input.value.trim();
                 
                 if (value) {
-                    const [lat, lng] = value.split(',').map(parseFloat);
-                    if (!isNaN(lat) && !isNaN(lng)) {
-                        coords.push([lat, lng]);
+                    const parsed = parseCoordinateInput(value, currentFormat);
+                    if (parsed && !isNaN(parsed[0]) && !isNaN(parsed[1])) {
+                        coords.push(parsed);
                     } else {
                         return null; // Coordonnée invalide
                     }
@@ -443,6 +546,68 @@
             }
             
             return coords;
+        }
+
+        // Changer le format des coordonnées
+        function changeCoordinateFormat() {
+            const formatSelect = document.getElementById('coordinate-format');
+            const newFormat = formatSelect.value;
+            
+            // Sauvegarder les coordonnées actuelles en décimal
+            let currentCoords = null;
+            if (currentMarker && currentSquare) {
+                const leafletCoords = currentSquare.getLatLngs()[0];
+                // Convertir les objets LatLng de Leaflet en tableaux simples
+                currentCoords = leafletCoords.map(coord => [coord.lat, coord.lng]);
+            }
+            
+            // Mettre à jour le format actuel
+            currentFormat = newFormat;
+            
+            // Mettre à jour les placeholders et les aides
+            updatePlaceholdersAndHelp(newFormat);
+            
+            // Si il y a des coordonnées actuelles, les reconvertir
+            if (currentCoords) {
+                updateFormInputs(currentCoords);
+                displayCoordinates(currentCoords);
+                
+                // Mettre à jour le popup
+                if (currentMarker) {
+                    const popupContent = createPopupContent(currentCoords);
+                    currentMarker.setPopupContent(popupContent);
+                }
+            }
+        }
+
+        // Mettre à jour les placeholders et aides selon le format
+        function updatePlaceholdersAndHelp(format) {
+            const inputs = document.querySelectorAll('.coordinate-input');
+            const helps = document.querySelectorAll('.coordinate-help');
+            
+            let placeholder, helpText;
+            
+            switch(format) {
+                case 'dms':
+                    placeholder = "36°45'15.12\"N 3°3'31.68\"E";
+                    helpText = "Degrés Minutes Secondes";
+                    break;
+                case 'utm':
+                    placeholder = "31N 500000 4000000";
+                    helpText = "Zone Easting Northing";
+                    break;
+                default:
+                    placeholder = "36.7538 3.0588";
+                    helpText = "Latitude Longitude";
+            }
+            
+            inputs.forEach(input => {
+                input.placeholder = placeholder;
+            });
+            
+            helps.forEach(help => {
+                help.textContent = helpText;
+            });
         }
 
         // Afficher le carré depuis les coordonnées du formulaire
@@ -479,8 +644,8 @@
             const popupContent = createPopupContent(coords);
             currentMarker.bindPopup(popupContent);
 
-            // Centrer la carte sur le carré
-            map.fitBounds(currentSquare.getBounds(), { padding: [20, 20] });
+            // Centrer la carte sur le carré avec un zoom fixe approprié
+            map.setView([centerLat, centerLng], 16);
 
             // Afficher les coordonnées dans la sidebar
             displayCoordinates(coords);
