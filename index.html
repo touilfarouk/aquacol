@@ -896,11 +896,21 @@
             
             content += `
                     </div>
-                    <div style="font-size: 0.7rem; color: #666;">
+                    <div style="font-size: 0.7rem; color: #666; margin-bottom: 10px;">
                         <i class="fas fa-calendar"></i> ${new Date(concession.created_at).toLocaleDateString('fr-FR')}
                         <span style="margin-left: 10px;">
                             <i class="fas fa-hashtag"></i> ID: ${concession.id}
                         </span>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <button onclick="viewConcessionDetails(${concession.id})" 
+                                style="flex: 1; padding: 6px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                            <i class="fas fa-eye"></i> Détails
+                        </button>
+                        <button onclick="generateTechnicalSheet(${concession.id})" 
+                                style="flex: 1; padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                            <i class="fas fa-file-pdf"></i> Fiche PDF
+                        </button>
                     </div>
                 </div>
             `;
@@ -1043,6 +1053,67 @@
                 const communeCode = getCommuneCode(selectedCommune, selectedWilaya);
                 document.getElementById('code-commune').value = communeCode;
             }
+        }
+
+        // View concession details in a new page
+        function viewConcessionDetails(concessionId) {
+            // Open details page in new tab
+            window.open(`details.php?id=${concessionId}`, '_blank');
+        }
+
+        // Generate technical sheet PDF
+        function generateTechnicalSheet(concessionId) {
+            // Create a form to submit to PDF generator
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'generate_pdf.php';
+            form.target = '_blank';
+            
+            // Add concession ID
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'concession_id';
+            idInput.value = concessionId;
+            form.appendChild(idInput);
+            
+            // Add map screenshot data (we'll capture the current map view)
+            const mapScreenshot = captureMapScreenshot(concessionId);
+            if (mapScreenshot) {
+                const screenshotInput = document.createElement('input');
+                screenshotInput.type = 'hidden';
+                screenshotInput.name = 'map_screenshot';
+                screenshotInput.value = mapScreenshot;
+                form.appendChild(screenshotInput);
+            }
+            
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        }
+
+        // Capture map screenshot for PDF
+        function captureMapScreenshot(concessionId) {
+            try {
+                // Find the concession marker
+                const concession = savedMarkers.find(item => item.data.id == concessionId);
+                if (concession && concession.marker) {
+                    // Center the map on the concession
+                    const marker = concession.marker;
+                    const latlng = marker.getLatLng();
+                    map.setView(latlng, 16);
+                    
+                    // Use html2canvas or leaflet-image to capture the map
+                    // For now, we'll return the coordinates as a fallback
+                    return JSON.stringify({
+                        lat: latlng.lat,
+                        lng: latlng.lng,
+                        zoom: 16
+                    });
+                }
+            } catch (error) {
+                console.error('Error capturing map screenshot:', error);
+            }
+            return null;
         }
     </script>
 </body>
