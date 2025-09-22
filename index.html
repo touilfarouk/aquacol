@@ -251,6 +251,9 @@
 
                     <!-- Boutons -->
                     <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-success" onclick="saveCoordinates()">
+                            <i class="fas fa-save me-2"></i>Sauvegarder
+                        </button>
                         <button type="button" class="btn btn-primary" onclick="displayMarkerFromForm()">
                             <i class="fas fa-map-marker-alt me-2"></i>Afficher sur la carte
                         </button>
@@ -658,6 +661,57 @@
                 displaySquareFromCoordinates(coords);
             } else {
                 alert('Veuillez saisir des coordonnées valides dans tous les champs.');
+            }
+        }
+
+        // Sauvegarder les coordonnées via API
+        async function saveCoordinates() {
+            const saveBtn = document.querySelector('button[onclick="saveCoordinates()"]');
+            const originalText = saveBtn.innerHTML;
+            
+            try {
+                // Récupérer les données du formulaire
+                const formData = new FormData(document.getElementById('coordinate-form'));
+                const data = Object.fromEntries(formData.entries());
+                
+                // Ajouter le format des coordonnées
+                data.format_coordonnees = currentFormat;
+                
+                // Vérifier que les coordonnées sont présentes
+                if (!data.coordonnee_a || !data.coordonnee_b || !data.coordonnee_c || !data.coordonnee_d) {
+                    alert('Veuillez d\'abord placer un marqueur sur la carte ou saisir les coordonnées.');
+                    return;
+                }
+                
+                // Afficher un indicateur de chargement
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sauvegarde...';
+                saveBtn.disabled = true;
+                
+                // Envoyer les données à l'API
+                const response = await fetch('http://localhost/aquaculture/api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ form: data })
+                });
+                
+                const result = await response.json();
+                
+                if (result.response === "true") {
+                    alert('✅ ' + result.message + '\nID: ' + result.id);
+                    clearAll(); // Vider le formulaire après sauvegarde réussie
+                } else {
+                    alert('❌ Erreur: ' + result.message);
+                }
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur de connexion au serveur');
+            } finally {
+                // Restaurer le bouton
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
             }
         }
 
