@@ -162,6 +162,26 @@
         .leaflet-tooltip.custom-tooltip::before {
             border-top-color: #28a745;
         }
+        
+        /* Style for click popup */
+        .leaflet-popup.custom-popup .leaflet-popup-content-wrapper {
+            border-radius: 4px;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .leaflet-popup.custom-popup .leaflet-popup-content {
+            margin: 0;
+            width: 100% !important;
+        }
+        
+        .leaflet-popup.custom-popup .leaflet-popup-tip-container {
+            margin-top: -1px;
+        }
+        
+        .leaflet-popup.custom-popup .leaflet-popup-tip {
+            background: #28a745;
+        }
 
         @media (max-width: 768px) {
             .main-container {
@@ -841,18 +861,25 @@
                 fillOpacity: 0.1
             }).addTo(map);
 
-            // Create popup content
-            const popupContent = createSavedConcessionPopup(concession, coords);
-            // Bind tooltip that appears on hover at the top
-            marker.bindTooltip(popupContent, {
+            // Create hover content (simplified view)
+            const hoverContent = createSavedConcessionPopup(concession, coords, true);
+            
+            // Create click content (full view with buttons)
+            const clickContent = createSavedConcessionPopup(concession, coords, false);
+            
+            // Bind hover tooltip (shows on hover)
+            marker.bindTooltip(hoverContent, {
                 permanent: false,
                 direction: 'top',
                 className: 'custom-tooltip',
                 offset: [0, -15]
             });
             
-            // Also bind popup for click (as a fallback)
-            marker.bindPopup(popupContent);
+            // Bind click popup (shows full content with buttons)
+            marker.bindPopup(clickContent, {
+                maxWidth: 300,
+                className: 'custom-popup'
+            });
 
             // Store references
             savedMarkers.push({ marker, square, data: concession });
@@ -864,9 +891,50 @@
             return [parseFloat(parts[0]), parseFloat(parts[1])];
         }
 
-        function createSavedConcessionPopup(concession, coords) {
+        function createSavedConcessionPopup(concession, coords, isHover = false) {
     const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
-    let content = `
+    
+    // Content for hover (without buttons)
+    let hoverContent = `
+        <div style="min-width: 245px; font-size: 0.8rem;">
+            <h6 style="margin-bottom: 10px; color: #28a745;">
+                <i class="fas fa-fish" style="color: #28a745;"></i> ${concession.nom_zone || 'Concession'}
+            </h6>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+                <tbody>
+                    ${concession.code_concession ? `
+                        <tr>
+                            <td>
+                                <strong><i class="fas fa-barcode" style="color: #6c757d;"></i> Code</strong>
+                            </td>
+                            <td>
+                                <span style="font-family: monospace; background: #f8f9fa; padding: 2px 4px; border-radius: 3px;">
+                                    ${concession.code_concession}
+                                </span>
+                            </td>
+                        </tr>` : ''}
+
+                    <tr>
+                        <td>
+                            <strong><i class="fas fa-map-marker-alt" style="color: #fd7e14;"></i> Localisation</strong>
+                        </td>
+                        <td>${concession.wilaya_name_ascii || 'N/A'} - ${concession.commune_name_ascii || 'N/A'}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="font-size: 0.7rem; color: #666; margin-top: 5px;">
+                <i class="fas fa-mouse-pointer"></i> Cliquez pour plus d'options
+            </div>
+        </div>
+    `;
+    
+    // Return hover content if it's for hover tooltip
+    if (isHover) {
+        return hoverContent;
+    }
+    
+    // Full content with buttons for click popup
+    let fullContent = `
         <div style="min-width: 245px; font-size: 0.8rem;">
             <h6 style="margin-bottom: 10px; color: #28a745;">
                 <i class="fas fa-fish" style="color: #28a745;"></i> ${concession.nom_zone || 'Concession'}
@@ -910,12 +978,12 @@
                 </tbody>
             </table>
 
-            <div style="margin-top: 10px;">
+            <div style="margin: 10px 0;">
                 <strong><i class="fas fa-info-circle" style="color: #17a2b8;"></i> Description:</strong><br>
                 <small>${concession.description || 'Aucune description'}</small>
             </div>
 
-            <div style="margin-top: 10px; font-family: 'Courier New', monospace;">
+            <div style="margin: 10px 0; font-family: 'Courier New', monospace;">
                 <strong><i class="fas fa-vector-square" style="color: #007bff;"></i> Coordonnées (50m x 50m):</strong>
                 <table style="width: 100%; font-size: 0.75rem; margin-top: 4px;">
                     <tbody>
@@ -927,30 +995,31 @@
                 </table>
             </div>
 
-            <div style="font-size: 0.7rem; color: #666; margin-top: 10px;">
+            <div style="font-size: 0.7rem; color: #666; margin: 10px 0;">
                 <i class="fas fa-calendar" style="color: #20c997;"></i> ${new Date(concession.created_at).toLocaleDateString('fr-FR')}
                 <span style="margin-left: 10px;">
                     <i class="fas fa-hashtag" style="color: #dc3545;"></i> ID: ${concession.id}
                 </span>
             </div>
 
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
-                <button onclick="viewConcessionDetails(${concession.id})" 
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <button onclick="event.stopPropagation(); viewConcessionDetails(${concession.id})" 
                         style="flex: 1; padding: 6px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
                     <i class="fas fa-eye"></i> Détails
                 </button>
-                <button onclick="generateTechnicalSheet(${concession.id})" 
+                <button onclick="event.stopPropagation(); generateTechnicalSheet(${concession.id})" 
                         style="flex: 1; padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
-                    <i class="fas fa-file-pdf"></i> Fiche PDF
+                    <i class="fas fa-file-pdf"></i> PDF
                 </button>
-                <button onclick="generatePaymentStatement(${concession.id})" 
+                <button onclick="event.stopPropagation(); generatePaymentStatement(${concession.id})" 
                         style="flex: 1; padding: 6px 12px; background: #6f42c1; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
                     <i class="fas fa-file-invoice-dollar"></i> Paiement
                 </button>
             </div>
         </div>
     `;
-    return content;
+    
+    return fullContent;
 }
 
         // Clear all saved markers from map
