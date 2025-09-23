@@ -147,6 +147,22 @@
             border-radius: 0.25rem;
         }
 
+        /* Custom tooltip styling for hover popups */
+        .leaflet-tooltip.custom-tooltip {
+            background: white;
+            border: 1px solid #28a745;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            padding: 8px;
+            pointer-events: auto;
+            max-width: 450px;
+            z-index: 1000 !important;
+        }
+        
+        .leaflet-tooltip.custom-tooltip::before {
+            border-top-color: #28a745;
+        }
+
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -827,6 +843,15 @@
 
             // Create popup content
             const popupContent = createSavedConcessionPopup(concession, coords);
+            // Bind tooltip that appears on hover at the top
+            marker.bindTooltip(popupContent, {
+                permanent: false,
+                direction: 'top',
+                className: 'custom-tooltip',
+                offset: [0, -15]
+            });
+            
+            // Also bind popup for click (as a fallback)
             marker.bindPopup(popupContent);
 
             // Store references
