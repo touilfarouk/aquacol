@@ -839,88 +839,94 @@
             return [parseFloat(parts[0]), parseFloat(parts[1])];
         }
 
-        // Create popup content for saved concessions
         function createSavedConcessionPopup(concession, coords) {
-            const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
-            let content = `
-                <div style="min-width: 245px;">
-                    <h6 style="margin-bottom: 10px; color: #28a745;">
-                        <i class="fas fa-fish"></i> ${concession.nom_zone || 'Concession'}
-                    </h6>`;
-            
-            // Show concession code if available
-            if (concession.code_concession) {
-                content += `
-                    <div style="margin-bottom: 8px; font-size: 0.8rem;">
-                        <strong><i class="fas fa-barcode"></i> Code:</strong> 
-                        <span style="font-family: monospace; background: #f8f9fa; padding: 2px 4px; border-radius: 3px;">
-                            ${concession.code_concession}
-                        </span>
-                    </div>`;
-            }
-            
-            content += `
-                    <div style="margin-bottom: 10px; font-size: 0.85rem;">
-                        <strong><i class="fas fa-map-marker-alt"></i> Localisation:</strong><br>
-                        <small>${concession.wilaya_name_ascii || 'N/A'} - ${concession.commune_name_ascii || 'N/A'}</small>
-                    </div>`;
-            
-            // Show superficie if available
-            if (concession.superficie) {
-                content += `
-                    <div style="margin-bottom: 8px; font-size: 0.8rem;">
-                        <strong><i class="fas fa-expand-arrows-alt"></i> Superficie:</strong> ${concession.superficie} m²
-                    </div>`;
-            }
-            
-            // Show distance if available
-            if (concession.distance_voi_acces) {
-                content += `
-                    <div style="margin-bottom: 8px; font-size: 0.8rem;">
-                        <strong><i class="fas fa-road"></i> Distance d'accès:</strong> ${concession.distance_voi_acces}m
-                    </div>`;
-            }
-            
-            content += `
-                    <div style="margin-bottom: 10px;">
-                        <strong>Description:</strong><br>
-                        <small>${concession.description || 'Aucune description'}</small>
-                    </div>
-                    <div style="font-family: 'Courier New', monospace; font-size: 0.75rem; margin-bottom: 10px;">
-                        <strong>Coordonnées (50m x 50m):</strong><br>
-            `;
-            
-            coords.forEach((coord, index) => {
-                const formatted = formatCoordinate(coord[0], coord[1], concession.format_coordonnees || 'decimal');
-                content += `<div>${labels[index]}: ${formatted}</div>`;
-            });
-            
-            content += `
-                    </div>
-                    <div style="font-size: 0.7rem; color: #666; margin-bottom: 10px;">
-                        <i class="fas fa-calendar"></i> ${new Date(concession.created_at).toLocaleDateString('fr-FR')}
-                        <span style="margin-left: 10px;">
-                            <i class="fas fa-hashtag"></i> ID: ${concession.id}
-                        </span>
-                    </div>
-                    <div style="display: flex; gap: 8px; margin-top: 10px;">
-                        <button onclick="viewConcessionDetails(${concession.id})" 
-                                style="flex: 1; padding: 6px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
-                            <i class="fas fa-eye"></i> Détails
-                        </button>
-                        <button onclick="generateTechnicalSheet(${concession.id})" 
-                                style="flex: 1; padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
-                            <i class="fas fa-file-pdf"></i> Fiche PDF
-                        </button>
-                        <button onclick="generatePaymentStatement(${concession.id})" 
-                                style="flex: 1; padding: 6px 12px; background: #6f42c1; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
-                            <i class="fas fa-file-invoice-dollar"></i> Paiement
-                        </button>
-                    </div>
-                </div>
-            `;
-            return content;
-        }
+    const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
+    let content = `
+        <div style="min-width: 245px; font-size: 0.8rem;">
+            <h6 style="margin-bottom: 10px; color: #28a745;">
+                <i class="fas fa-fish" style="color: #28a745;"></i> ${concession.nom_zone || 'Concession'}
+            </h6>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+                <tbody>
+                    ${concession.code_concession ? `
+                        <tr>
+                            <td>
+                                <strong><i class="fas fa-barcode" style="color: #6c757d;"></i> Code</strong>
+                            </td>
+                            <td>
+                                <span style="font-family: monospace; background: #f8f9fa; padding: 2px 4px; border-radius: 3px;">
+                                    ${concession.code_concession}
+                                </span>
+                            </td>
+                        </tr>` : ''}
+
+                    <tr>
+                        <td>
+                            <strong><i class="fas fa-map-marker-alt" style="color: #fd7e14;"></i> Localisation</strong>
+                        </td>
+                        <td>${concession.wilaya_name_ascii || 'N/A'} - ${concession.commune_name_ascii || 'N/A'}</td>
+                    </tr>
+
+                    ${concession.superficie ? `
+                        <tr>
+                            <td>
+                                <strong><i class="fas fa-expand-arrows-alt" style="color: #17a2b8;"></i> Superficie</strong>
+                            </td>
+                            <td>${concession.superficie} m²</td>
+                        </tr>` : ''}
+
+                    ${concession.distance_voi_acces ? `
+                        <tr>
+                            <td>
+                                <strong><i class="fas fa-road" style="color: #6f42c1;"></i> Accès</strong>
+                            </td>
+                            <td>${concession.distance_voi_acces} m</td>
+                        </tr>` : ''}
+                </tbody>
+            </table>
+
+            <div style="margin-top: 10px;">
+                <strong><i class="fas fa-info-circle" style="color: #17a2b8;"></i> Description:</strong><br>
+                <small>${concession.description || 'Aucune description'}</small>
+            </div>
+
+            <div style="margin-top: 10px; font-family: 'Courier New', monospace;">
+                <strong><i class="fas fa-vector-square" style="color: #007bff;"></i> Coordonnées (50m x 50m):</strong>
+                <table style="width: 100%; font-size: 0.75rem; margin-top: 4px;">
+                    <tbody>
+                        ${coords.map((coord, index) => {
+                            const formatted = formatCoordinate(coord[0], coord[1], concession.format_coordonnees || 'decimal');
+                            return `<tr><td>${labels[index]}</td><td>${formatted}</td></tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="font-size: 0.7rem; color: #666; margin-top: 10px;">
+                <i class="fas fa-calendar" style="color: #20c997;"></i> ${new Date(concession.created_at).toLocaleDateString('fr-FR')}
+                <span style="margin-left: 10px;">
+                    <i class="fas fa-hashtag" style="color: #dc3545;"></i> ID: ${concession.id}
+                </span>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                <button onclick="viewConcessionDetails(${concession.id})" 
+                        style="flex: 1; padding: 6px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                    <i class="fas fa-eye"></i> Détails
+                </button>
+                <button onclick="generateTechnicalSheet(${concession.id})" 
+                        style="flex: 1; padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                    <i class="fas fa-file-pdf"></i> Fiche PDF
+                </button>
+                <button onclick="generatePaymentStatement(${concession.id})" 
+                        style="flex: 1; padding: 6px 12px; background: #6f42c1; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                    <i class="fas fa-file-invoice-dollar"></i> Paiement
+                </button>
+            </div>
+        </div>
+    `;
+    return content;
+}
 
         // Clear all saved markers from map
         function clearSavedMarkers() {
