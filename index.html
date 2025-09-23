@@ -187,6 +187,90 @@
             background: #28a745;
         }
 
+        /* Layer Control Styles */
+        #layer-control {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 5px;
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+        }
+        
+        #layer-control .layer-toggle {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        
+        #layer-control .layer-options {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 5px;
+            min-width: 150px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s;
+        }
+        
+        #layer-control .layer-options.show {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        #layer-control .layer-options a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            color: #333;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        #layer-control .layer-options a i {
+            width: 16px;
+            text-align: center;
+        }
+        
+        #layer-control .layer-options a:hover {
+            background: #f8f9fa;
+        }
+        
+        #layer-control .layer-options a.active {
+            background: #e9ecef;
+            color: #0d6efd;
+            font-weight: 500;
+        }
+        
+        /* Make sure the map controls are above the layer control */
+        .leaflet-top, .leaflet-bottom {
+            z-index: 999;
+        }
+
+        #layer-control .layer-options i {
+            width: 20px;
+            text-align: center;
+            margin-right: 5px;
+        }
+
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -347,12 +431,26 @@
         <!-- Carte -->
         <div class="map-container">
             <div id="map"></div>
+            <!-- Layer Control -->
+            <div id="layer-control">
+                <div class="layer-toggle" onclick="document.querySelector('.layer-options').style.display = document.querySelector('.layer-options').style.display === 'block' ? 'none' : 'block';">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Couches</span>
+                    <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 5px;"></i>
+                </div>
+                <div class="layer-options">
+                    <a href="#" data-layer="satellite"><i class="fas fa-satellite"></i> Satellite</a>
+                    <a href="#" data-layer="street"><i class="fas fa-map"></i> Carte</a>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.label@0.2.1-0/src/Leaflet.label-src.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.label@0.2.1-0/dist/leaflet.label.css" />
     
     <script>
         // Variables globales
@@ -371,20 +469,143 @@
             loadSavedConcessions(); // Load existing concessions on page load
         });
 
+        // Define base layers
+        let baseLayers = {
+            'Carte': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }),
+            'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+                maxZoom: 19
+            })
+        };
+
+        // Water labels overlay - using Stamen's watercolor with just labels
+        let waterLabels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            subdomains: 'abcd',
+            minZoom: 0,
+            maxZoom: 20,
+            ext: 'png',
+            pane: 'labels',
+            detectRetina: true
+        });
+
+        // Create a map pane for labels
+        function createLabelPane() {
+            if (!map.getPane('labels')) {
+                const labelsPane = map.createPane('labels');
+                labelsPane.style.zIndex = 650;
+                labelsPane.style.pointerEvents = 'none';
+            }
+        }
+
         // Initialiser la carte
         function initMap() {
             // Créer la carte centrée sur l'Algérie avec un zoom plus proche
-            map = L.map('map').setView([36.7538, 3.0588], 12);
+            map = L.map('map', {
+                zoomControl: false,
+                layers: [baseLayers['Carte']]
+            }).setView([36.7538, 3.0588], 12);
 
-            // Ajouter les tuiles
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
+            // Add zoom control with a nice position
+            L.control.zoom({
+                position: 'topright'
             }).addTo(map);
+
+            // Create the label pane
+            createLabelPane();
+
+            // Initialize layer control
+            initLayerControl();
 
             // Événement de clic sur la carte
             map.on('click', function(e) {
                 placeMarkerAndGenerateSquare(e.latlng);
             });
+        }
+
+        // Initialize layer control
+        function initLayerControl() {
+            const layerControl = document.getElementById('layer-control');
+            const layerButtons = layerControl.querySelectorAll('.layer-options a');
+            const layerToggle = layerControl.querySelector('.layer-toggle');
+            const layerOptions = layerControl.querySelector('.layer-options');
+            
+            // Set default active layer
+            let currentLayer = 'street';
+            
+            // Toggle layer options visibility
+            layerToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                layerOptions.classList.toggle('show');
+            });
+            
+            // Close layer options when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!layerControl.contains(e.target)) {
+                    layerOptions.classList.remove('show');
+                }
+            });
+            
+            // Add click event to layer buttons
+            layerButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const layerType = this.getAttribute('data-layer');
+                    
+                    // Remove active class from all buttons
+                    layerButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Update toggle icon
+                    const iconMap = {
+                        'satellite': 'fa-satellite',
+                        'street': 'fa-map'
+                    };
+                    
+                    layerToggle.innerHTML = `
+                        <i class="fas ${iconMap[layerType] || 'fa-map'}"></i>
+                        <span>${this.textContent.trim()}</span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 5px;"></i>
+                    `;
+                    
+                    // Remove all base layers first
+                    Object.values(baseLayers).forEach(layer => {
+                        if (map.hasLayer(layer)) {
+                            map.removeLayer(layer);
+                        }
+                    });
+                    
+                    // Add the selected base layer
+                    if (layerType === 'satellite') {
+                        baseLayers['Satellite'].addTo(map);
+                    } else {
+                        // Street view (default)
+                        baseLayers['Carte'].addTo(map);
+                    }
+                    
+                    currentLayer = layerType;
+                    
+                    // Close the layer options
+                    layerOptions.classList.remove('show');
+                });
+            });
+            
+            // Set default active button and update toggle
+            const defaultButton = document.querySelector('[data-layer="street"]');
+            defaultButton.classList.add('active');
+            layerToggle.innerHTML = `
+                <i class="fas fa-map"></i>
+                <span>${defaultButton.textContent.trim()}</span>
+                <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 5px;"></i>
+            `;
         }
 
         // Placer un marqueur et générer un carré de 50m x 50m
