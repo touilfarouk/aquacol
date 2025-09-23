@@ -494,23 +494,24 @@
 
         // Créer le contenu du popup
         function createPopupContent(coords) {
-            const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
-            let content = `
-                <div style="min-width: 250px;">
-                    <h6 style="margin-bottom: 10px; color: #667eea;">
-                        <i class="fas fa-square"></i> Carré de 50m x 50m
-                    </h6>
-                    <div style="font-family: 'Courier New', monospace; font-size: 0.75rem;">
-            `;
-            
-            coords.forEach((coord, index) => {
-                const formatted = formatCoordinate(coord[0], coord[1], currentFormat);
-                content += `<div><strong>${labels[index]}:</strong> ${formatted}</div>`;
-            });
-            
-            content += `</div></div>`;
-            return content;
-        }
+    const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
+    let content = `
+        <div style="width: 445px !important; min-width: 250px;">
+            <h6 style="margin-bottom: 10px; color: #667eea;">
+                <i class="fas fa-square"></i> Carré de 50m x 50m
+            </h6>
+            <div style="font-family: 'Courier New', monospace; font-size: 0.75rem;">
+    `;
+    
+    coords.forEach((coord, index) => {
+        const formatted = formatCoordinate(coord[0], coord[1], currentFormat);
+        content += `<div><strong>${labels[index]}:</strong> ${formatted}</div>`;
+    });
+    
+    content += `</div></div>`;
+    return content;
+}
+
 
         // Mettre à jour les champs du formulaire
         function updateFormInputs(coords) {
