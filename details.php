@@ -89,10 +89,12 @@
         <?php
         include('config.php');
         
+        // Get concession ID and code from URL for security
         $concessionId = $_GET['id'] ?? null;
+        $concessionCode = $_GET['code'] ?? null;
         
-        if (!$concessionId) {
-            echo '<div class="alert alert-danger">ID de concession manquant</div>';
+        if (!$concessionId || !$concessionCode) {
+            echo '<div class="alert alert-danger">Paramètres de concession manquants ou invalides</div>';
             exit;
         }
         
@@ -101,12 +103,16 @@
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             ]);
             
-            $stmt = $pdo->prepare("SELECT * FROM coordinates WHERE id = :id");
-            $stmt->execute([':id' => $concessionId]);
+            // Secure query - verify both ID and code match
+            $stmt = $pdo->prepare("SELECT * FROM coordinates WHERE id = :id AND code_concession = :code");
+            $stmt->execute([
+                ':id' => $concessionId,
+                ':code' => $concessionCode
+            ]);
             $concession = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$concession) {
-                echo '<div class="alert alert-danger">Concession non trouvée</div>';
+                echo '<div class="alert alert-danger">Concession non trouvée ou accès non autorisé</div>';
                 exit;
             }
         ?>
@@ -200,6 +206,9 @@
                 
                 <div class="row mt-4">
                     <div class="col text-center">
+                        <a href="application/<?= htmlspecialchars($concession['code_concession']) ?>-<?= htmlspecialchars($concession['id']) ?>" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-file-alt me-2"></i>Demande d'Application
+                        </a>
                         <button onclick="generatePDF()" class="btn btn-success btn-lg me-3">
                             <i class="fas fa-file-pdf me-2"></i>Générer Fiche Technique PDF
                         </button>

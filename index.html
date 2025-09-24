@@ -985,7 +985,7 @@
                 saveBtn.disabled = true;
                 
                 // Envoyer les données à l'API
-                const response = await fetch('http://213.179.181.50/aquaculture/api.php', {
+                const response = await fetch('http://localhost/aquaculture/api.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1035,7 +1035,7 @@
         // Charger toutes les concessions sauvegardées
         async function loadSavedConcessions() {
             try {
-                const response = await fetch('http://213.179.181.50/aquaculture/get_coordinates.php');
+                const response = await fetch('http://localhost/aquaculture/get_coordinates.php');
                 const result = await response.json();
                 
                 if (result.response === "true" && result.data) {
@@ -1228,7 +1228,7 @@
             </div>
 
             <div style="display: flex; gap: 8px; margin-top: 16px;">
-                <button onclick="event.stopPropagation(); viewConcessionDetails(${concession.id})" 
+                <button onclick="event.stopPropagation(); viewConcessionDetails(${concession.id}, '${concession.code_concession || ''}')" 
                         style="flex: 1; padding: 6px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
                     <i class="fas fa-eye"></i> Détails
                 </button>
@@ -1386,9 +1386,14 @@
         }
 
         // View concession details in a new page
-        function viewConcessionDetails(concessionId) {
-            // Open details page in new tab
-            window.open(`details.php?id=${concessionId}`, '_blank');
+        function viewConcessionDetails(concessionId, concessionCode) {
+            // Open details page in new tab using clean format (no "details/" prefix)
+            if (concessionCode) {
+                window.open(`${concessionCode}-${concessionId}`, '_blank');
+            } else {
+                // Fallback for backward compatibility
+                window.open(`details.php?id=${concessionId}`, '_blank');
+            }
         }
 
         // Generate technical sheet PDF

@@ -1,0 +1,63 @@
+# Clean .htaccess for Aquaculture Management System
+# Compatible with Apache 2.4+ and XAMPP
+
+# Enable URL rewriting (only if mod_rewrite is available)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Pretty URLs with concession code for security
+    # /application/CODE123-456 -> application.php?code=CODE123&id=456
+    RewriteRule ^application/([A-Za-z0-9]+)-([0-9]+)/?$ application.php?code=$1&id=$2 [QSA,L]
+    
+    # /details/CODE123-456 -> details.php?code=CODE123&id=456 (backward compatibility)
+    RewriteRule ^details/([A-Za-z0-9]+)-([0-9]+)/?$ details.php?code=$1&id=$2 [QSA,L]
+    
+    # Direct concession access: /CODE123-456 -> details.php?code=CODE123&id=456
+    RewriteRule ^([A-Za-z0-9]+)-([0-9]+)/?$ details.php?code=$1&id=$2 [QSA,L]
+    
+    # Backward compatibility - redirect old format to new format
+    RewriteCond %{QUERY_STRING} ^id=([0-9]+)$
+    RewriteRule ^details\.php$ /aquaculture/redirect_to_secure.php?id=%1 [R=302,L]
+    
+    RewriteCond %{QUERY_STRING} ^id=([0-9]+)$
+    RewriteRule ^application\.php$ /aquaculture/redirect_to_secure.php?type=application&id=%1 [R=302,L]
+    
+    # Remove trailing slash (optional - helps with consistency)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [R=301,L]
+</IfModule>
+
+# Security: Protect sensitive files
+<Files "config.php">
+    Require all denied
+</Files>
+
+<Files ".htaccess">
+    Require all denied
+</Files>
+
+# Optional: Prevent access to backup and temporary files
+<FilesMatch "\.(bak|backup|old|tmp|log)$">
+    Require all denied
+</FilesMatch>
+
+# Optional: Enable compression for better performance
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+# Optional: Set cache headers for static files
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+</IfModule>
