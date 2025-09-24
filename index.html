@@ -1126,8 +1126,9 @@
     
     // Content for hover (without buttons)
     let hoverContent = `
-        <div style="min-width: 245px; font-size: 0.8rem;">
-            <h6 style="margin-bottom: 10px; color: #28a745;">
+        <div style="min-width: 245px; font-size: 0.8rem; position: relative;">
+            <img src="logo.png" alt="Logo" style="position: absolute; top: 0; right: 0; width: 40px; height: 40px; opacity: 0.7; border-radius: 50%; background: white; padding: 2px;">
+            <h6 style="margin-bottom: 10px; color: #28a745; padding-right: 30px;">
                 <i class="fas fa-fish" style="color: #28a745;"></i> ${concession.nom_zone || 'Concession'}
             </h6>
             <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
@@ -1165,8 +1166,9 @@
     
     // Full content with buttons for click popup
     let fullContent = `
-        <div style="min-width: 280px; font-size: 0.8rem; padding: 14px 16px 16px;">
-            <h6 style="margin-bottom: 10px; color: #28a745;">
+        <div style="min-width: 280px; font-size: 0.8rem; padding: 14px 16px 16px; position: relative;">
+            <img src="logo.png" alt="Logo" style="position: absolute; top: 14px; right: 16px; width: 28px; height: 28px; opacity: 0.7; border-radius: 50%; background: white; padding: 2px;">
+            <h6 style="margin-bottom: 10px; color: #28a745; padding-right: 35px;">
                 <i class="fas fa-fish" style="color: #28a745;"></i> ${concession.nom_zone || 'Concession'}
             </h6>
             <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
