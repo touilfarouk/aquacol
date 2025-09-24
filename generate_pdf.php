@@ -52,28 +52,39 @@ try {
     $pdf->SetTitle('Fiche Technique - ' . $concession['nom_zone']);
     $pdf->SetSubject('Fiche Technique de Concession Aquacole');
     
-    // Set default header data
-    $pdf->SetHeaderData('', 0, 'Fiche Technique de Concession', 'Système de Gestion des Concessions Aquaculture');
-    
-    // Set header and footer fonts
-    $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-    $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
-    
-    // Set default monospaced font
-    $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+    // Disable default header and footer
+    $pdf->setPrintHeader(false);
+    $pdf->setPrintFooter(false);
     
     // Set margins
-    $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-    $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-    $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-    
-    // Set auto page breaks
+    $pdf->SetMargins(PDF_MARGIN_LEFT, 30, PDF_MARGIN_RIGHT); // Increased top margin for custom header
     $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
     
     // Add a page
     $pdf->AddPage();
     
-    // Set font
+    // Add custom header with ministry logo
+    $pdf->SetY(10);
+    
+    // Check if logo exists
+    $logoPath = __DIR__ . '/logo_ministaire.jpg';
+    if (file_exists($logoPath)) {
+        // Add the ministry header logo (full width)
+        $pdf->Image($logoPath, 15, 10, 180, 0, 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+        $pdf->Ln(25); // Space after logo
+    } else {
+        // Fallback header text if logo not found
+        $pdf->SetFont('helvetica', 'B', 14);
+        $pdf->Cell(0, 10, 'الجمهورية الجزائرية الديمقراطية الشعبية', 0, 1, 'C');
+        $pdf->Cell(0, 10, 'وزارة الصيد البحري و المنتجات الصيدية', 0, 1, 'C');
+        $pdf->Ln(10);
+    }
+    
+    // Add a separator line
+    $pdf->Line(15, $pdf->GetY(), 195, $pdf->GetY());
+    $pdf->Ln(10);
+    
+    // Set font for title
     $pdf->SetFont('helvetica', 'B', 16);
     
     // Title
