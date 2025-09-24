@@ -1228,7 +1228,7 @@
             </div>
 
             <div style="display: flex; gap: 8px; margin-top: 16px;">
-                <button onclick="event.stopPropagation(); viewConcessionDetails(${concession.id}, '${concession.code_concession || ''}')" 
+                <button onclick="event.stopPropagation(); viewConcessionDetails(${concession.id})" 
                         style="flex: 1; padding: 6px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
                     <i class="fas fa-eye"></i> Détails
                 </button>
@@ -1386,14 +1386,9 @@
         }
 
         // View concession details in a new page
-        function viewConcessionDetails(concessionId, concessionCode) {
-            // Open details page in new tab using clean format (no "details/" prefix)
-            if (concessionCode) {
-                window.open(`${concessionCode}-${concessionId}`, '_blank');
-            } else {
-                // Fallback for backward compatibility
-                window.open(`details.php?id=${concessionId}`, '_blank');
-            }
+        function viewConcessionDetails(concessionId) {
+            // Open details page in new tab
+            window.open(`details.php?id=${concessionId}`, '_blank');
         }
 
         // Generate technical sheet PDF

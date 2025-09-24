@@ -179,12 +179,11 @@
 
     <div class="main-container">
         <?php
-        // Get concession ID and code from URL for security
+        // Get concession ID from URL
         $concessionId = $_GET['id'] ?? null;
-        $concessionCode = $_GET['code'] ?? null;
         
-        if (!$concessionId || !$concessionCode) {
-            echo '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Paramètres de concession manquants ou invalides</div>';
+        if (!$concessionId) {
+            echo '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>ID de concession manquant</div>';
             exit;
         }
         
@@ -195,16 +194,13 @@
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             ]);
             
-            // Secure query - verify both ID and code match
-            $stmt = $pdo->prepare("SELECT * FROM coordinates WHERE id = :id AND code_concession = :code");
-            $stmt->execute([
-                ':id' => $concessionId,
-                ':code' => $concessionCode
-            ]);
+            // Get concession data
+            $stmt = $pdo->prepare("SELECT * FROM coordinates WHERE id = :id");
+            $stmt->execute([':id' => $concessionId]);
             $concession = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$concession) {
-                echo '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Concession non trouvée ou accès non autorisé</div>';
+                echo '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Concession non trouvée</div>';
                 exit;
             }
         ?>
@@ -415,7 +411,7 @@
                             <button type="submit" class="btn btn-primary btn-lg me-3">
                                 <i class="fas fa-paper-plane me-2"></i>Soumettre la Demande
                             </button>
-                            <a href="<?= htmlspecialchars($concessionCode) ?>-<?= htmlspecialchars($concessionId) ?>" class="btn btn-outline-secondary btn-lg">
+                            <a href="details.php?id=<?= htmlspecialchars($concessionId) ?>" class="btn btn-outline-secondary btn-lg">
                                 <i class="fas fa-arrow-left me-2"></i>Retour aux Détails
                             </a>
                         </div>
