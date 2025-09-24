@@ -9,9 +9,12 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
+      :root {
+            --primary-color: #0077ff;
+  --secondary-color: #0077ff;
+  --success-color: #0077ff;
+  --warning-color: #0077ff;
+  --danger-color: #0077ff;
         }
         
         body {
