@@ -89,10 +89,31 @@
         <?php
         include('config.php');
         
-        $concessionId = $_GET['id'] ?? null;
+        $concessionParam = $_GET['id'] ?? null;
+        
+        if (!$concessionParam) {
+            echo '<div class="alert alert-danger">ID de concession manquant</div>';
+            exit;
+        }
+        
+        // Parse the combined parameter (format: concession-code-numericId or just numericId)
+        $concessionCode = null;
+        $concessionId = null;
+        
+        if (strpos($concessionParam, '-') !== false) {
+            // New format: concession-code-numericId
+            $parts = explode('-', $concessionParam);
+            if (count($parts) >= 2) {
+                $concessionId = array_pop($parts); // Last part is the numeric ID
+                $concessionCode = implode('-', $parts); // Everything else is the code
+            }
+        } else {
+            // Old format: just numeric ID
+            $concessionId = $concessionParam;
+        }
         
         if (!$concessionId) {
-            echo '<div class="alert alert-danger">ID de concession manquant</div>';
+            echo '<div class="alert alert-danger">Format d\'ID invalide</div>';
             exit;
         }
         
@@ -101,12 +122,27 @@
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             ]);
             
-            $stmt = $pdo->prepare("SELECT * FROM coordinates WHERE id = :id");
-            $stmt->execute([':id' => $concessionId]);
+            // If we have a concession code, verify both code and ID match
+            if ($concessionCode) {
+                $stmt = $pdo->prepare("SELECT * FROM coordinates WHERE id = :id AND code_concession = :code");
+                $stmt->execute([
+                    ':id' => $concessionId,
+                    ':code' => $concessionCode
+                ]);
+            } else {
+                // Backward compatibility: just use ID
+                $stmt = $pdo->prepare("SELECT * FROM coordinates WHERE id = :id");
+                $stmt->execute([':id' => $concessionId]);
+            }
+            
             $concession = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$concession) {
-                echo '<div class="alert alert-danger">Concession non trouvée</div>';
+                if ($concessionCode) {
+                    echo '<div class="alert alert-danger">Concession non trouvée ou code invalide</div>';
+                } else {
+                    echo '<div class="alert alert-danger">Concession non trouvée</div>';
+                }
                 exit;
             }
         ?>
@@ -200,7 +236,7 @@
                 
                 <div class="row mt-4">
                     <div class="col text-center">
-                        <a href="application.php?id=<?= htmlspecialchars($concession['id']) ?>" class="btn btn-primary btn-lg me-3">
+                        <a href="application.php?id=<?= htmlspecialchars($concession['code_concession'] ? $concession['code_concession'] . '-' . $concession['id'] : $concession['id']) ?>" class="btn btn-primary btn-lg me-3">
                             <i class="fas fa-file-alt me-2"></i>Demande d'Application
                         </a>
                         <button onclick="generatePDF()" class="btn btn-success btn-lg me-3">

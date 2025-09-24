@@ -179,11 +179,32 @@
 
     <div class="main-container">
         <?php
-        // Get concession ID from URL
-        $concessionId = $_GET['id'] ?? null;
+        // Get concession parameter from URL
+        $concessionParam = $_GET['id'] ?? null;
+        
+        if (!$concessionParam) {
+            echo '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>ID de concession manquant</div>';
+            exit;
+        }
+        
+        // Parse the combined parameter (format: concession-code-numericId or just numericId)
+        $concessionCode = null;
+        $concessionId = null;
+        
+        if (strpos($concessionParam, '-') !== false) {
+            // New format: concession-code-numericId
+            $parts = explode('-', $concessionParam);
+            if (count($parts) >= 2) {
+                $concessionId = array_pop($parts); // Last part is the numeric ID
+                $concessionCode = implode('-', $parts); // Everything else is the code
+            }
+        } else {
+            // Old format: just numeric ID
+            $concessionId = $concessionParam;
+        }
         
         if (!$concessionId) {
-            echo '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>ID de concession manquant</div>';
+            echo '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Format d\'ID invalide</div>';
             exit;
         }
         
@@ -194,13 +215,27 @@
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             ]);
             
-            // Get concession data
-            $stmt = $pdo->prepare("SELECT * FROM coordinates WHERE id = :id");
-            $stmt->execute([':id' => $concessionId]);
+            // If we have a concession code, verify both code and ID match
+            if ($concessionCode) {
+                $stmt = $pdo->prepare("SELECT * FROM coordinates WHERE id = :id AND code_concession = :code");
+                $stmt->execute([
+                    ':id' => $concessionId,
+                    ':code' => $concessionCode
+                ]);
+            } else {
+                // Backward compatibility: just use ID
+                $stmt = $pdo->prepare("SELECT * FROM coordinates WHERE id = :id");
+                $stmt->execute([':id' => $concessionId]);
+            }
+            
             $concession = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$concession) {
-                echo '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Concession non trouvée</div>';
+                if ($concessionCode) {
+                    echo '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Concession non trouvée ou code invalide</div>';
+                } else {
+                    echo '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Concession non trouvée</div>';
+                }
                 exit;
             }
         ?>
@@ -411,7 +446,7 @@
                             <button type="submit" class="btn btn-primary btn-lg me-3">
                                 <i class="fas fa-paper-plane me-2"></i>Soumettre la Demande
                             </button>
-                            <a href="details.php?id=<?= htmlspecialchars($concessionId) ?>" class="btn btn-outline-secondary btn-lg">
+                            <a href="details.php?id=<?= htmlspecialchars($concession['code_concession'] ? $concession['code_concession'] . '-' . $concession['id'] : $concession['id']) ?>" class="btn btn-outline-secondary btn-lg">
                                 <i class="fas fa-arrow-left me-2"></i>Retour aux Détails
                             </a>
                         </div>
