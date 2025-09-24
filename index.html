@@ -453,6 +453,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.label@0.2.1-0/dist/leaflet.label.css" />
     
     <script>
+        // Configuration du serveur
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const SERVER_HOST = isLocalhost ? 'localhost' : '213.179.181.50';
+        const API_BASE_URL = `http://${SERVER_HOST}/aquaculture`;
+        
         // Variables globales
         let map;
         let currentMarker = null;
@@ -985,7 +990,7 @@
                 saveBtn.disabled = true;
                 
                 // Envoyer les données à l'API
-                const response = await fetch('http://213.179.181.50/aquaculture/api.php', {
+                const response = await fetch(`${API_BASE_URL}/api.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1035,7 +1040,7 @@
         // Charger toutes les concessions sauvegardées
         async function loadSavedConcessions() {
             try {
-                const response = await fetch('http://213.179.181.50/aquaculture/get_coordinates.php');
+                const response = await fetch(`${API_BASE_URL}/get_coordinates.php`);
                 const result = await response.json();
                 
                 if (result.response === "true" && result.data) {
@@ -1264,7 +1269,7 @@
         // Load communes data from JSON file
         async function loadCommunesData() {
             try {
-                const response = await fetch('communes.json');
+                const response = await fetch(`${API_BASE_URL}/communes.json`);
                 const jsonData = await response.json();
                 
                 console.log('JSON Data structure:', jsonData); // Debug log
