@@ -10,11 +10,11 @@
     
     <style>
       :root {
-            --primary-color: #0077ff;
-  --secondary-color: #0077ff;
-  --success-color: #0077ff;
-  --warning-color: #0077ff;
-  --danger-color: #0077ff;
+            --primary-color: #4a8eff;
+  --secondary-color: #4a8eff;
+  --success-color: #4a8eff;
+  --warning-color: #4a8eff;
+  --danger-color: #4a8eff;
         }
         
         body {
