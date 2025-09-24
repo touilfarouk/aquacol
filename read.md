@@ -1,3 +1,0 @@
-first tep  me, for this project remove the code of drawing polygons on the map and replace it with a clicable icon tha open popup with fours coordinates of a square and display the coordinates on the form by the left that the code is  is already setup, so basically the user can enter a coordinates into the form to display the icon on the map or click on the map to generate acoordinate that reflect a square of 50 each side   
-
-can you add a button on this popup at the bottom to get the ID and navigate to a blank page and another button to generate  une fiche technique.pdf of the concession for customer to download and  review, a screenshot of the concession icon on the map displayed on the pdf at the top right as a refference will be great if it is possible 
