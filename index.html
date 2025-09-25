@@ -1105,6 +1105,25 @@
             document.getElementById('current-coordinates').classList.add('d-none');
         }
 
+        // Adjust map view to fit all concessions
+        function adjustMapViewToFitConcessions() {
+            if (savedMarkers.length > 0) {
+                // Get bounds of all saved markers
+                const markers = savedMarkers.map(item => item.marker);
+                const group = new L.featureGroup(markers);
+                const bounds = group.getBounds();
+                
+                // Fit map to bounds with padding
+                map.fitBounds(bounds, {
+                    padding: [20, 20],
+                    maxZoom: 10 // Don't zoom in too much
+                });
+            } else {
+                // If no concessions, center on Algeria's coast
+                map.setView([36.4, 3.0], 7);
+            }
+        }
+
         // Charger toutes les concessions sauvegardées
         async function loadSavedConcessions() {
             try {
@@ -1119,9 +1138,23 @@
                     result.data.forEach(concession => {
                         displaySavedConcession(concession);
                     });
+                    
+                    // Adjust map view after loading concessions with a longer delay
+                    setTimeout(() => {
+                        adjustMapViewToFitConcessions();
+                    }, 500);
+                } else {
+                    // If no concessions found, still adjust to coastal view
+                    setTimeout(() => {
+                        adjustMapViewToFitConcessions();
+                    }, 500);
                 }
             } catch (error) {
                 console.error('Erreur lors du chargement des concessions:', error);
+                // Even on error, adjust to coastal view
+                setTimeout(() => {
+                    adjustMapViewToFitConcessions();
+                }, 500);
             }
         }
 
