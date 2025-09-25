@@ -1,0 +1,704 @@
+
+    <style>
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-icon.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        
+        .step-icon.completed {
+            background-color: #198754;
+            color: white;
+        }
+        
+        .step-connector {
+            flex: 1;
+            height: 2px;
+            background-color: #e9ecef;
+            margin: 0 10px;
+            margin-top: 20px;
+        }
+        
+        .step-connector.completed {
+            background-color: #198754;
+        }
+        
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .person-section {
+            display: none;
+        }
+        
+        .person-section.active {
+            display: block;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+        
+        .bg-blue-50 {
+            background-color: #e7f1ff;
+        }
+        
+        .bg-purple-50 {
+            background-color: #f0e6ff;
+        }
+        
+        .text-blue-600 {
+            color: #0d6efd;
+        }
+        
+        .page-header {
+            background-color: #f8f9fa;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        @media (max-width: 768px) {
+            .step-connector {
+                display: none;
+            }
+            
+            .progress-steps {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 1rem;
+            }
+            .step-container {
+                display: inline-block;
+                min-width: 120px;
+                text-align: center;
+                margin-right: 1rem;
+            }
+        }
+    </style>
+</head>
+  <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h1 class="page-title mb-2">
+                            <i class="fas fa-file-alt text-primary me-3"></i>
+                            Demande d'Octroi de Concession Aquacole
+                        </h1>
+                        <p class="page-subtitle text-muted">Ministère de l'Agriculture, du Développement Rural et de la Pêche</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container pb-5">
+            <!-- Progress Steps -->
+            <div class="progress-steps mb-5">
+                <div class="d-flex justify-content-between align-items-center flex-nowrap">
+                    <div class="step-container d-flex flex-column align-items-center">
+                        <div class="step-icon active">1</div>
+                        <span class="text-center small fw-medium">Porteur de projet</span>
+                    </div>
+                    <div class="step-connector"></div>
+
+                    <div class="step-container d-flex flex-column align-items-center">
+                        <div class="step-icon">2</div>
+                        <span class="text-center small fw-medium">Identification du projet</span>
+                    </div>
+                    <div class="step-connector"></div>
+
+                    <div class="step-container d-flex flex-column align-items-center">
+                        <div class="step-icon">3</div>
+                        <span class="text-center small fw-medium">Détails du projet</span>
+                    </div>
+                    <div class="step-connector"></div>
+
+                    <div class="step-container d-flex flex-column align-items-center">
+                        <div class="step-icon">4</div>
+                        <span class="text-center small fw-medium">Spécifications techniques</span>
+                    </div>
+                    <div class="step-connector"></div>
+
+                    <div class="step-container d-flex flex-column align-items-center">
+                        <div class="step-icon">5</div>
+                        <span class="text-center small fw-medium">Documents</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-container bg-light p-4 rounded">
+                <!-- Step 1 -->
+                <div class="form-section active">
+                    <h2 class="h4 mb-4">1. Porteur de projet</h2>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="porteurType" id="porteurPhysique" value="physique" onchange="togglePersonType('physique')">
+                                <label class="form-check-label" for="porteurPhysique">
+                                    Personne Physique
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="porteurType" id="porteurMorale" value="morale" onchange="togglePersonType('morale')">
+                                <label class="form-check-label" for="porteurMorale">
+                                    Personne Morale
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personne Physique -->
+                    <div id="personnePhysique" class="person-section">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="civilite" class="form-label required">Civilité</label>
+                                <select id="civilite" class="form-select" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="M.">Monsieur</option>
+                                    <option value="Mme">Madame</option>
+                                    <option value="Mlle">Mademoiselle</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="nom" class="form-label required">Nom</label>
+                                <input type="text" id="nom" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="prenom" class="form-label required">Prénom</label>
+                                <input type="text" id="prenom" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="dateNaissance" class="form-label required">Date de naissance</label>
+                                <input type="date" id="dateNaissance" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lieuNaissance" class="form-label required">Lieu de naissance</label>
+                                <input type="text" id="lieuNaissance" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="adresse" class="form-label required">Adresse</label>
+                            <input type="text" id="adresse" class="form-control" required>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="codePostal" class="form-label required">Code postal</label>
+                                <input type="text" id="codePostal" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="ville" class="form-label required">Ville</label>
+                                <input type="text" id="ville" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="pays" class="form-label required">Pays</label>
+                                <input type="text" id="pays" value="Algérie" class="form-control" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="telephone" class="form-label required">Téléphone</label>
+                                <input type="tel" id="telephone" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label required">Email</label>
+                                <input type="email" id="email" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="numIdentite" class="form-label required">Numéro de pièce d'identité</label>
+                            <input type="text" id="numIdentite" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <!-- Personne Morale -->
+                    <div id="personneMorale" class="person-section">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="raisonSociale" class="form-label required">Raison sociale</label>
+                                <input type="text" id="raisonSociale" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="formeJuridique" class="form-label required">Forme juridique</label>
+                                <select id="formeJuridique" class="form-select" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="SARL">SARL (Société à Responsabilité Limitée)</option>
+                                    <option value="EURL">EURL (Entreprise Unipersonnelle à Responsabilité Limitée)</option>
+                                    <option value="SA">SA (Société Anonyme)</option>
+                                    <option value="SNC">SNC (Société en Nom Collectif)</option>
+                                    <option value="SCS">SCS (Société en Commandite Simple)</option>
+                                    <option value="SCA">SCA (Société en Commandite par Actions)</option>
+                                    <option value="GIE">GIE (Groupement d'Intérêt Économique)</option>
+                                    <option value="Coopérative">Coopérative</option>
+                                    <option value="Autre">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="registreCommerce" class="form-label required">N° Registre du Commerce</label>
+                                <input type="text" id="registreCommerce" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="nif" class="form-label required">N° d'identification fiscale (NIF)</label>
+                                <input type="text" id="nif" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="adresseSiege" class="form-label required">Adresse du siège social</label>
+                            <input type="text" id="adresseSiege" class="form-control" required>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="codePostalSiege" class="form-label required">Code postal</label>
+                                <input type="text" id="codePostalSiege" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="villeSiege" class="form-label required">Ville</label>
+                                <input type="text" id="villeSiege" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="paysSiege" class="form-label required">Pays</label>
+                                <input type="text" id="paysSiege" value="Algérie" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="telephoneSiege" class="form-label required">Téléphone</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">+213</span>
+                                    <input type="tel" id="telephoneSiege" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="emailSiege" class="form-label required">Email</label>
+                                <input type="email" id="emailSiege" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h3 class="h5 mb-3">Représentant légal</h3>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="civiliteRepresentant" class="form-label required">Civilité</label>
+                                <select id="civiliteRepresentant" class="form-select" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="M.">Monsieur</option>
+                                    <option value="Mme">Madame</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="nomRepresentant" class="form-label required">Nom</label>
+                                <input type="text" id="nomRepresentant" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="prenomRepresentant" class="form-label required">Prénom</label>
+                                <input type="text" id="prenomRepresentant" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="fonctionRepresentant" class="form-label required">Fonction</label>
+                                <input type="text" id="fonctionRepresentant" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="emailRepresentant" class="form-label required">Email du représentant</label>
+                                <input type="email" id="emailRepresentant" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="telephoneRepresentant" class="form-label required">Téléphone du représentant</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">+213</span>
+                                    <input type="tel" id="telephoneRepresentant" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="capitalSocial" class="form-label required">Capital social (en DZD)</label>
+                                <input type="number" id="capitalSocial" min="0" step="1000" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="form-section">
+                    <h2 class="h4 mb-4">2. Identification du projet</h2>
+                    <div class="space-y-4">
+                        <!-- Informations de base -->
+                        <div class="bg-blue-50 p-3 rounded mb-4">
+                            <h3 class="h5 text-primary mb-3">Informations de base</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="denominationProjet" class="form-label required">Dénomination du projet</label>
+                                    <input type="text" id="denominationProjet" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="dateDemande" class="form-label required">Date de la demande</label>
+                                    <input type="date" id="dateDemande" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Localisation du projet -->
+                        <div class="bg-blue-50 p-3 rounded mb-4">
+                            <h3 class="h5 text-success mb-3">Localisation du projet</h3>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="wilayaProjet" class="form-label required">Wilaya</label>
+                                    <select id="wilayaProjet" class="form-select" required>
+                                        <option value="">Sélectionner une wilaya</option>
+                                        <option value="alger">Alger</option>
+                                        <option value="oran">Oran</option>
+                                        <option value="constantine">Constantine</option>
+                                        <option value="annaba">Annaba</option>
+                                        <option value="bejaia">Béjaïa</option>
+                                        <option value="tlemcen">Tlemcen</option>
+                                        <option value="setif">Sétif</option>
+                                        <option value="blida">Blida</option>
+                                        <option value="tizi_ouzou">Tizi Ouzou</option>
+                                        <option value="batna">Batna</option>
+                                        <option value="autre">Autre</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="daira" class="form-label required">Daïra</label>
+                                    <input type="text" id="daira" class="form-control" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="communeProjet" class="form-label required">Commune</label>
+                                    <input type="text" id="communeProjet" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="zaaLieu" class="form-label">ZAA/Lieu</label>
+                                    <input type="text" id="zaaLieu" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <!-- Superficie demandée -->
+                            <div class="mb-3">
+                                <label class="form-label">Superficie demandée</label>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <div class="input-group">
+                                            <span class="input-group-text">À terre :</span>
+                                            <input type="number" id="superficieTerre" class="form-control" placeholder="m²">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <div class="input-group">
+                                            <span class="input-group-text">En mer/plan d'eau :</span>
+                                            <input type="number" id="superficieMer" class="form-control" placeholder="Ha">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Coordonnées géographiques -->
+                            <div class="mb-3">
+                                <label class="form-label">Coordonnées géographiques</label>
+                                <div class="row">
+                                    <div class="col-md-3 mb-2">
+                                        <label class="form-label small">Point A</label>
+                                        <input type="text" id="coordA" class="form-control" placeholder="Lat, Long">
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <label class="form-label small">Point B</label>
+                                        <input type="text" id="coordB" class="form-control" placeholder="Lat, Long">
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <label class="form-label small">Point C</label>
+                                        <input type="text" id="coordC" class="form-control" placeholder="Lat, Long">
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <label class="form-label small">Point D</label>
+                                        <input type="text" id="coordD" class="form-control" placeholder="Lat, Long">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Milieu d'élevage -->
+                        <div class="bg-blue-50 p-3 rounded mb-4">
+                            <h3 class="h5 text-info mb-3">Milieu d'élevage</h3>
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="milieuElevage" id="eau_mer" value="eau_mer">
+                                        <label class="form-check-label" for="eau_mer">Eau de mer</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="milieuElevage" id="eau_douce" value="eau_douce">
+                                        <label class="form-check-label" for="eau_douce">Eau douce</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="milieuElevage" id="eau_saumatre" value="eau_saumatre">
+                                        <label class="form-check-label" for="eau_saumatre">Eau saumâtre</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Type d'établissement -->
+                        <div class="bg-blue-50 p-3 rounded mb-4">
+                            <h3 class="h5 text-purple mb-3">Type d'établissement d'aquaculture</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="typeEtablissement" id="pisciculture" value="pisciculture">
+                                        <label class="form-check-label" for="pisciculture">Établissement de pisciculture</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="typeEtablissement" id="conchyliculture" value="conchyliculture">
+                                        <label class="form-check-label" for="conchyliculture">Établissement de conchyliculture</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="typeEtablissement" id="carcinoculture" value="carcinoculture">
+                                        <label class="form-check-label" for="carcinoculture">Établissement de carcinoculture</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="typeEtablissement" id="echinoculture" value="echinoculture">
+                                        <label class="form-check-label" for="echinoculture">Établissement d'échinoculture</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="typeEtablissement" id="algoculture" value="algoculture">
+                                        <label class="form-check-label" for="algoculture">Établissement d'algoculture</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="typeEtablissement" id="prelevement" value="prelevement">
+                                        <label class="form-check-label" for="prelevement">Établissement de prélèvement de juvéniles ou naissains</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="typeEtablissement" id="crevetticulture" value="crevetticulture">
+                                        <label class="form-check-label" for="crevetticulture">Établissement de crevetticulture</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="typeEtablissement" id="coralliculture" value="coralliculture">
+                                        <label class="form-check-label" for="coralliculture">Établissement de coralliculture</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="typeEtablissement" id="aquariophilie" value="aquariophilie">
+                                        <label class="form-check-label" for="aquariophilie">Établissement d'aquariophilie</label>
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check me-2">
+                                            <input class="form-check-input" type="checkbox" name="typeEtablissement" id="autreEtablissement" value="autre">
+                                            <label class="form-check-label" for="autreEtablissement">Autre (précisez) :</label>
+                                        </div>
+                                        <input type="text" id="typeEtablissementAutre" class="form-control" placeholder="Précisez le type d'établissement">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Intérêt de l'activité aquacole -->
+                        <div class="bg-blue-50 p-3 rounded mb-4">
+                            <h3 class="h5 text-warning mb-3">Intérêt de l'activité aquacole</h3>
+                            <div class="mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="interetActivite" id="economique" value="economique">
+                                    <label class="form-check-label" for="economique">Économique</label>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="interetActivite" id="recherche" value="recherche">
+                                    <label class="form-check-label" for="recherche">Recherche scientifique, développement</label>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="form-check me-2">
+                                    <input class="form-check-input" type="checkbox" name="interetActivite" id="autreInteret" value="autre">
+                                    <label class="form-check-label" for="autreInteret">Autres (précisez) :</label>
+                                </div>
+                                <input type="text" id="interetAutreTexte" class="form-control">
+                            </div>
+                        </div>
+
+                        <!-- Financement du projet -->
+                        <div class="bg-blue-50 p-3 rounded mb-4">
+                            <h3 class="h5 text-orange mb-3">Financement du projet</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="montantGlobal" class="form-label required">Montant global du projet (DA)</label>
+                                    <input type="number" id="montantGlobal" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombreEmploi" class="form-label">Nombre d'emplois</label>
+                                    <input type="number" id="nombreEmploi" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="dureeRealisation" class="form-label">Durée de réalisation (mois)</label>
+                                    <input type="number" id="dureeRealisation" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="capaciteProduction" class="form-label">Capacité de production (Tonnes/cycle)</label>
+                                    <input type="number" id="capaciteProduction" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="form-section">
+                    <h2 class="h4 mb-4">3. Détails du projet</h2>
+                    <div class="space-y-4">
+                        <!-- Espèces d'élevage -->
+                        <div class="bg-blue-50 p-3 rounded mb-4">
+                            <h3 class="h5 text-primary mb-3">Espèces d'élevage</h3>
+                            
+                            <!-- Espèces de pisciculture -->
+                            <div class="mb-4">
+                                <h4 class="h6 mb-2">Espèces des établissements de pisciculture</h4>
+                                <div class="row">
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesPisciculture" id="daurade" value="daurade">
+                                            <label class="form-check-label" for="daurade">Daurade royale</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesPisciculture" id="loup" value="loup">
+                                            <label class="form-check-label" for="loup">Loup de mer (Bar)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesPisciculture" id="maigre" value="maigre">
+                                            <label class="form-check-label" for="maigre">Maigre</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesPisciculture" id="tilapia" value="tilapia">
+                                            <label class="form-check-label" for="tilapia">Tilapia</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesPisciculture" id="poisson_chat" value="poisson_chat">
+                                            <label class="form-check-label" for="poisson_chat">Poisson chat</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesPisciculture" id="carpes" value="carpes">
+                                            <label class="form-check-label" for="carpes">Carpes</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesPisciculture" id="mulet" value="mulet">
+                                            <label class="form-check-label" for="mulet">Mulet</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesPisciculture" id="anguille" value="anguille">
+                                            <label class="form-check-label" for="anguille">Anguille</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesPisciculture" id="sandre" value="sandre">
+                                            <label class="form-check-label" for="sandre">Sandre</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesPisciculture" id="black_bass" value="black_bass">
+                                            <label class="form-check-label" for="black_bass">Black-bass</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-2 d-flex align-items-center">
+                                    <div class="form-check me-2">
+                                        <input class="form-check-input" type="checkbox" name="especesPisciculture" id="autrePisciculture" value="autre">
+                                        <label class="form-check-label" for="autrePisciculture">Autre (précisez) :</label>
+                                    </div>
+                                    <input type="text" id="especesPiscicultureAutre" class="form-control">
+                                </div>
+                            </div>
+
+                            <!-- Espèces de conchyliculture -->
+                            <div class="mb-4">
+                                <h4 class="h6 mb-2">Espèces des établissements de conchyliculture</h4>
+                                <div class="row">
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesConchyliculture" id="moules" value="moules">
+                                            <label class="form-check-label" for="moules">Moules</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesConchyliculture" id="huitres" value="huitres">
+                                            <label class="form-check-label" for="huitres">Huîtres</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especesConchyliculture" id="palourdes" value="palourdes">
+                                            <label class="form-check-label" for="palourdes">Palourdes</
