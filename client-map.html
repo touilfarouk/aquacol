@@ -319,8 +319,8 @@
                 <span data-i18n="nav.brand">Gestion des Concessions Aquaculture</span>
             </a>
             <div class="d-flex align-items-center gap-2">
-                <a href="client-map.html" class="btn btn-sm btn-outline-light me-2">
-                    <i class="fas fa-eye me-1"></i> <span data-i18n="nav.view_client">Vue Client</span>
+                <a href="index.html" class="btn btn-sm btn-outline-light me-2">
+                    <i class="fas fa-user-shield me-1"></i> <span data-i18n="nav.view_admin">Vue Admin</span>
                 </a>
                 <button type="button" id="lang-fr" class="btn btn-sm btn-outline-light" onclick="setLang('fr')">Français</button>
                 <button type="button" id="lang-ar" class="btn btn-sm btn-outline-light" onclick="setLang('ar')">العربية</button>
@@ -331,132 +331,7 @@
     <!-- Main Container -->
     <div class="main-container">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <!-- Instructions -->
-            <div class="form-section">
-                <div class="instructions">
-                    <h6><i class="fas fa-info-circle"></i><span data-i18n="instructions.title">Instructions</span></h6>
-                    <ol>
-                        <li data-i18n="instructions.1">Cliquez sur la carte pour placer un marqueur</li>
-                        <li data-i18n="instructions.2">Le marqueur génère automatiquement un carré de 50m x 50m</li>
-                        <li data-i18n="instructions.3">Ou saisissez manuellement les coordonnées dans les champs</li>
-                        <li data-i18n="instructions.4">Cliquez sur le marqueur pour voir les coordonnées du carré</li>
-                    </ol>
-                </div>
-            </div>
-
-            <!-- Formulaire de coordonnées -->
-            <div class="form-section">
-                <h6><i class="fas fa-map-marker-alt"></i><span data-i18n="coord.title">Coordonnées de la Zone</span></h6>
-                
-                <form id="coordinate-form">
-                    <!-- Format de coordonnées -->
-                    <div class="mb-3">
-                        <label class="form-label" data-i18n="coord.format">Format des coordonnées</label>
-                        <select class="form-select" id="coordinate-format" onchange="changeCoordinateFormat()">
-                            <option value="decimal" data-i18n="coord.format.decimal">Degrés décimaux (DD)</option>
-                            <option value="dms" data-i18n="coord.format.dms">Degrés, minutes, secondes (DMS)</option>
-                            <option value="utm" data-i18n="coord.format.utm">Système de coordonnées universel (UTM)</option>
-                        </select>
-                    </div>
-
-                    <!-- Coordonnées -->
-                    <div class="mb-3">
-                        <label class="form-label" data-i18n="coord.square_title">Coordonnées du carré (50m x 50m)</label>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <label class="form-label small" data-i18n="coord.point_a">Point A (Nord-Ouest)</label>
-                                <input type="text" class="form-control coordinate-input" name="coordonnee_a" 
-                                       placeholder="36.7538 3.0588">
-                                <div class="coordinate-help" id="help-a" data-i18n="coord.help.latlng">Latitude Longitude</div>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label small" data-i18n="coord.point_b">Point B (Nord-Est)</label>
-                                <input type="text" class="form-control coordinate-input" name="coordonnee_b" 
-                                       placeholder="36.7548 3.0598">
-                                <div class="coordinate-help" id="help-b" data-i18n="coord.help.latlng">Latitude Longitude</div>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label small" data-i18n="coord.point_c">Point C (Sud-Est)</label>
-                                <input type="text" class="form-control coordinate-input" name="coordonnee_c" 
-                                       placeholder="36.7528 3.0608">
-                                <div class="coordinate-help" id="help-c" data-i18n="coord.help.latlng">Latitude Longitude</div>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label small" data-i18n="coord.point_d">Point D (Sud-Ouest)</label>
-                                <input type="text" class="form-control coordinate-input" name="coordonnee_d" 
-                                       placeholder="36.7518 3.0578">
-                                <div class="coordinate-help" id="help-d" data-i18n="coord.help.latlng">Latitude Longitude</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Localisation -->
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <label class="form-label" data-i18n="form.wilaya">Wilaya</label>
-                            <select class="form-select" name="wilaya_name_ascii" id="wilaya-select" onchange="loadCommunes()">
-                                <option value="" data-i18n="form.wilaya.placeholder">Sélectionner une wilaya</option>
-                            </select>
-                            <input type="hidden" name="code_wilaya" id="code-wilaya">
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label" data-i18n="form.commune">Commune</label>
-                            <select class="form-select" name="commune_name_ascii" id="commune-select" onchange="updateCommuneCode()">
-                                <option value="" data-i18n="form.commune.placeholder">Sélectionner une commune</option>
-                            </select>
-                            <input type="hidden" name="code_commune" id="code-commune">
-                        </div>
-                    </div>
-
-                    <!-- Informations supplémentaires -->
-                    <div class="mb-3">
-                        <label class="form-label" data-i18n="form.zone_name">Nom de la zone</label>
-                        <input type="text" class="form-control" name="nom_zone" data-i18n-placeholder="form.zone_name.placeholder" placeholder="Ex: Zone A1">
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <label class="form-label" data-i18n="form.area_m2">Superficie (m²)</label>
-                            <input type="number" class="form-control" name="superficie" step="0.01" min="0" placeholder="2500.00">
-                            <div class="form-text"></div>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label" data-i18n="form.road_distance">Distance voie d'accès</label>
-                            <input type="number" class="form-control" name="distance_voi_acces" min="0" placeholder="100">
-                            <div class="form-text"></div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label" data-i18n="form.description">Description</label>
-                        <textarea class="form-control" name="description" rows="3" 
-                                  data-i18n-placeholder="form.description.placeholder" placeholder="Description de la zone..."></textarea>
-                    </div>
-
-                    <!-- Boutons -->
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-success" onclick="saveCoordinates()">
-                            <i class="fas fa-save me-2"></i><span data-i18n="sidebar.buttons.save">Sauvegarder</span>
-                        </button>
-                        <button type="button" class="btn btn-primary" onclick="displayMarkerFromForm()">
-                            <i class="fas fa-map-marker-alt me-2"></i><span data-i18n="sidebar.buttons.zoom_to_point">Zoomer sur le point</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary" onclick="clearAll()">
-                            <i class="fas fa-times me-2"></i><span data-i18n="sidebar.buttons.clear_all">Effacer tout</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Affichage des coordonnées actuelles -->
-            <div class="form-section">
-                <div id="current-coordinates" class="coordinate-display d-none">
-                    <h6><i class="fas fa-crosshairs"></i><span data-i18n="coord.current">Coordonnées actuelles:</span></h6>
-                    <div id="coordinates-list"></div>
-                </div>
-            </div>
-        </div>
+   
 
         <!-- Carte -->
         <div class="map-container">
