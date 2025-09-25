@@ -15,6 +15,7 @@
   --success-color: #4a8eff;
   --warning-color: #4a8eff;
   --danger-color: #4a8eff;
+ 
         }
         
         body {

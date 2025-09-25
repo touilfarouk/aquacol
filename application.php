@@ -17,6 +17,7 @@
             --success-color: #4a8eff;
             --warning-color: #4a8eff;
             --danger-color: #4a8eff;
+            --title-color:rgb(33, 165, 6);
         }
         
         body {
@@ -329,7 +330,7 @@
                         <div class="d-flex justify-content-between align-items-center flex-nowrap">
                             <div class="step-container d-flex flex-column align-items-center">
                                 <div class="step-icon active">1</div>
-                                <span class="text-center small fw-medium" data-i18n="wizard.steps.1">Porteur de projet</span>
+                                <span  class="text-center small fw-medium" data-i18n="wizard.steps.1">Porteur de projet</span>
                             </div>
                             <div class="step-connector"></div>
                             <div class="step-container d-flex flex-column align-items-center">
@@ -359,7 +360,7 @@
 
                         <!-- Step 1: Porteur de projet -->
                         <div class="wizard-section active" data-step="1">
-                            <h5 class="mb-3">1. Porteur de projet</h5>
+                            <h5 style="color: var(--title-color);" class="mb-3">1. Porteur de projet</h5>
                             <div class="mb-3 d-flex gap-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="porteur_type" id="porteurPhysique" value="physique" required>
@@ -551,7 +552,7 @@
 
                         <!-- Step 2: Identification du projet -->
                         <div class="wizard-section" data-step="2">
-                            <h5 class="mb-3">2. Identification du projet</h5>
+                            <h5 style="color: var(--title-color);" class="mb-3">2. Identification du projet</h5>
                             <div class="bg-light p-3 rounded mb-3">
                                 <h6 class="text-primary mb-2">Informations de base</h6>
                                 <div class="row">
@@ -573,7 +574,7 @@
 
                         <!-- Step 3: Détails du projet -->
                         <div class="wizard-section" data-step="3">
-                            <h5 class="mb-3">3. Détails du projet</h5>
+                            <h5 style="color: var(--title-color);" class="mb-3">3. Détails du projet</h5>
                             <div class="bg-light p-3 rounded mb-3">
                                 <h6 class="text-primary mb-2">Espèces d'élevage</h6>
                                 <div class="row">
@@ -599,7 +600,7 @@
 
                         <!-- Step 4: Spécifications techniques -->
                         <div class="wizard-section" data-step="4">
-                            <h5 class="mb-3">4. Spécifications techniques</h5>
+                            <h5 style="color: var(--title-color);" class="mb-3">4. Spécifications techniques</h5>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Capacité de production (Tonnes/cycle)</label>
