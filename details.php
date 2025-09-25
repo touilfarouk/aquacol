@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détails de la Concession</title>
+    <title data-i18n="details.title">Détails de la Concession</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -74,14 +74,18 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
+        <div class="container d-flex justify-content-between align-items-center">
             <a class="navbar-brand" href="index.html">
                 <i class="fas fa-fish me-2"></i>
-                Gestion des Concessions Aquaculture
+                <span data-i18n="nav.brand">Gestion des Concessions Aquaculture</span>
             </a>
-            <a href="index.html" class="btn btn-outline-light btn-sm">
-                <i class="fas fa-arrow-left me-2"></i>Retour à la carte
-            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="index.html" class="btn btn-outline-light btn-sm me-3">
+                    <i class="fas fa-arrow-left me-2"></i><span data-i18n="details.actions.back_to_map">Retour à la carte</span>
+                </a>
+                <button type="button" id="lang-fr" class="btn btn-sm btn-outline-light" onclick="setLang('fr')">Français</button>
+                <button type="button" id="lang-ar" class="btn btn-sm btn-outline-light" onclick="setLang('ar')">العربية</button>
+            </div>
         </div>
     </nav>
 
@@ -163,19 +167,19 @@
             <div class="card-body p-4">
                 <div class="row">
                     <div class="col-md-6">
-                        <h5><i class="fas fa-info-circle me-2"></i>Informations Générales</h5>
+                        <h5><i class="fas fa-info-circle me-2"></i><span data-i18n="details.header.info">Informations Générales</span></h5>
                         
                         <div class="info-item">
                             <div class="info-icon"><i class="fas fa-hashtag"></i></div>
                             <div>
-                                <strong>ID:</strong> <?= htmlspecialchars($concession['id']) ?>
+                                <strong data-i18n="details.labels.id">ID:</strong> <?= htmlspecialchars($concession['id']) ?>
                             </div>
                         </div>
                         
                         <div class="info-item">
                             <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
                             <div>
-                                <strong>Localisation:</strong><br>
+                                <strong data-i18n="details.labels.location">Localisation:</strong><br>
                                 <?= htmlspecialchars($concession['wilaya_name_ascii'] ?: 'N/A') ?> - 
                                 <?= htmlspecialchars($concession['commune_name_ascii'] ?: 'N/A') ?>
                             </div>
@@ -185,7 +189,7 @@
                         <div class="info-item">
                             <div class="info-icon"><i class="fas fa-expand-arrows-alt"></i></div>
                             <div>
-                                <strong>Superficie:</strong> <?= number_format($concession['superficie'], 2) ?> m²
+                                <strong data-i18n="details.labels.area">Superficie:</strong> <?= number_format($concession['superficie'], 2) ?> m²
                             </div>
                         </div>
                         <?php endif; ?>
@@ -194,7 +198,7 @@
                         <div class="info-item">
                             <div class="info-icon"><i class="fas fa-road"></i></div>
                             <div>
-                                <strong>Distance voie d'accès:</strong> <?= $concession['distance_voi_acces'] ?>m
+                                <strong data-i18n="details.labels.road_distance">Distance voie d'accès:</strong> <?= $concession['distance_voi_acces'] ?>m
                             </div>
                         </div>
                         <?php endif; ?>
@@ -202,8 +206,12 @@
                         <div class="info-item">
                             <div class="info-icon"><i class="fas fa-eye"></i></div>
                             <div>
-                                <strong>Visibilité:</strong> 
-                                <?= $concession['visible'] ? 'Visible' : 'Masqué' ?>
+                                <strong data-i18n="details.labels.visibility">Visibilité:</strong> 
+                                <?php if ($concession['visible']): ?>
+                                    <span data-i18n="details.visibility.visible">Visible</span>
+                                <?php else: ?>
+                                    <span data-i18n="details.visibility.hidden">Masqué</span>
+                                <?php endif; ?>
                             </div>
                         </div>
                         
@@ -211,7 +219,7 @@
                         <div class="info-item">
                             <div class="info-icon"><i class="fas fa-file-text"></i></div>
                             <div>
-                                <strong>Description:</strong><br>
+                                <strong data-i18n="details.labels.description">Description:</strong><br>
                                 <?= nl2br(htmlspecialchars($concession['description'])) ?>
                             </div>
                         </div>
@@ -219,11 +227,11 @@
                     </div>
                     
                     <div class="col-md-6">
-                        <h5><i class="fas fa-map me-2"></i>Localisation sur la Carte</h5>
+                        <h5><i class="fas fa-map me-2"></i><span data-i18n="details.map.title">Localisation sur la Carte</span></h5>
                         <div id="map"></div>
                         
                         <div class="mt-3">
-                            <h6><i class="fas fa-crosshairs me-2"></i>Coordonnées (50m x 50m)</h6>
+                            <h6><i class="fas fa-crosshairs me-2"></i><span data-i18n="details.coordinates.title">Coordonnées (50m x 50m)</span></h6>
                             <div style="font-family: 'Courier New', monospace; font-size: 0.9rem; background: #f8f9fa; padding: 15px; border-radius: 8px;">
                                 <div><strong>A (NO):</strong> <?= htmlspecialchars($concession['coordonnee_a']) ?></div>
                                 <div><strong>B (NE):</strong> <?= htmlspecialchars($concession['coordonnee_b']) ?></div>
@@ -237,13 +245,13 @@
                 <div class="row mt-4">
                     <div class="col text-center">
                         <a href="application.php?id=<?= htmlspecialchars($concession['code_concession'] ? $concession['code_concession'] . '-' . $concession['id'] : $concession['id']) ?>" class="btn btn-primary btn-lg me-3">
-                            <i class="fas fa-file-alt me-2"></i>Demande d'Application
+                            <i class="fas fa-file-alt me-2"></i><span data-i18n="details.actions.apply">Demande d'Application</span>
                         </a>
                         <button onclick="generatePDF()" class="btn btn-success btn-lg me-3">
-                            <i class="fas fa-file-pdf me-2"></i>Générer Fiche Technique PDF
+                            <i class="fas fa-file-pdf me-2"></i><span data-i18n="details.actions.generate_pdf">Générer Fiche Technique PDF</span>
                         </button>
                         <a href="index.html" class="btn btn-outline-primary btn-lg">
-                            <i class="fas fa-arrow-left me-2"></i>Retour à la carte
+                            <i class="fas fa-arrow-left me-2"></i><span data-i18n="details.actions.back_to_map">Retour à la carte</span>
                         </a>
                     </div>
                 </div>
@@ -259,8 +267,52 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- i18n loader (reads ?lang=fr|ar and applies langs/*.json) -->
+    <script src="langs/i18n.js"></script>
     
     <script>
+        // Language switcher that preserves current id & other params
+        function setLang(lang) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('lang', lang);
+            window.location.href = url.toString();
+        }
+        // Highlight active language button
+        (function highlightActiveLang(){
+            const params = new URLSearchParams(window.location.search);
+            const lang = params.get('lang') || 'fr';
+            const frBtn = document.getElementById('lang-fr');
+            const arBtn = document.getElementById('lang-ar');
+            if (frBtn && arBtn) {
+                if (lang === 'ar') {
+                    arBtn.classList.add('btn-light');
+                    arBtn.classList.remove('btn-outline-light');
+                    frBtn.classList.add('btn-outline-light');
+                    frBtn.classList.remove('btn-light');
+                } else {
+                    frBtn.classList.add('btn-light');
+                    frBtn.classList.remove('btn-outline-light');
+                    arBtn.classList.add('btn-outline-light');
+                    arBtn.classList.remove('btn-light');
+                }
+            }
+        })();
+        // Keep current lang when navigating between pages
+        document.addEventListener('click', function(e){
+            const anchor = e.target.closest('a');
+            if (!anchor || !anchor.href) return;
+            try {
+                const href = anchor.getAttribute('href');
+                const url = new URL(href, window.location.href);
+                if (/index\.(html|php)$|details\.php|application\.php/i.test(url.pathname)) {
+                    const lang = new URLSearchParams(window.location.search).get('lang');
+                    if (lang) {
+                        url.searchParams.set('lang', lang);
+                        anchor.setAttribute('href', url.toString());
+                    }
+                }
+            } catch(_) {}
+        });
         // Initialize map
         const concessionData = <?= json_encode($concession ?? []) ?>;
         

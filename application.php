@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application - Concession Aquaculture</title>
+    <title data-i18n="application.title">Application - Concession Aquaculture</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -164,15 +164,17 @@
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
             <a class="navbar-brand" href="index.html">
                 <i class="fas fa-fish me-2"></i>
-                Gestion des Concessions Aquaculture
+                <span data-i18n="nav.brand">Gestion des Concessions Aquaculture</span>
             </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="index.html">
-                    <i class="fas fa-map me-1"></i>Carte
+            <div class="d-flex align-items-center gap-2">
+                <a class="btn btn-sm btn-outline-light me-3" href="index.html">
+                    <i class="fas fa-map me-1"></i><span data-i18n="nav.map">Carte</span>
                 </a>
+                <button type="button" id="lang-fr" class="btn btn-sm btn-outline-light" onclick="setLang('fr')">Français</button>
+                <button type="button" id="lang-ar" class="btn btn-sm btn-outline-light" onclick="setLang('ar')">العربية</button>
             </div>
         </div>
     </nav>
@@ -242,21 +244,21 @@
         
         <div class="application-card">
             <div class="card-header">
-                <h1><i class="fas fa-file-alt me-3"></i>Demande d'Application</h1>
-                <p class="mb-0">Concession: <?= htmlspecialchars($concession['nom_zone'] ?? 'Zone ' . $concession['id']) ?></p>
+                <h1><i class="fas fa-file-alt me-3"></i><span data-i18n="application.title">Demande d'Application</span></h1>
+                <p class="mb-0"><span data-i18n="application.concession">Concession</span>: <?= htmlspecialchars($concession['nom_zone'] ?? 'Zone ' . $concession['id']) ?></p>
             </div>
             
             <div class="card-body">
                 <!-- Concession Information -->
                 <div class="info-section">
-                    <h4><i class="fas fa-info-circle me-2"></i>Informations de la Concession</h4>
+                    <h4><i class="fas fa-info-circle me-2"></i><span data-i18n="application.concession_info.title">Informations de la Concession</span></h4>
                     
                     <div class="row">
                         <div class="col-md-6">
                             <div class="info-item">
                                 <div class="info-icon"><i class="fas fa-hashtag"></i></div>
                                 <div>
-                                    <strong>ID:</strong> <?= htmlspecialchars($concession['id']) ?>
+                                    <strong data-i18n="application.concession_info.id">ID:</strong> <?= htmlspecialchars($concession['id']) ?>
                                 </div>
                             </div>
                             
@@ -264,7 +266,7 @@
                             <div class="info-item">
                                 <div class="info-icon"><i class="fas fa-barcode"></i></div>
                                 <div>
-                                    <strong>Code Concession:</strong> <?= htmlspecialchars($concession['code_concession']) ?>
+                                    <strong data-i18n="application.concession_info.code">Code de concession:</strong> <?= htmlspecialchars($concession['code_concession']) ?>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -272,7 +274,7 @@
                             <div class="info-item">
                                 <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
                                 <div>
-                                    <strong>Localisation:</strong><br>
+                                    <strong data-i18n="application.concession_info.location">Localisation:</strong><br>
                                     <?= htmlspecialchars($concession['wilaya_name_ascii'] ?? 'N/A') ?> - 
                                     <?= htmlspecialchars($concession['commune_name_ascii'] ?? 'N/A') ?>
                                 </div>
@@ -284,7 +286,7 @@
                             <div class="info-item">
                                 <div class="info-icon"><i class="fas fa-expand-arrows-alt"></i></div>
                                 <div>
-                                    <strong>Superficie:</strong> <?= number_format($concession['superficie'], 2) ?> m²
+                                    <strong data-i18n="application.concession_info.area">Superficie:</strong> <?= number_format($concession['superficie'], 2) ?> m²
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -293,7 +295,7 @@
                             <div class="info-item">
                                 <div class="info-icon"><i class="fas fa-road"></i></div>
                                 <div>
-                                    <strong>Distance voie d'accès:</strong> <?= htmlspecialchars($concession['distance_voi_acces']) ?> mètres
+                                    <strong data-i18n="application.concession_info.road_distance">Distance voie d'accès:</strong> <?= htmlspecialchars($concession['distance_voi_acces']) ?> m
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -301,156 +303,398 @@
                             <div class="info-item">
                                 <div class="info-icon"><i class="fas fa-calendar"></i></div>
                                 <div>
-                                    <strong>Date de création:</strong> <?= date('d/m/Y H:i', strtotime($concession['created_at'])) ?>
+                                    <strong data-i18n="application.concession_info.created_date">Date de création:</strong> <?= date('d/m/Y H:i', strtotime($concession['created_at'])) ?>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Application Form -->
+                <!-- Application Form (Wizard) -->
                 <div class="application-form">
-                    <h4><i class="fas fa-file-signature me-2"></i>Formulaire de Demande</h4>
-                    
-                    <form id="applicationForm" method="POST" action="process_application.php">
+                    <style>
+                        .step-icon { width: 40px; height: 40px; border-radius: 50%; background-color: #e9ecef; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 0.5rem; }
+                        .step-icon.active { background-color: #0d6efd; color: #fff; }
+                        .step-icon.completed { background-color: #198754; color: #fff; }
+                        .step-connector { flex: 1; height: 2px; background-color: #e9ecef; margin: 0 10px; margin-top: 20px; }
+                        .step-connector.completed { background-color: #198754; }
+                        .wizard-section { display: none; }
+                        .wizard-section.active { display: block; }
+                        .required::after { content: " *"; color: #dc3545; }
+                    </style>
+                    <h4><i class="fas fa-file-signature me-2"></i><span data-i18n="application.title">Demande d'Octroi de Concession Aquacole</span></h4>
+
+                    <!-- Progress Steps -->
+                    <div class="progress-steps mb-4">
+                        <div class="d-flex justify-content-between align-items-center flex-nowrap">
+                            <div class="step-container d-flex flex-column align-items-center">
+                                <div class="step-icon active">1</div>
+                                <span class="text-center small fw-medium" data-i18n="wizard.steps.1">Porteur de projet</span>
+                            </div>
+                            <div class="step-connector"></div>
+                            <div class="step-container d-flex flex-column align-items-center">
+                                <div class="step-icon">2</div>
+                                <span class="text-center small fw-medium" data-i18n="wizard.steps.2">Identification du projet</span>
+                            </div>
+                            <div class="step-connector"></div>
+                            <div class="step-container d-flex flex-column align-items-center">
+                                <div class="step-icon">3</div>
+                                <span class="text-center small fw-medium" data-i18n="wizard.steps.3">Détails du projet</span>
+                            </div>
+                            <div class="step-connector"></div>
+                            <div class="step-container d-flex flex-column align-items-center">
+                                <div class="step-icon">4</div>
+                                <span class="text-center small fw-medium" data-i18n="wizard.steps.4">Spécifications techniques</span>
+                            </div>
+                            <div class="step-connector"></div>
+                            <div class="step-container d-flex flex-column align-items-center">
+                                <div class="step-icon">5</div>
+                                <span class="text-center small fw-medium" data-i18n="wizard.steps.5">Documents</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="applicationWizardForm" method="POST" action="process_application.php">
                         <input type="hidden" name="concession_id" value="<?= htmlspecialchars($concessionId) ?>">
-                        
-                        <div class="form-section">
-                            <h5><i class="fas fa-user me-2"></i>Informations du Demandeur</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Nom complet <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="applicant_name" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Email <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control" name="applicant_email" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Téléphone <span class="text-danger">*</span></label>
-                                        <input type="tel" class="form-control" name="applicant_phone" required>
-                                    </div>
+
+                        <!-- Step 1: Porteur de projet -->
+                        <div class="wizard-section active" data-step="1">
+                            <h5 class="mb-3">1. Porteur de projet</h5>
+                            <div class="mb-3 d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="porteur_type" id="porteurPhysique" value="physique" required>
+                                    <label class="form-check-label" for="porteurPhysique" data-i18n="wizard.porteur.physique">Personne Physique</label>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Numéro CIN/Passeport <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="applicant_id_number" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Adresse complète <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" name="applicant_address" rows="3" required></textarea>
-                                    </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="porteur_type" id="porteurMorale" value="morale" required>
+                                    <label class="form-check-label" for="porteurMorale" data-i18n="wizard.porteur.morale">Personne Morale</label>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="form-section">
-                            <h5><i class="fas fa-building me-2"></i>Informations de l'Entreprise/Organisation</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Nom de l'entreprise</label>
-                                        <input type="text" class="form-control" name="company_name">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Numéro de registre commercial</label>
-                                        <input type="text" class="form-control" name="company_registration">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Secteur d'activité</label>
-                                        <select class="form-select" name="activity_sector">
-                                            <option value="">Sélectionner un secteur</option>
-                                            <option value="pisciculture">Pisciculture</option>
-                                            <option value="conchyliculture">Conchyliculture</option>
-                                            <option value="algaculture">Algaculture</option>
-                                            <option value="crustaculture">Crustaculture</option>
-                                            <option value="autre">Autre</option>
+
+                            <div id="sectionPhysique" class="mt-3 person-section">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label required" data-i18n="wizard.labels.civilite">Civilité</label>
+                                        <select class="form-select" name="civilite">
+                                            <option value="">Sélectionner</option>
+                                            <option>M.</option>
+                                            <option>Mme</option>
+                                            <option>Mlle</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Expérience dans le domaine (années)</label>
-                                        <input type="number" class="form-control" name="experience_years" min="0">
+                                    <div class="col-md-4">
+                                        <label class="form-label required" data-i18n="wizard.labels.nom">Nom</label>
+                                        <input type="text" class="form-control" name="nom">
                                     </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label required" data-i18n="wizard.labels.prenom">Prénom</label>
+                                        <input type="text" class="form-control" name="prenom">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label required" data-i18n="wizard.labels.date_naissance">Date de naissance</label>
+                                        <input type="date" class="form-control" name="date_naissance">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label required" data-i18n="wizard.labels.lieu_naissance">Lieu de naissance</label>
+                                        <input type="text" class="form-control" name="lieu_naissance">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label required" data-i18n="wizard.labels.adresse">Adresse</label>
+                                    <input type="text" class="form-control" name="adresse">
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label required" data-i18n="wizard.labels.code_postal">Code postal</label>
+                                        <input type="text" class="form-control" name="code_postal">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label required" data-i18n="wizard.labels.ville">Ville</label>
+                                        <input type="text" class="form-control" name="ville">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label required" data-i18n="wizard.labels.pays">Pays</label>
+                                        <input type="text" class="form-control" name="pays" value="Algérie" readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label required" data-i18n="wizard.labels.telephone">Téléphone</label>
+                                        <input type="tel" class="form-control" name="telephone">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label required" data-i18n="wizard.labels.email">Email</label>
+                                        <input type="email" class="form-control" name="email">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label required" data-i18n="wizard.labels.num_identite">Numéro de pièce d'identité</label>
+                                    <input type="text" class="form-control" name="num_identite">
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="form-section">
-                            <h5><i class="fas fa-fish me-2"></i>Détails du Projet Aquacole</h5>
-                            <div class="row">
+
+                            <!-- Personne Morale -->
+                            <div id="sectionMorale" class="mt-3 person-section" style="display:none">
+                            <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Type d'aquaculture <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="aquaculture_type" required>
-                                            <option value="">Sélectionner le type</option>
-                                            <option value="marine">Aquaculture marine</option>
-                                            <option value="eau_douce">Aquaculture d'eau douce</option>
-                                            <option value="saumatre">Aquaculture d'eau saumâtre</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Espèces à élever <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="species_to_raise" required placeholder="Ex: Dorade, Bar, Moules...">
-                                    </div>
+                                    <label class="form-label required" data-i18n="wizard.morale.raison_sociale">Raison sociale</label>
+                                    <input type="text" class="form-control" name="raison_sociale">
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Production annuelle prévue (tonnes)</label>
-                                        <input type="number" class="form-control" name="annual_production" min="0" step="0.1">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Investissement prévu (DZD)</label>
-                                        <input type="number" class="form-control" name="planned_investment" min="0">
-                                    </div>
+                                    <label class="form-label required" data-i18n="wizard.morale.forme_juridique">Forme juridique</label>
+                                    <select class="form-select" name="forme_juridique">
+                                        <option value="">Sélectionner</option>
+                                        <option value="SARL">SARL</option>
+                                        <option value="EURL">EURL</option>
+                                        <option value="SA">SA</option>
+                                        <option value="SNC">SNC</option>
+                                        <option value="SCS">SCS</option>
+                                        <option value="SCA">SCA</option>
+                                        <option value="GIE">GIE</option>
+                                        <option value="Coopérative">Coopérative</option>
+                                        <option value="Autre">Autre</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label required" data-i18n="wizard.morale.registre_commerce">N° Registre du Commerce</label>
+                                    <input type="text" class="form-control" name="registre_commerce">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required" data-i18n="wizard.morale.nif">NIF</label>
+                                    <input type="text" class="form-control" name="nif">
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Description détaillée du projet <span class="text-danger">*</span></label>
-                                <textarea class="form-control" name="project_description" rows="4" required placeholder="Décrivez votre projet aquacole en détail..."></textarea>
+                                <label class="form-label required" data-i18n="wizard.morale.adresse_siege">Adresse du siège social</label>
+                                <input type="text" class="form-control" name="adresse_siege">
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label required">Code postal</label>
+                                    <input type="text" class="form-control" name="code_postal_siege">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label required">Ville</label>
+                                    <input type="text" class="form-control" name="ville_siege">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label required">Pays</label>
+                                    <input type="text" class="form-control" name="pays_siege" value="Algérie" readonly>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label required">Téléphone</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">+213</span>
+                                        <input type="tel" class="form-control" name="telephone_siege">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required">Email</label>
+                                    <input type="email" class="form-control" name="email_siege">
+                                </div>
+                            </div>
+                            <hr class="my-3">
+                            <h6 class="mb-3" data-i18n="wizard.morale.representant_legal">Représentant légal</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label required">Civilité</label>
+                                    <select class="form-select" name="civilite_representant">
+                                        <option value="">Sélectionner</option>
+                                        <option>M.</option>
+                                        <option>Mme</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label required">Nom</label>
+                                    <input type="text" class="form-control" name="nom_representant">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label required">Prénom</label>
+                                    <input type="text" class="form-control" name="prenom_representant">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label required" data-i18n="wizard.morale.fonction">Fonction</label>
+                                    <input type="text" class="form-control" name="fonction_representant">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label required" data-i18n="wizard.morale.email_representant">Email du représentant</label>
+                                    <input type="email" class="form-control" name="email_representant">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label required" data-i18n="wizard.morale.telephone_representant">Téléphone du représentant</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">+213</span>
+                                        <input type="tel" class="form-control" name="telephone_representant">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" data-i18n="wizard.morale.capital_social">Capital social (en DZD)</label>
+                                    <input type="number" class="form-control" name="capital_social" min="0" step="1000">
+                                </div>
+                            </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="button" class="btn btn-primary" onclick="goToStep(2)" data-i18n="actions.next">Suivant</button>
                             </div>
                         </div>
-                        
-                        <div class="form-section">
-                            <h5><i class="fas fa-file-upload me-2"></i>Documents Requis</h5>
+
+                        <!-- Step 2: Identification du projet -->
+                        <div class="wizard-section" data-step="2">
+                            <h5 class="mb-3">2. Identification du projet</h5>
+                            <div class="bg-light p-3 rounded mb-3">
+                                <h6 class="text-primary mb-2">Informations de base</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Dénomination du projet</label>
+                                        <input type="text" class="form-control" name="denomination_projet">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Date de la demande</label>
+                                        <input type="date" class="form-control" name="date_demande">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-3">
+                                <button type="button" class="btn btn-outline-secondary" onclick="goToStep(1)" data-i18n="actions.previous">Précédent</button>
+                                <button type="button" class="btn btn-primary" onclick="goToStep(3)" data-i18n="actions.next">Suivant</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Détails du projet -->
+                        <div class="wizard-section" data-step="3">
+                            <h5 class="mb-3">3. Détails du projet</h5>
+                            <div class="bg-light p-3 rounded mb-3">
+                                <h6 class="text-primary mb-2">Espèces d'élevage</h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especes[]" value="daurade">
+                                            <label class="form-check-label">Daurade royale</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="especes[]" value="loup">
+                                            <label class="form-check-label">Loup de mer (Bar)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-3">
+                                <button type="button" class="btn btn-outline-secondary" onclick="goToStep(2)" data-i18n="actions.previous">Précédent</button>
+                                <button type="button" class="btn btn-primary" onclick="goToStep(4)" data-i18n="actions.next">Suivant</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Spécifications techniques -->
+                        <div class="wizard-section" data-step="4">
+                            <h5 class="mb-3">4. Spécifications techniques</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Capacité de production (Tonnes/cycle)</label>
+                                    <input type="number" class="form-control" name="capacite_production">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Durée de réalisation (mois)</label>
+                                    <input type="number" class="form-control" name="duree_realisation">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-3">
+                                <button type="button" class="btn btn-outline-secondary" onclick="goToStep(3)" data-i18n="actions.previous">Précédent</button>
+                                <button type="button" class="btn btn-primary" onclick="goToStep(5)" data-i18n="actions.next">Suivant</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Documents -->
+                        <div class="wizard-section" data-step="5">
+                            <h5 class="mb-3">5. Documents</h5>
                             <div class="alert alert-info">
                                 <i class="fas fa-info-circle me-2"></i>
-                                <strong>Documents à fournir:</strong>
-                                <ul class="mb-0 mt-2">
-                                    <li>Copie de la pièce d'identité</li>
-                                    <li>Extrait de casier judiciaire</li>
-                                    <li>Certificat de résidence</li>
-                                    <li>Étude technique du projet</li>
-                                    <li>Étude d'impact environnemental</li>
-                                    <li>Justificatifs financiers</li>
-                                </ul>
+                                <strong>Documents à fournir:</strong> Copie d'identité, Casier judiciaire, Étude technique, etc.
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Commentaires sur les documents</label>
-                                <textarea class="form-control" name="documents_comments" rows="3" placeholder="Précisez l'état de vos documents ou toute information pertinente..."></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="form-section">
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" name="terms_accepted" id="termsCheck" required>
-                                <label class="form-check-label" for="termsCheck">
-                                    <strong>J'accepte les termes et conditions</strong> et je certifie que toutes les informations fournies sont exactes.
-                                </label>
+                                <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                                <label class="form-check-label" for="termsCheck">J'accepte les termes et conditions</label>
                             </div>
-                        </div>
-                        
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-lg me-3">
-                                <i class="fas fa-paper-plane me-2"></i>Soumettre la Demande
-                            </button>
-                            <a href="details.php?id=<?= htmlspecialchars($concession['code_concession'] ? $concession['code_concession'] . '-' . $concession['id'] : $concession['id']) ?>" class="btn btn-outline-secondary btn-lg">
-                                <i class="fas fa-arrow-left me-2"></i>Retour aux Détails
-                            </a>
+                            <div class="d-flex justify-content-between mt-3">
+                                <button type="button" class="btn btn-outline-secondary" onclick="goToStep(4)" data-i18n="actions.previous">Précédent</button>
+                                <button type="submit" class="btn btn-primary" data-i18n="actions.submit">Soumettre la Demande</button>
+                            </div>
                         </div>
                     </form>
+
+                    <script>
+        // Toggle between Personne Physique and Personne Morale
+        function togglePorteurType() {
+            const type = document.querySelector('input[name="porteur_type"]:checked')?.value;
+            const phy = document.getElementById('sectionPhysique');
+            const mor = document.getElementById('sectionMorale');
+            if (!type) return;
+            // Show/Hide
+            if (type === 'physique') {
+                phy.style.display = '';
+                mor.style.display = 'none';
+                setSectionRequired(phy, true);
+                setSectionRequired(mor, false);
+            } else {
+                phy.style.display = 'none';
+                mor.style.display = '';
+                setSectionRequired(phy, false);
+                setSectionRequired(mor, true);
+            }
+        }
+        function setSectionRequired(container, on) {
+            if (!container) return;
+            container.querySelectorAll('input, select, textarea').forEach(el => {
+                // Only toggle fields that make sense for required
+                const shouldRequire = on && el.name && !el.hasAttribute('readonly');
+                el.required = shouldRequire;
+                if (!shouldRequire) el.classList.remove('is-invalid');
+            });
+        }
+        document.addEventListener('change', function(e){
+            if (e.target && e.target.name === 'porteur_type') {
+                togglePorteurType();
+            }
+        });
+        // Initialize toggle on load
+        document.addEventListener('DOMContentLoaded', function(){
+            // Default to physique if none selected
+            const radios = document.querySelectorAll('input[name="porteur_type"]');
+            const anyChecked = Array.from(radios).some(r => r.checked);
+            if (!anyChecked && radios.length) {
+                radios[0].checked = true;
+            }
+            togglePorteurType();
+        });
+                        function setActiveStep(step) {
+                            document.querySelectorAll('.wizard-section').forEach(s => s.classList.remove('active'));
+                            const target = document.querySelector(`.wizard-section[data-step="${step}"]`);
+                            if (target) target.classList.add('active');
+                            // Update step icons
+                            const icons = document.querySelectorAll('.step-icon');
+                            icons.forEach((icon, idx) => {
+                                icon.classList.remove('active', 'completed');
+                                const s = idx + 1;
+                                if (s < step) icon.classList.add('completed');
+                                if (s === step) icon.classList.add('active');
+                            });
+                        }
+                        function goToStep(step) { setActiveStep(step); window.scrollTo({ top: document.querySelector('.application-form').offsetTop - 60, behavior: 'smooth' }); }
+                        // init
+                        setActiveStep(1);
+                    </script>
                 </div>
             </div>
         </div>
@@ -464,7 +708,51 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- i18n loader (reads ?lang=fr|ar and applies langs/*.json) -->
+    <script src="langs/i18n.js"></script>
     <script>
+        // Language switcher: preserves other query params
+        function setLang(lang) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('lang', lang);
+            window.location.href = url.toString();
+        }
+        // Highlight active language button
+        (function highlightActiveLang(){
+            const params = new URLSearchParams(window.location.search);
+            const lang = params.get('lang') || 'fr';
+            const frBtn = document.getElementById('lang-fr');
+            const arBtn = document.getElementById('lang-ar');
+            if (frBtn && arBtn) {
+                if (lang === 'ar') {
+                    arBtn.classList.add('btn-light');
+                    arBtn.classList.remove('btn-outline-light');
+                    frBtn.classList.add('btn-outline-light');
+                    frBtn.classList.remove('btn-light');
+                } else {
+                    frBtn.classList.add('btn-light');
+                    frBtn.classList.remove('btn-outline-light');
+                    arBtn.classList.add('btn-outline-light');
+                    arBtn.classList.remove('btn-light');
+                }
+            }
+        })();
+        // Keep current lang when navigating between pages
+        document.addEventListener('click', function(e){
+            const anchor = e.target.closest('a');
+            if (!anchor || !anchor.href) return;
+            try {
+                const href = anchor.getAttribute('href');
+                const url = new URL(href, window.location.href);
+                if (/index\.(html|php)$|details\.php|application\.php/i.test(url.pathname)) {
+                    const lang = new URLSearchParams(window.location.search).get('lang');
+                    if (lang) {
+                        url.searchParams.set('lang', lang);
+                        anchor.setAttribute('href', url.toString());
+                    }
+                }
+            } catch(_) {}
+        });
         // Form validation and submission
         document.getElementById('applicationForm').addEventListener('submit', function(e) {
             e.preventDefault();
