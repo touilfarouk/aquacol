@@ -77,7 +77,7 @@ try {
         $pdf->Ln(25); // Space after logo
     } else {
         // Fallback header text if logo not found
-        $pdf->SetFont('helvetica', 'B', 14);
+        $pdf->SetFont('dejavusansmono', 'B', 14);
         $pdf->Cell(0, 10, 'الجمهورية الجزائرية الديمقراطية الشعبية', 0, 1, 'C');
         $pdf->Cell(0, 10, 'وزارة الصيد البحري و المنتجات الصيدية', 0, 1, 'C');
         $pdf->Ln(10);
@@ -88,15 +88,15 @@ try {
     $pdf->Ln(10);
     
     // Set font for title
-    $pdf->SetFont('helvetica', 'B', 16);
+    $pdf->SetFont('dejavusansmono', 'B', 16);
     
     // Title
     $pdf->Cell(0, 10, 'FICHE TECHNIQUE DE CONCESSION AQUACOLE', 0, 1, 'C');
-    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetFont('dejavusansmono', 'B', 14);
     $pdf->Cell(0, 10, 'Zone: ' . $concession['nom_zone'], 0, 1, 'C');
     
     // Add date
-    $pdf->SetFont('helvetica', '', 10);
+    $pdf->SetFont('dejavusansmono', '', 10);
     $pdf->Cell(0, 10, 'Date: ' . date('d/m/Y'), 0, 1, 'R');
     
     // Add a line
@@ -104,9 +104,9 @@ try {
     $pdf->Ln(10);
     
     // Add concession information
-    $pdf->SetFont('helvetica', 'B', 12);
+    $pdf->SetFont('dejavusansmono', 'B', 12);
     $pdf->Cell(0, 10, 'Informations de la Concession', 0, 1, 'L');
-    $pdf->SetFont('helvetica', '', 10);
+    $pdf->SetFont('dejavusansmono', '', 10);
     
     $info_html = '<table cellspacing="0" cellpadding="4" border="0.5">';
     $info_html .= addTableRow('ID', $concession['id']);
@@ -123,7 +123,10 @@ try {
     $info_html .= addTableRow('Date de création', date('d/m/Y H:i', strtotime($concession['created_at'])));
     $info_html .= addTableRow('Statut', $concession['visible'] ? 'Actif' : 'Inactif');
     if ($concession['description']) {
-        $info_html .= addTableRow('Description', $concession['description']);
+        $info_html .= addTableRow(
+            'Description',
+            '<span dir="rtl">'.$concession['description'].'</span>'
+        );
     }
     $info_html .= '</table>';
     
@@ -131,9 +134,9 @@ try {
     
     // Add coordinates section
     $pdf->Ln(10);
-    $pdf->SetFont('helvetica', 'B', 12);
+    $pdf->SetFont('dejavusansmono', 'B', 12);
     $pdf->Cell(0, 10, 'Coordonnées Géographiques', 0, 1, 'L');
-    $pdf->SetFont('helvetica', '', 10);
+    $pdf->SetFont('dejavusansmono', '', 10);
     
     $coords_html = '<table cellspacing="0" cellpadding="5" border="1" style="border-collapse: collapse;">';
     $coords_html .= '<tr style="background-color:#f2f2f2;">';
@@ -162,7 +165,7 @@ try {
     
     // Add map image section
     $pdf->Ln(10);
-    $pdf->SetFont('helvetica', 'B', 12);
+    $pdf->SetFont('dejavusansmono', 'B', 12);
     $pdf->Cell(0, 10, 'Localisation', 0, 1, 'L');
     
     // Generate static map URL using OpenStreetMap
@@ -201,12 +204,12 @@ try {
     
     // Add a note about the map
     $pdf->SetY($pdf->GetY() + 5);
-    $pdf->SetFont('helvetica', 'I', 8);
+    $pdf->SetFont('dejavusansmono', 'I', 8);
     $pdf->Cell(0, 5, 'Carte générée avec OpenStreetMap. Les points A, B, C, D représentent les coins de la concession.', 0, 1, 'C');
     
     // Add footer
     $pdf->SetY(-15);
-    $pdf->SetFont('helvetica', 'I', 8);
+    $pdf->SetFont('dejavusansmono', 'I', 8);
     $pdf->Cell(0, 10, 'Page '.$pdf->getAliasNumPage().'/'.$pdf->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
     
     // Output the PDF
