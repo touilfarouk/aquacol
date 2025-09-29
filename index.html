@@ -528,10 +528,20 @@
             } catch(_) {}
         });
         // Configuration du serveur
-        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const SERVER_HOST = isLocalhost ? 'localhost' : '213.179.181.50';
-        //const SERVER_HOST = isLocalhost ? 'localhost' : '105.96.71.114';
-        const API_BASE_URL = `http://${SERVER_HOST}/aquaculture`;
+        const hostname = window.location.hostname;
+
+            let SERVER_HOST;
+
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                SERVER_HOST = 'localhost';
+            } else if (hostname === '213.179.181.50') {
+                SERVER_HOST = '213.179.181.50';
+            } else {
+                // fallback to the third IP
+                SERVER_HOST = '105.96.71.114';
+            }
+
+            const API_BASE_URL = `http://${SERVER_HOST}/aquaculture`;
         
         // Variables globales
         let map;
