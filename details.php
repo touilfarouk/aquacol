@@ -315,71 +315,128 @@
             } catch(_) {}
         });
         // Initialize map
-        const concessionData = <?= json_encode($concession ?? []) ?>;
-        
-        if (concessionData.coordonnee_a) {
-            // Parse coordinates
-            const coords = [
-                parseCoordinateString(concessionData.coordonnee_a),
-                parseCoordinateString(concessionData.coordonnee_b),
-                parseCoordinateString(concessionData.coordonnee_c),
-                parseCoordinateString(concessionData.coordonnee_d)
-            ];
-            
-            // Calculate center
-            const centerLat = coords.reduce((sum, coord) => sum + coord[0], 0) / 4;
-            const centerLng = coords.reduce((sum, coord) => sum + coord[1], 0) / 4;
-            
-            // Create map
-            const map = L.map('map').setView([centerLat, centerLng], 16);
-            
-            // Add tiles
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-            
-            // Create custom icon
-            const customIcon = L.icon({
-                iconUrl: 'icons.png',
-                iconSize: [40, 60],
-                iconAnchor: [20, 60],
-                popupAnchor: [0, -60]
-            });
-            
-            // Add marker
-            L.marker([centerLat, centerLng], {
-                icon: customIcon
-            }).addTo(map);
-            
-            // Add square
-            L.polygon(coords, {
-                color: '#28a745',
-                weight: 2,
-                fillOpacity: 0.2
-            }).addTo(map);
-        }
-        
-        function parseCoordinateString(coordStr) {
-            const parts = coordStr.split(/[\s,]+/);
-            return [parseFloat(parts[0]), parseFloat(parts[1])];
-        }
-        
-        function generatePDF() {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'generate_pdf.php';
-            form.target = '_blank';
-            
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden';
-            idInput.name = 'concession_id';
-            idInput.value = concessionData.id;
-            form.appendChild(idInput);
-            
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-        }
-    </script>
-</body>
-</html>
+        const concessionData = <?= json_encode($concession ?? null) ?>;
+
+(function () {
+  // Helper to parse "lat lng" or "lat,lng"
+  function parseCoordinateString(coordStr) {
+    if (!coordStr) return [NaN, NaN];
+    const parts = coordStr.toString().trim().split(/[\s,]+/);
+    return [parseFloat(parts[0]), parseFloat(parts[1])];
+  }
+
+  // Nothing to do if no concession data
+  if (!concessionData || !concessionData.coordonnee_a) return;
+
+  // Parse coords
+  const coords = [
+    parseCoordinateString(concessionData.coordonnee_a),
+    parseCoordinateString(concessionData.coordonnee_b),
+    parseCoordinateString(concessionData.coordonnee_c),
+    parseCoordinateString(concessionData.coordonnee_d)
+  ];
+
+  // Validate
+  const validCoords = coords.every(c => Array.isArray(c) && !isNaN(c[0]) && !isNaN(c[1]));
+  if (!validCoords) {
+    console.error('Invalid concession coordinates', coords);
+    return;
+  }
+
+  // Compute center
+  const centerLat = coords.reduce((sum, c) => sum + c[0], 0) / coords.length;
+  const centerLng = coords.reduce((sum, c) => sum + c[1], 0) / coords.length;
+
+  // If a Leaflet map already exists on this page (same container), remove it first
+  if (window._singleMap && window._singleMap instanceof L.Map) {
+    try {
+      window._singleMap.off();
+      window._singleMap.remove();
+    } catch (e) {
+      // ignore
+      console.warn('Previous map removal error', e);
+    }
+  }
+
+  // Create map and save it globally so subsequent code can remove it if needed
+  const map = L.map('map', { zoomControl: true }).setView([centerLat, centerLng], 16);
+  window._singleMap = map;
+
+  // Define base layers (Google + OSM fallback)
+  const terrainLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+    attribution: '&copy; <a href="https://www.google.com/maps">Google Maps</a>',
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    maxZoom: 20
+  });
+
+  const satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    attribution: '&copy; <a href="https://www.google.com/maps">Google Maps</a>',
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    maxZoom: 20
+  });
+
+  const osmFallback = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19,
+    subdomains: ['a','b','c']
+  });
+
+  // Add default (Terrain)
+  terrainLayer.addTo(map);
+
+  // Simple tileerror fallback: if several tiles fail, switch to OSM
+  let tileErrorCount = 0;
+  const MAX_TILE_ERRORS = 6;
+  function onTileError() {
+    tileErrorCount++;
+    if (tileErrorCount >= MAX_TILE_ERRORS) {
+      // remove google layers and add OSM fallback
+      try {
+        if (map.hasLayer(terrainLayer)) map.removeLayer(terrainLayer);
+        if (map.hasLayer(satelliteLayer)) map.removeLayer(satelliteLayer);
+      } catch(_) {}
+      osmFallback.addTo(map);
+      // Remove listeners to avoid repeated switching
+      terrainLayer.off('tileerror', onTileError);
+      satelliteLayer.off('tileerror', onTileError);
+      console.warn('Switched to OSM fallback due to repeated tile errors.');
+    }
+  }
+  terrainLayer.on('tileerror', onTileError);
+  satelliteLayer.on('tileerror', onTileError);
+
+  // Add a layers control so user can switch
+  L.control.layers(
+    { 'Terrain': terrainLayer, 'Satellite': satelliteLayer, 'OSM (fallback)': osmFallback },
+    {}, // overlays (none)
+    { collapsed: false }
+  ).addTo(map);
+
+  // Create custom icon (keeps your settings)
+  const customIcon = L.icon({
+    iconUrl: 'icons.png',
+    iconSize: [40, 60],
+    iconAnchor: [20, 60],
+    popupAnchor: [0, -60]
+  });
+
+  // Add marker at center
+  L.marker([centerLat, centerLng], { icon: customIcon }).addTo(map);
+
+  // Add polygon (square)
+  L.polygon(coords, {
+    color: '#28a745',
+    weight: 2,
+    fillOpacity: 0.2
+  }).addTo(map);
+
+  // Optional: fit bounds to the polygon for better framing (comment out if you prefer fixed zoom)
+  try {
+    const bounds = L.latLngBounds(coords);
+    map.fitBounds(bounds.pad(0.15));
+  } catch (e) {
+    // ignore
+  }
+
+})();
+</script>
