@@ -322,6 +322,9 @@
                 <a href="client-map.html" class="btn btn-sm btn-outline-light me-2">
                     <i class="fas fa-eye me-1"></i> <span data-i18n="nav.view_client">Vue Client</span>
                 </a>
+                <a href="admin_concessions.php" class="btn btn-sm btn-outline-light me-2">
+                    <i class="fas fa-user-shield me-1"></i> <span>Administration</span>
+                </a>
                 <button type="button" id="lang-fr" class="btn btn-sm btn-outline-light" onclick="setLang('fr')">Français</button>
                 <button type="button" id="lang-ar" class="btn btn-sm btn-outline-light" onclick="setLang('ar')">العربية</button>
             </div>
@@ -527,6 +530,7 @@
         // Configuration du serveur
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const SERVER_HOST = isLocalhost ? 'localhost' : '213.179.181.50';
+        //const SERVER_HOST = isLocalhost ? 'localhost' : '105.96.71.114';
         const API_BASE_URL = `http://${SERVER_HOST}/aquaculture`;
         
         // Variables globales

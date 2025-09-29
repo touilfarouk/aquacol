@@ -340,7 +340,7 @@
             
             // Create custom icon
             const customIcon = L.icon({
-                iconUrl: 'icon.png',
+                iconUrl: 'icons.png',
                 iconSize: [40, 60],
                 iconAnchor: [20, 60],
                 popupAnchor: [0, -60]
