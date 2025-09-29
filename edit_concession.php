@@ -94,13 +94,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Load concession data
 try {
-    $pdo = new PDO("mysql:host=" . DB_SERVER . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASS, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]);
+    $pdo = new PDO(
+        "mysql:host=" . DB_SERVER . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+        DB_USER,
+        DB_PASS,
+        [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+        ]
+    );
+
     $stmt = $pdo->prepare("SELECT * FROM coordinates WHERE id=:id");
     $stmt->execute([':id' => $id]);
     $concession = $stmt->fetch();
+
 } catch (Exception $e) {
     $error_message = "Erreur lors du chargement de la concession: " . $e->getMessage();
 }
@@ -340,102 +349,97 @@ try {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the map
-        const map = L.map('map').setView([36.7525, 3.042], 10);
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the map
+    const map = L.map('map').setView([36.7525, 3.042], 10);
+    
+    // Add Google Terrain tiles
+    L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+        attribution: '&copy; <a href="https://www.google.com/maps">Google Maps</a>',
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    }).addTo(map);
+    
+    let marker = null;
+    
+    // Function to update coordinate fields
+    function updateCoordinateFields(lat, lng) {
+        const latStr = lat.toFixed(6);
+        const lngStr = lng.toFixed(6);
         
-        // Add OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        // Approx offset for ~50m
+        const offset = 0.00045;
+        
+        document.getElementById('coordonnee_a').value = `${latStr}, ${lngStr}`;
+        document.getElementById('coordonnee_b').value = `${(lat + offset).toFixed(6)}, ${lngStr}`;
+        document.getElementById('coordonnee_c').value = `${(lat + offset).toFixed(6)}, ${(lng + offset).toFixed(6)}`;
+        document.getElementById('coordonnee_d').value = `${latStr}, ${(lng + offset).toFixed(6)}`;
+        
+        document.querySelectorAll('.coord-input').forEach(input => 
+            input.dispatchEvent(new Event('change'))
+        );
+    }
+    
+    // Handle map click
+    map.on('click', function(e) {
+        const { lat, lng } = e.latlng;
+        
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        
+        marker = L.marker([lat, lng], {
+            draggable: true,
+            title: 'Emplacement de la concession'
         }).addTo(map);
         
-        let marker = null;
-        
-        // Function to update coordinate fields
-        function updateCoordinateFields(lat, lng) {
-            // Convert lat/lng to decimal degrees with 6 decimal places
-            const latStr = lat.toFixed(6);
-            const lngStr = lng.toFixed(6);
-            
-            // Calculate the 50x50 meter square coordinates (approximately 0.00045 degrees = ~50m at equator)
-            const offset = 0.00045;
-            
-            // Update the coordinate fields
-            document.getElementById('coordonnee_a').value = `${latStr}, ${lngStr}`;
-            document.getElementById('coordonnee_b').value = `${(lat + offset).toFixed(6)}, ${lngStr}`;
-            document.getElementById('coordonnee_c').value = `${(lat + offset).toFixed(6)}, ${(lng + offset).toFixed(6)}`;
-            document.getElementById('coordonnee_d').value = `${latStr}, ${(lng + offset).toFixed(6)}`;
-            
-            // Trigger change event on inputs to update any listeners
-            document.querySelectorAll('.coord-input').forEach(input => input.dispatchEvent(new Event('change')));
-        }
-        
-        // Handle map click
-        map.on('click', function(e) {
-            const { lat, lng } = e.latlng;
-            
-            // Remove existing marker if any
-            if (marker) {
-                map.removeLayer(marker);
-            }
-            
-            // Add new marker
-            marker = L.marker([lat, lng], {
-                draggable: true,
-                title: 'Emplacement de la concession'
-            }).addTo(map);
-            
-            // Update coordinates when marker is dragged
-            marker.on('dragend', function(e) {
-                const newLatLng = e.target.getLatLng();
-                updateCoordinateFields(newLatLng.lat, newLatLng.lng);
-            });
-            
-            // Update coordinate fields
-            updateCoordinateFields(lat, lng);
-            
-            // Show popup with coordinates
-            marker.bindPopup(`
-                <div style="text-align: center;">
-                    <strong>Coordonnées de la concession</strong><br>
-                    A: ${lat.toFixed(6)}, ${lng.toFixed(6)}<br>
-                    B: ${(lat + 0.00045).toFixed(6)}, ${lng.toFixed(6)}<br>
-                    C: ${(lat + 0.00045).toFixed(6)}, ${(lng + 0.00045).toFixed(6)}<br>
-                    D: ${lat.toFixed(6)}, ${(lng + 0.00045).toFixed(6)}
-                </div>
-            `).openPopup();
+        marker.on('dragend', function(e) {
+            const newLatLng = e.target.getLatLng();
+            updateCoordinateFields(newLatLng.lat, newLatLng.lng);
         });
         
-        // If there are existing coordinates, add a marker
-        const coordA = document.getElementById('coordonnee_a').value;
-        if (coordA) {
-            try {
-                const [lat, lng] = coordA.split(',').map(Number);
-                if (!isNaN(lat) && !isNaN(lng)) {
-                    marker = L.marker([lat, lng], {
-                        draggable: true,
-                        title: 'Emplacement de la concession'
-                    }).addTo(map);
-                    
-                    // Center the map on the marker
-                    map.setView([lat, lng], 15);
-                    
-                    // Add popup
-                    marker.bindPopup(`
-                        <div style="text-align: center;">
-                            <strong>Coordonnées de la concession</strong><br>
-                            A: ${lat.toFixed(6)}, ${lng.toFixed(6)}<br>
-                            B: ${(lat + 0.00045).toFixed(6)}, ${lng.toFixed(6)}<br>
-                            C: ${(lat + 0.00045).toFixed(6)}, ${(lng + 0.00045).toFixed(6)}<br>
-                            D: ${lat.toFixed(6)}, ${(lng + 0.00045).toFixed(6)}
-                        </div>
-                    `);
-                }
-            } catch (e) {
-                console.error('Error parsing coordinates:', e);
-            }
-        }
+        updateCoordinateFields(lat, lng);
+        
+        marker.bindPopup(`
+            <div style="text-align: center;">
+                <strong>Coordonnées de la concession</strong><br>
+                A: ${lat.toFixed(6)}, ${lng.toFixed(6)}<br>
+                B: ${(lat + 0.00045).toFixed(6)}, ${lng.toFixed(6)}<br>
+                C: ${(lat + 0.00045).toFixed(6)}, ${(lng + 0.00045).toFixed(6)}<br>
+                D: ${lat.toFixed(6)}, ${(lng + 0.00045).toFixed(6)}
+            </div>
+        `).openPopup();
     });
-    </script>
+    
+    // If there are existing coordinates, add a marker
+    const coordA = document.getElementById('coordonnee_a').value;
+    if (coordA) {
+        try {
+            const [lat, lng] = coordA.split(',').map(Number);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                marker = L.marker([lat, lng], {
+                    draggable: true,
+                    title: 'Emplacement de la concession'
+                }).addTo(map);
+                
+                map.setView([lat, lng], 15);
+                
+                marker.bindPopup(`
+                    <div style="text-align: center;">
+                        <strong>Coordonnées de la concession</strong><br>
+                        A: ${lat.toFixed(6)}, ${lng.toFixed(6)}<br>
+                        B: ${(lat + 0.00045).toFixed(6)}, ${lng.toFixed(6)}<br>
+                        C: ${(lat + 0.00045).toFixed(6)}, ${(lng + 0.00045).toFixed(6)}<br>
+                        D: ${lat.toFixed(6)}, ${(lng + 0.00045).toFixed(6)}
+                    </div>
+                `);
+            }
+        } catch (e) {
+            console.error('Error parsing coordinates:', e);
+        }
+    }
+});
+</script>
+
 </body>
 </html>
