@@ -248,9 +248,9 @@
                         <a href="application.php?id=<?= htmlspecialchars($concession['code_concession'] ? $concession['code_concession'] . '-' . $concession['id'] : $concession['id']) ?>" class="btn btn-primary btn-lg me-3">
                             <i class="fas fa-file-alt me-2"></i><span data-i18n="details.actions.apply">Demande d'Application</span>
                         </a>
-                        <button onclick="generatePDF()" class="btn btn-success btn-lg me-3">
+                        <!-- <button onclick="generatePDF()" class="btn btn-success btn-lg me-3">
                             <i class="fas fa-file-pdf me-2"></i><span data-i18n="details.actions.generate_pdf">Générer Fiche Technique PDF</span>
-                        </button>
+                        </button> -->
                         <a href="index.html" class="btn btn-outline-primary btn-lg">
                             <i class="fas fa-arrow-left me-2"></i><span data-i18n="details.actions.back_to_map">Retour à la carte</span>
                         </a>
