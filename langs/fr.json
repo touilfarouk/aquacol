@@ -6,7 +6,7 @@
   "nav.map": "Carte",
   "instructions.title": "Instructions",
   "instructions.1": "1. Cliquez sur la carte pour placer un marqueur à l'emplacement souhaité",
-  "instructions.2": "2. Un carré de 50 × 50 mètres sera automatiquement généré",
+  "instructions.2": "2. Des Coordonnées géographiques seront automatiquement généré",
   "instructions.3": "3. Remplissez le formulaire avec les informations requises",
   "instructions.4": "4. Sauvegardez l'emplacement",
   "coord.title": "Coordonnées de la Zone",

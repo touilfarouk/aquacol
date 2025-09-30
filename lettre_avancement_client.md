@@ -24,7 +24,7 @@ J'ai le plaisir de vous informer des avancées significatives réalisées dans l
 - Carte interactive moderne et facile à utiliser
 - Placement des concessions d'un simple clic sur la carte
 - Possibilité d'ajuster précisément l'emplacement en déplaçant le marqueur
-- Calcul automatique des limites de la concession (carré de 50x50 mètres)
+- Calcul automatique des limites de la concession avec Coordonnées géographiques
 - Affichage des coordonnées détaillées pour chaque concession
 
 **Formulaire d'Édition Simplifié**

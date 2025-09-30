@@ -31,7 +31,7 @@
     box-shadow:
         0 4px 6px -1px rgba(0, 0, 0, 0.1),
         0 10px 15px -3px rgba(0, 0, 0, 0.2);
-}
+        }
 
 
         .main-container {
@@ -343,7 +343,7 @@
                         <li data-i18n="instructions.1">Cliquez sur la carte pour placer un marqueur</li>
                         <li data-i18n="instructions.2">Le marqueur génère des coordonnées géographiques/li>
                         <li data-i18n="instructions.3">Ou saisissez manuellement les coordonnées dans les champs</li>
-                        <li data-i18n="instructions.4">Cliquez sur le marqueur pour voir les coordonnées du carré</li>
+                        <li data-i18n="instructions.4">Cliquez sur le marqueur pour voir les Coordonnées géographiques</li>
                     </ol>
                 </div>
             </div>
@@ -591,33 +591,33 @@ function createLabelPane() {
     }
 }
 
-// Initialiser la carte
-function initMap() {
-    // Créer la carte centrée sur l'Algérie
-    map = L.map('map', {
-        zoomControl: false,
-        layers: [baseLayers['Terrain']] // Default = Terrain
-    }).setView([36.7538, 3.0588], 12);
+        // Initialiser la carte
+        function initMap() {
+            // Créer la carte centrée sur l'Algérie
+            map = L.map('map', {
+                zoomControl: false,
+                layers: [baseLayers['Terrain']] // Default = Terrain
+            }).setView([36.7538, 3.0588], 12);
 
-    // Add zoom control
-    L.control.zoom({
-        position: 'topright'
-    }).addTo(map);
+            // Add zoom control
+            L.control.zoom({
+                position: 'topright'
+            }).addTo(map);
 
-    // Create labels pane
-    createLabelPane();
+            // Create labels pane
+            createLabelPane();
 
-    // Add labels overlay
-    waterLabels.addTo(map);
+            // Add labels overlay
+            waterLabels.addTo(map);
 
-    // Initialize layer control
-    initLayerControl();
+            // Initialize layer control
+            initLayerControl();
 
-    // Click event
-    map.on('click', function(e) {
-        placeMarkerAndGenerateSquare(e.latlng);
-    });
-}
+            // Click event
+            map.on('click', function(e) {
+                placeMarkerAndGenerateSquare(e.latlng);
+            });
+        }
 
 
         // Initialize layer control
@@ -849,22 +849,22 @@ function initMap() {
 
         // Créer le contenu du popup
         function createPopupContent(coords) {
-    const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
-    let content = `
-        <div style="width: 445px !important; min-width: 250px;">
-            <h6 style="margin-bottom: 10px; color: #667eea;">
-                <i class="fas fa-square"></i> Coordonnées géographiques
-            </h6>
-            <div style="font-family: 'Courier New', monospace; font-size: 0.75rem;">
-    `;
-    
-    coords.forEach((coord, index) => {
-        const formatted = formatCoordinate(coord[0], coord[1], currentFormat);
-        content += `<div style="width: 445px !important; min-width: 250px;"><strong>${labels[index]}:</strong> ${formatted}</div>`;
-    });
-    
-    content += `</div></div>`;
-    return content;
+            const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
+            let content = `
+                <div style="width: 445px !important; min-width: 250px;">
+                    <h6 style="margin-bottom: 10px; color: #667eea;">
+                        <i class="fas fa-square"></i> Coordonnées géographiques
+                    </h6>
+                    <div style="font-family: 'Courier New', monospace; font-size: 0.75rem;">
+            `;
+            
+            coords.forEach((coord, index) => {
+                const formatted = formatCoordinate(coord[0], coord[1], currentFormat);
+                content += `<div style="width: 445px !important; min-width: 250px;"><strong>${labels[index]}:</strong> ${formatted}</div>`;
+            });
+            
+            content += `</div></div>`;
+            return content;
 }
 
 

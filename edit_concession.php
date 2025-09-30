@@ -315,7 +315,7 @@ try {
                         <div class="map-container">
                             <div id="map"></div>
                         </div>
-                        <div class="form-text">Cliquez sur la carte pour positionner la concession (carré de 50x50 mètres)</div>
+                        <div class="form-text">Cliquez sur la carte pour positionner la concession, Coordonnées géographiques seront automatiquement généré</div>
                     </div>
 
                     <div class="row mb-3">
