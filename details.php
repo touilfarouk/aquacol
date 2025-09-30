@@ -232,7 +232,7 @@
                         <div id="map"></div>
                         
                         <div class="mt-3">
-                            <h6><i class="fas fa-crosshairs me-2"></i><span data-i18n="details.coordinates.title">Coordonnées (50m x 50m)</span></h6>
+                            <h6><i class="fas fa-crosshairs me-2"></i><span data-i18n="details.coordinates.title">Coordonnées géographiques</span></h6>
                             <div style="font-family: 'Courier New', monospace; font-size: 0.9rem; background: #f8f9fa; padding: 15px; border-radius: 8px;">
                                 <div><strong>A (NO):</strong> <?= htmlspecialchars($concession['coordonnee_a']) ?></div>
                                 <div><strong>B (NE):</strong> <?= htmlspecialchars($concession['coordonnee_b']) ?></div>

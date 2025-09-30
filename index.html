@@ -341,7 +341,7 @@
                     <h6><i class="fas fa-info-circle"></i><span data-i18n="instructions.title">Instructions</span></h6>
                     <ol>
                         <li data-i18n="instructions.1">Cliquez sur la carte pour placer un marqueur</li>
-                        <li data-i18n="instructions.2">Le marqueur génère automatiquement un carré de 50m x 50m</li>
+                        <li data-i18n="instructions.2">Le marqueur génère des coordonnées géographiques/li>
                         <li data-i18n="instructions.3">Ou saisissez manuellement les coordonnées dans les champs</li>
                         <li data-i18n="instructions.4">Cliquez sur le marqueur pour voir les coordonnées du carré</li>
                     </ol>
@@ -365,7 +365,7 @@
 
                     <!-- Coordonnées -->
                     <div class="mb-3">
-                        <label class="form-label" data-i18n="coord.square_title">Coordonnées du carré (50m x 50m)</label>
+                        <label class="form-label" data-i18n="coord.square_title">Coordonnées géographiques</label>
                         <div class="row g-2">
                             <div class="col-6">
                                 <label class="form-label small" data-i18n="coord.point_a">Point A (Nord-Ouest)</label>
@@ -702,7 +702,7 @@ function initMap() {
             `;
         }
 
-        // Placer un marqueur et générer un carré de 50m x 50m
+        // Placer un marqueur et générer Coordonnées géographiques
         function placeMarkerAndGenerateSquare(latlng) {
             // Supprimer le marqueur et carré précédents
             if (currentMarker) {
@@ -712,7 +712,7 @@ function initMap() {
                 map.removeLayer(currentSquare);
             }
 
-            // Calculer les coordonnées du carré de 50m x 50m
+            // Calculer les Coordonnées géographiques
             const squareCoords = calculateSquareCoordinates(latlng.lat, latlng.lng, 50);
 
             // Créer le marqueur
@@ -742,7 +742,7 @@ function initMap() {
             displayCoordinates(squareCoords);
         }
 
-        // Calculer les coordonnées d'un carré de 50m x 50m
+        // Calculer les Coordonnées géographiques
         function calculateSquareCoordinates(centerLat, centerLng, sideLength) {
             // Conversion approximative : 1 degré ≈ 111320 mètres
             const metersPerDegree = 111320;
@@ -853,7 +853,7 @@ function initMap() {
     let content = `
         <div style="width: 445px !important; min-width: 250px;">
             <h6 style="margin-bottom: 10px; color: #667eea;">
-                <i class="fas fa-square"></i> Carré de 50m x 50m
+                <i class="fas fa-square"></i> Coordonnées géographiques
             </h6>
             <div style="font-family: 'Courier New', monospace; font-size: 0.75rem;">
     `;
@@ -1342,7 +1342,7 @@ function initMap() {
             </div>
 
             <div style="margin: 14px 0 12px; font-family: 'Courier New', monospace;">
-                <strong><i class="fas fa-vector-square" style="color: #007bff;"></i> Coordonnées (50m x 50m):</strong>
+                <strong><i class="fas fa-vector-square" style="color: #007bff;"></i>Coordonnées géographiques:</strong>
                 <table style="width: 100%; font-size: 0.75rem; margin-top: 4px;">
                     <tbody>
                         ${coords.map((coord, index) => {
