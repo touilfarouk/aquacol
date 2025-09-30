@@ -37,7 +37,7 @@
   "details.visibility.hidden": "مخفي",
   "details.labels.description": "الوصف",
   "details.map.title": "الموقع على الخريطة",
-  "details.coordinates.title": "الإحداثيات (50م × 50م)",
+  "details.coordinates.title": "الإحداثيات ",
   "details.actions.apply": "طلب امتياز",
   "details.actions.generate_pdf": "توليد بطاقة تقنية PDF",
   "details.actions.back_to_map": "العودة إلى الخريطة",
@@ -89,7 +89,7 @@
   "layer.options.satellite": "صورة فضائية",
   "layer.options.street": "خريطة",
 
-  "coord.square_title": "إحداثيات المربع (50م × 50م)",
+  "coord.square_title": "إحداثيات  ",
   "coord.point_a": "النقطة A (شمال غرب)",
   "coord.point_b": "النقطة B (شمال شرق)",
   "coord.point_c": "النقطة C (جنوب شرق)",

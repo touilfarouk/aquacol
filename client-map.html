@@ -604,8 +604,8 @@ function initMap() {
             }).addTo(map);
 
             // Popup avec les coordonnées
-            const popupContent = createPopupContent(squareCoords);
-            currentMarker.bindPopup(popupContent, { className: 'custom-popup' }).openPopup();
+            //const popupContent = createPopupContent(squareCoords);
+          //  currentMarker.bindPopup(popupContent, { className: 'custom-popup' }).openPopup();
 
             // Mettre à jour les champs du formulaire
             updateFormInputs(squareCoords);
@@ -840,8 +840,8 @@ function initMap() {
                 
                 // Mettre à jour le popup
                 if (currentMarker) {
-                    const popupContent = createPopupContent(currentCoords);
-                    currentMarker.setPopupContent(popupContent);
+                    //const popupContent = createPopupContent(currentCoords);
+                   // currentMarker.setPopupContent(popupContent);
                 }
             }
         }
@@ -907,8 +907,8 @@ function initMap() {
             }).addTo(map);
 
             // Popup avec les coordonnées
-            const popupContent = createPopupContent(coords);
-            currentMarker.bindPopup(popupContent);
+           // const popupContent = createPopupContent(coords);
+           // currentMarker.bindPopup(popupContent);
 
             // Centrer la carte sur le carré avec un zoom fixe approprié
             map.setView([centerLat, centerLng], 16);
@@ -1086,8 +1086,22 @@ function initMap() {
                 fillOpacity: 0.1
             }).addTo(map);
 
+            // Create hover content (simplified view)
+            const hoverContent = createSavedConcessionPopup(concession, coords, true);
+            
             // Create click content (full view with buttons)
             const clickContent = createSavedConcessionPopup(concession, coords, false);
+            
+            // Bind hover tooltip (shows on hover) with RTL-aware offset
+            const isRTLDoc = document.documentElement.getAttribute('dir') === 'rtl';
+            marker.bindTooltip(hoverContent, {
+                permanent: false,
+                direction: 'top',
+                className: 'custom-tooltip' + (isRTLDoc ? ' rtl' : ''),
+                // Shift tooltip in RTL 240px to the right
+                offset: isRTLDoc ? [240, -16] : [0, -16],
+                sticky: true
+            });
             
             // Bind click popup (shows full content with buttons)
             marker.bindPopup(clickContent, {
@@ -1105,7 +1119,49 @@ function initMap() {
             return [parseFloat(parts[0]), parseFloat(parts[1])];
         }
 
-        function createSavedConcessionPopup(concession) {
+        function createSavedConcessionPopup(concession, coords, isHover = false) {
+    const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
+    
+    // Content for hover (without buttons)
+    let hoverContent = `
+        <div style="min-width: 245px; font-size: 0.8rem; position: relative;">
+            <img src="logo.png" alt="Logo" style="position: absolute; top: 0; right: 0; width: 40px; height: 40px; opacity: 0.7; border-radius: 50%; background: white; padding: 2px;">
+            <h6 style="margin-bottom: 10px; color: #28a745; padding-right: 30px;">
+                <i class="fas fa-fish" style="color: #28a745;"></i> ${concession.nom_zone || 'Concession'}
+            </h6>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+                <tbody>
+                    ${concession.code_concession ? `
+                        <tr>
+                            <td>
+                                <strong><i class="fas fa-barcode" style="color: #6c757d;"></i> Code</strong>
+                            </td>
+                            <td>
+                                <span style="font-family: monospace; background: #f8f9fa; padding: 2px 4px; border-radius: 3px;">
+                                    ${concession.code_concession}
+                                </span>
+                            </td>
+                        </tr>` : ''}
+
+                    <tr>
+                        <td>
+                            <strong><i class="fas fa-map-marker-alt" style="color: #fd7e14;"></i> Localisation</strong>
+                        </td>
+                        <td>${concession.wilaya_name_ascii || 'N/A'} - ${concession.commune_name_ascii || 'N/A'}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="font-size: 0.7rem; color: #666; margin-top: 5px;">
+                <i class="fas fa-mouse-pointer"></i> Cliquez pour plus d'options
+            </div>
+        </div>
+    `;
+    
+    // Return hover content if it's for hover tooltip
+    if (isHover) {
+        return hoverContent;
+    }
+    
     // Full content with buttons for click popup
     let fullContent = `
         <div style="min-width: 280px; font-size: 0.8rem; padding: 14px 16px 16px; position: relative;">
@@ -1155,6 +1211,18 @@ function initMap() {
             <div style="margin: 12px 0 10px;">
                 <strong><i class="fas fa-info-circle" style="color: #17a2b8;"></i> Description:</strong><br>
                 <small>${concession.description || 'Aucune description'}</small>
+            </div>
+
+            <div style="margin: 14px 0 12px; font-family: 'Courier New', monospace;">
+                <strong><i class="fas fa-vector-square" style="color: #007bff;"></i> Coordonnées géographiques:</strong>
+                <table style="width: 100%; font-size: 0.75rem; margin-top: 4px;">
+                    <tbody>
+                        ${coords.map((coord, index) => {
+                            const formatted = formatCoordinate(coord[0], coord[1], concession.format_coordonnees || 'decimal');
+                            return `<tr><td>${labels[index]}</td><td>${formatted}</td></tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
             </div>
 
             <div style="font-size: 0.7rem; color: #666; margin: 12px 0 16px;">
