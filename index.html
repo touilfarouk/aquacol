@@ -12,6 +12,7 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
+    
     <style>
       :root {
             --primary-color: #4a8eff;
@@ -37,6 +38,7 @@
         .main-container {
             display: flex;
             height: calc(100vh - 76px);
+            position: relative;
         }
 
         .sidebar {
@@ -306,7 +308,96 @@
             
             .map-container {
                 height: 50vh;
+                width: 100%; /* Override the calc() for mobile */
             }
+        }
+
+        /* Sidebar toggle functionality - Enhanced animations */
+        .sidebar {
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            width: 400px;
+            flex-shrink: 0;
+            will-change: transform;
+        }
+
+        .main-container.sidebar-collapsed .sidebar {
+            transform: translateX(-100%);
+            position: absolute;
+        }
+
+        .main-container.sidebar-collapsed .map-container {
+            width: 100%;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+            transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            width: calc(100% - 400px);
+            will-change: width;
+        }
+
+        /* Enhanced fish icon toggle button */
+        #sidebar-toggle {
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-radius: 8px;
+            padding: 8px 12px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        #sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        #sidebar-toggle:active {
+            transform: translateY(-1px) scale(1.01);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Shimmer effect on hover */
+        #sidebar-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        #sidebar-toggle:hover::before {
+            left: 100%;
+        }
+
+        /* Enhanced state indicators */
+        #sidebar-toggle .fa-fish {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .main-container.sidebar-collapsed #sidebar-toggle .fa-fish {
+            transform: scale(1.15) rotate(5deg);
+            color: #28a745;
+            filter: drop-shadow(0 4px 8px rgba(40, 167, 69, 0.4));
+        }
+
+        /* Subtle collapsed state indicator */
+        .main-container.sidebar-collapsed::after {
+            content: '';
+            position: fixed;
+            left: 0;
+            top: 76px;
+            width: 4px;
+            height: calc(100vh - 76px);
+            background: linear-gradient(to bottom, #28a745, #20c997);
+            box-shadow: 2px 0 8px rgba(40, 167, 69, 0.3);
+            z-index: 1001;
+            transition: opacity 0.3s ease;
         }
     </style>
 </head>
@@ -314,7 +405,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid d-flex justify-content-between align-items-center">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="#" id="sidebar-toggle" onclick="toggleSidebar()" style="cursor: pointer;">
                 <i class="fas fa-fish me-2"></i>
                 <span data-i18n="nav.brand">Gestion des Concessions Aquaculture</span>
             </a>
@@ -494,6 +585,43 @@
             url.searchParams.set('lang', lang);
             window.location.href = url.toString();
         }
+        // Toggle sidebar visibility (fish icon click) - Enhanced version
+        function toggleSidebar() {
+            const mainContainer = document.querySelector('.main-container');
+            const fishIcon = document.querySelector('#sidebar-toggle .fa-fish');
+
+            // Use requestAnimationFrame for smoother animations
+            requestAnimationFrame(() => {
+                if (sidebarVisible) {
+                    // Hide sidebar with enhanced animation
+                    mainContainer.classList.add('sidebar-collapsed');
+                    sidebarVisible = false;
+                    // Visual feedback handled by CSS
+                } else {
+                    // Show sidebar with enhanced animation
+                    mainContainer.classList.remove('sidebar-collapsed');
+                    sidebarVisible = true;
+                    // Visual feedback handled by CSS
+                }
+            });
+
+            // Optimize map resize timing for smoother experience
+            if (map) {
+                // Use longer delay to account for enhanced animation timing
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 500);
+            }
+        }
+
+        // Initialize visual state on page load
+        function initializeSidebarState() {
+            const fishIcon = document.querySelector('#sidebar-toggle .fa-fish');
+            if (fishIcon && !sidebarVisible) {
+                fishIcon.style.transform = 'scale(1.15) rotate(5deg)';
+                fishIcon.style.color = '#28a745';
+            }
+        }
         // Highlight active language button
         (function highlightActiveLang(){
             const params = new URLSearchParams(window.location.search);
@@ -550,6 +678,7 @@
         let currentFormat = 'decimal';
         let savedMarkers = []; // Array to store all saved concession markers
         let communesData = []; // Array to store communes data
+        let sidebarVisible = true; // Track sidebar visibility state
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
@@ -557,6 +686,7 @@
             setupFormListeners();
             loadCommunesData(); // Load communes data
             loadSavedConcessions(); // Load existing concessions on page load
+            initializeSidebarState(); // Initialize visual state
         });
 // Define base layers
 let baseLayers = {
@@ -1360,19 +1490,23 @@ function createLabelPane() {
                 </span>
             </div>
 
-            <div style="display: flex; gap: 8px; margin-top: 16px;">
+              <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;">
                 <button onclick="event.stopPropagation(); viewConcessionDetails(${concession.id}, '${concession.code_concession || ''}')" 
-                        style="flex: 1; padding: 6px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                        style="flex: 1; padding: 6px 12px; background: #2563eb; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
                     <i class="fas fa-eye"></i> Détails
                 </button>
                 <button onclick="event.stopPropagation(); generateTechnicalSheet(${concession.id})" 
-                        style="flex: 1; padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                        style="flex: 1; padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
                     <i class="fas fa-file-pdf"></i> PDF
                 </button>
                 <button onclick="event.stopPropagation(); generatePaymentStatement(${concession.id})" 
-                        style="flex: 1; padding: 6px 12px; background: #6f42c1; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                        style="flex: 1; padding: 6px 12px; background: #22c55e; color: white; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
                     <i class="fas fa-file-invoice-dollar"></i> Paiement
                 </button>
+                <a href="application.php?id=${concession.code_concession ? concession.code_concession + '-' + concession.id : concession.id}" 
+                style="flex: 1; padding: 6px 12px; background: #eab308; color: white; text-decoration: none; text-align: center; border-radius: 4px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <i class="fas fa-file-alt" style="margin-right: 6px;"></i> Je dépose ma demande
+                </a>
             </div>
         </div>
     `;

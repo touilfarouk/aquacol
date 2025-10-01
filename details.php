@@ -168,17 +168,17 @@
             <div class="card-body p-4">
                 <div class="row">
                     <div class="col-md-6">
-                        <h5><i class="fas fa-info-circle me-2"></i><span data-i18n="details.header.info">Informations Générales</span></h5>
+                        <h5><i class="fas fa-info-circle me-2"></i><span style="color:green" data-i18n="details.header.info">Informations Générales</span></h5>
                         
-                        <div class="info-item">
+                        <!-- <div class="info-item">
                             <div class="info-icon"><i class="fas fa-hashtag"></i></div>
                             <div>
-                                <strong data-i18n="details.labels.id">ID:</strong> <?= htmlspecialchars($concession['id']) ?>
+                                <strong data-i18n="details.labels.id">ID:</strong>
                             </div>
-                        </div>
+                        </div> -->
                         
                         <div class="info-item">
-                            <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div class="info-icon"><i style="color:lightgreen" class="fas fa-map-marker-alt"></i></div>
                             <div>
                                 <strong data-i18n="details.labels.location">Localisation:</strong><br>
                                 <?= htmlspecialchars($concession['wilaya_name_ascii'] ?: 'N/A') ?> - 
@@ -188,7 +188,7 @@
                         
                         <?php if ($concession['superficie']): ?>
                         <div class="info-item">
-                            <div class="info-icon"><i class="fas fa-expand-arrows-alt"></i></div>
+                            <div class="info-icon"><i style="color:orange" class="fas fa-expand-arrows-alt"></i></div>
                             <div>
                                 <strong data-i18n="details.labels.area">Superficie:</strong> <?= number_format($concession['superficie'], 2) ?> m²
                             </div>
@@ -197,7 +197,7 @@
                         
                         <?php if ($concession['distance_voi_acces']): ?>
                         <div class="info-item">
-                            <div class="info-icon"><i class="fas fa-road"></i></div>
+                            <div class="info-icon"><i style="color:pink" class="fas fa-road"></i></div>
                             <div>
                                 <strong data-i18n="details.labels.road_distance">Distance voie d'accès:</strong> <?= $concession['distance_voi_acces'] ?>m
                             </div>
@@ -205,7 +205,7 @@
                         <?php endif; ?>
                         
                         <div class="info-item">
-                            <div class="info-icon"><i class="fas fa-eye"></i></div>
+                            <div class="info-icon"><i style="color:lightblue" class="fas fa-eye"></i></div>
                             <div>
                                 <strong data-i18n="details.labels.visibility">Visibilité:</strong> 
                                 <?php if ($concession['visible']): ?>
@@ -218,7 +218,7 @@
                         
                         <?php if ($concession['description']): ?>
                         <div class="info-item">
-                            <div class="info-icon"><i class="fas fa-file-text"></i></div>
+                            <div class="info-icon"><i style="color:brown" class="fas fa-file-text"></i></div>
                             <div>
                                 <strong data-i18n="details.labels.description">Description:</strong><br>
                                 <?= nl2br(htmlspecialchars($concession['description'])) ?>
@@ -245,13 +245,13 @@
                 
                 <div class="row mt-4">
                     <div class="col text-center">
-                        <a href="application.php?id=<?= htmlspecialchars($concession['code_concession'] ? $concession['code_concession'] . '-' . $concession['id'] : $concession['id']) ?>" class="btn btn-primary btn-lg me-3">
-                            <i class="fas fa-file-alt me-2"></i><span data-i18n="details.actions.apply">Je dépose ma demande</span>
+                        <a href="application.php?id=<?= htmlspecialchars($concession['code_concession'] ? $concession['code_concession'] . '-' . $concession['id'] : $concession['id']) ?>" class="btn btn-warning btn-lg me-3">
+                            <i class="fas fa-file-alt me-2"></i><span  data-i18n="details.actions.apply">Je dépose ma demande</span>
                         </a>
                         <!-- <button onclick="generatePDF()" class="btn btn-success btn-lg me-3">
                             <i class="fas fa-file-pdf me-2"></i><span data-i18n="details.actions.generate_pdf">Générer Fiche Technique PDF</span>
                         </button> -->
-                        <a href="index.html" class="btn btn-outline-primary btn-lg">
+                        <a href="index.html" class="btn btn-outline-success btn-lg">
                             <i class="fas fa-arrow-left me-2"></i><span data-i18n="details.actions.back_to_map">Retour à la carte</span>
                         </a>
                     </div>
