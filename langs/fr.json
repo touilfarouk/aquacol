@@ -38,7 +38,7 @@
   "details.labels.description": "Description",
   "details.map.title": "Localisation sur la Carte",
   "details.coordinates.title": "Coordonnées géographiques",
-  "details.actions.apply": "Demande d'Application",
+  "details.actions.apply": "Je dépose ma demande",
   "details.actions.generate_pdf": "Générer Fiche Technique PDF",
   "details.actions.back_to_map": "Retour à la carte",
 

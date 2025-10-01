@@ -176,7 +176,7 @@ try {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_concessions.php">Concessions</a>
+                        <a class="nav-link" href="admin_concessions.php">Liste des concessions</a>
                     </li>
                 </ul>
                 <!-- <a href="index.php" class="btn btn-light">Retour au site</a> -->

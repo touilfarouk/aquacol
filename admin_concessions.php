@@ -71,8 +71,8 @@ try {
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="admin_concessions.php">Concessions</a>
+                   <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Carte</a>
                     </li>
                 </ul>
                 <!-- <a href="index.php" class="btn btn-light">Retour au site</a> -->
