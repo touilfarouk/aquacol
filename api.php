@@ -30,12 +30,13 @@ try {
     $codeConcession = $codeWilaya . $codeCommune . str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT);
 
     // Insert Query 
-    $query = "INSERT INTO coordinates (nom_zone, wilaya_name_ascii, commune_name_ascii, code_wilaya, code_commune, visible, distance_voi_acces, code_concession, superficie, description, coordonnee_a, coordonnee_b, coordonnee_c, coordonnee_d, format_coordonnees, created_at) 
-              VALUES (:nom_zone, :wilaya_name_ascii, :commune_name_ascii, :code_wilaya, :code_commune, :visible, :distance_voi_acces, :code_concession, :superficie, :description, :coordonnee_a, :coordonnee_b, :coordonnee_c, :coordonnee_d, :format_coordonnees, NOW())";
+    $query = "INSERT INTO coordinates (nom_zone,zone, wilaya_name_ascii, commune_name_ascii, code_wilaya, code_commune, visible, distance_voi_acces, code_concession, superficie, description, coordonnee_a, coordonnee_b, coordonnee_c, coordonnee_d, format_coordonnees, created_at) 
+              VALUES (:nom_zone, :zone, :wilaya_name_ascii, :commune_name_ascii, :code_wilaya, :code_commune, :visible, :distance_voi_acces, :code_concession, :superficie, :description, :coordonnee_a, :coordonnee_b, :coordonnee_c, :coordonnee_d, :format_coordonnees, NOW())";
 
     $stmt = $pdo->prepare($query);
     $stmt->execute([
         ':nom_zone' => $data['nom_zone'] ?? '',
+        ':zone' => $data['zone'] ?? '',
         ':wilaya_name_ascii' => $data['wilaya_name_ascii'] ?? '',
         ':commune_name_ascii' => $data['commune_name_ascii'] ?? '',
         ':code_wilaya' => $codeWilaya,

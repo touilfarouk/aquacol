@@ -445,7 +445,7 @@
                 
                 <form id="coordinate-form">
                     <!-- Hidden field for selected zone nom_zaa -->
-                    <input type="hidden" name="nom_zaa_selected" id="nom-zaa-selected" value="">
+                    <input type="hidden" name="zone" id="nom-zaa-selected" value="">
 
                     <!-- Bir El Malah Zones -->
                     <div class="mb-3">
@@ -1235,6 +1235,12 @@ function createLabelPane() {
                 // Récupérer les données du formulaire
                 const formData = new FormData(document.getElementById('coordinate-form'));
                 const data = Object.fromEntries(formData.entries());
+                
+                // Explicitly add the zone field
+                data.zone = document.getElementById('nom-zaa-selected').value;
+                
+                // Debug: log the data being sent
+                console.log('Data being sent to backend:', data);
                 
                 // Ajouter le format des coordonnées
                 data.format_coordonnees = currentFormat;
