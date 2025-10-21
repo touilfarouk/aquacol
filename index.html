@@ -444,9 +444,12 @@
                 <h6><i class="fas fa-map-marker-alt"></i><span data-i18n="coord.title">Coordonnées de la Zone</span></h6>
                 
                 <form id="coordinate-form">
+                    <!-- Hidden field for selected zone nom_zaa -->
+                    <input type="hidden" name="nom_zaa_selected" id="nom-zaa-selected" value="">
+
                     <!-- Bir El Malah Zones -->
                     <div class="mb-3">
-                        <label class="form-label" for="bir-el-malah-select">Zones Bir El Malah</label>
+                        <label class="form-label" for="bir-el-malah-select">Zones ZAA</label>
                         <select class="form-select" id="bir-el-malah-select" onchange="selectBirElMalahZone()">
                             <option value="">Sélectionner une zone</option>
                         </select>
@@ -703,7 +706,7 @@
             initMap();
             setupFormListeners();
             loadCommunesData(); // Load communes data
-            loadBirElMalahZones(); // Load Bir El Malah zones
+            loadZones(); // Load all zones dynamically
             loadSavedConcessions(); // Load existing concessions on page load
             initializeSidebarState(); // Initialize visual state
         });
@@ -1218,6 +1221,11 @@ function createLabelPane() {
             }
         }
 
+        // Refresh concessions (call after saving new one)
+        function refreshConcessions() {
+            loadSavedConcessions();
+        }
+
         // Sauvegarder les coordonnées via API
         async function saveCoordinates() {
             const saveBtn = document.querySelector('button[onclick="saveCoordinates()"]');
@@ -1376,6 +1384,11 @@ function createLabelPane() {
                 weight: 2,
                 fillOpacity: 0.1
             }).addTo(map);
+
+            // If the concession has a nom_zaa, load the corresponding zone JSON for visualization
+            if (concession.nom_zaa && zoneFileMap[concession.nom_zaa]) {
+                loadZoneForDisplay(concession.nom_zaa, coords);
+            }
 
             // Create hover content (simplified view)
             const hoverContent = createSavedConcessionPopup(concession, coords, true);
@@ -1556,34 +1569,71 @@ function createLabelPane() {
             savedMarkers = [];
         }
 
-        // Refresh concessions (call after saving new one)
-        function refreshConcessions() {
-            loadSavedConcessions();
+        // Display zone polygon on map when selected
+        async function displayZonePolygon(zoneFile, zoneCoordinates) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/zone/${zoneFile}`);
+                const jsonData = await response.json();
+
+                if (jsonData.features && jsonData.features.length > 0) {
+                    jsonData.features.forEach(feature => {
+                        if (feature.geometry && feature.geometry.coordinates) {
+                            // Create polygon from zone boundaries
+                            const zonePolygon = L.polygon(feature.geometry.coordinates[0].map(coord => [coord[1], coord[0]]), {
+                                color: '#007bff',
+                                weight: 3,
+                                fillOpacity: 0.1,
+                                opacity: 0.8
+                            }).addTo(map);
+
+                            // Fit map to show the zone
+                            map.fitBounds(zonePolygon.getBounds().pad(0.1));
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error displaying zone polygon:', error);
+            }
         }
 
-        // Load Bir El Malah zones from JSON file
-        async function loadBirElMalahZones() {
+        // Load zones from the zone folder dynamically
+        async function loadZones() {
             try {
-                const response = await fetch(`${API_BASE_URL}/bir_el_malah.json`);
-                const jsonData = await response.json();
+                // First, load the list of zone files from server
+                const response = await fetch(`${API_BASE_URL}/list_zone_files.php`);
+                const zoneFiles = await response.json();
                 
                 const select = document.getElementById('bir-el-malah-select');
                 select.innerHTML = '<option value="">Sélectionner une zone</option>';
-                select.innerHTML = '<option value="">Concession without zone</option>';
-                if (jsonData.features && jsonData.features.length > 0) {
-                    jsonData.features.forEach(feature => {
-                        const option = document.createElement('option');
-                        option.value = feature.properties.nom_zaa;
-                        option.textContent = `${feature.properties.nom_zaa} (${feature.properties.commune})`;
-                        option.dataset.coordinates = JSON.stringify(feature.geometry.coordinates[0]);
-                        option.dataset.description = feature.properties.description;
-                        option.dataset.superficie = feature.properties.superficie_ha;
-                        select.appendChild(option);
-                    });
+                
+                for (const file of zoneFiles) {
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/zone/${file}`);
+                        const jsonData = await response.json();
+                        
+                        if (jsonData.features && jsonData.features.length > 0) {
+                            jsonData.features.forEach(feature => {
+                                const option = document.createElement('option');
+                                option.value = feature.properties.nom_zaa;
+                                option.textContent = `${feature.properties.nom_zaa} (${feature.properties.commune})`;
+                                option.dataset.coordinates = JSON.stringify(feature.geometry.coordinates[0]);
+                                option.dataset.description = feature.properties.description;
+                                option.dataset.superficie = feature.properties.superficie_ha;
+                                option.dataset.zoneFile = file;
+                                select.appendChild(option);
+                                 
+                                // Store mapping for later zone loading
+                                zoneFileMap[feature.properties.nom_zaa] = file;
+                            });
+                        }
+                    } catch (fileError) {
+                        console.warn(`Could not load zone file: ${file}`, fileError);
+                    }
                 }
                 
+                console.log('Zones loaded successfully');
             } catch (error) {
-                console.error('Erreur lors du chargement des zones Bir El Malah:', error);
+                console.error('Error loading zones:', error);
             }
         }
 
@@ -1617,18 +1667,15 @@ function createLabelPane() {
                 // Update form inputs with coordinates
                 updateFormInputs(coords);
                 
-                // Update description and superficie if available
-                const descriptionField = document.querySelector('textarea[name="description"]');
-                if (descriptionField && description) {
-                    descriptionField.value = description;
-                    console.log('Description field updated');
+                // Update form with zone information
+                const zoneField = document.getElementById('nom-zaa-selected');
+                if (zoneField) {
+                    zoneField.value = selectedOption.value;
+                    console.log('Zone field updated with nom_zaa:', selectedOption.value);
                 }
                 
-                const superficieField = document.querySelector('input[name="superficie"]');
-                if (superficieField && superficie) {
-                    superficieField.value = (superficie * 10000).toFixed(2); // Convert ha to m²
-                    console.log('Superficie field updated');
-                }
+                // Display the zone polygon on the map
+                displayZonePolygon(selectedOption.dataset.zoneFile, coordinates);
                 
                 // Check if map is initialized before displaying
                 if (typeof map !== 'undefined' && map) {
@@ -1777,6 +1824,45 @@ function createLabelPane() {
             if (selectedCommune && selectedWilaya) {
                 const communeCode = getCommuneCode(selectedCommune, selectedWilaya);
                 document.getElementById('code-commune').value = communeCode;
+            }
+        }
+
+        // Load zone JSON for displaying saved concession zones
+        async function loadZoneForDisplay(nomZaa, concessionCoords) {
+            try {
+                const filename = zoneFileMap[nomZaa];
+                if (!filename) {
+                    console.warn(`No filename found for zone: ${nomZaa}`);
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/zone/${filename}`);
+                const jsonData = await response.json();
+
+                if (jsonData.features && jsonData.features.length > 0) {
+                    jsonData.features.forEach(feature => {
+                        if (feature.geometry && feature.geometry.coordinates) {
+                            // Create polygon from zone boundaries
+                            const zonePolygon = L.polygon(feature.geometry.coordinates[0].map(coord => [coord[1], coord[0]]), {
+                                color: '#007bff',
+                                weight: 3,
+                                fillOpacity: 0.1,
+                                opacity: 0.8
+                            }).addTo(map);
+
+                            // Calculate bounds and fit map to show both zone and concession
+                            const zoneBounds = zonePolygon.getBounds();
+                            const concessionCenter = L.latLngBounds(concessionCoords).getCenter();
+
+                            // Fit map to show both
+                            const group = new L.featureGroup([zonePolygon]);
+                            group.addLayer(L.marker(concessionCenter));
+                            map.fitBounds(group.getBounds().pad(0.1));
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading zone for display:', error);
             }
         }
 
