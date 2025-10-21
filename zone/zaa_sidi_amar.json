@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Sidi Amar",
+        "commune": "Souk Tleta",
+        "superficie_ha": 1.8421,
+        "description": "Zone Agricole Améliorée située dans la commune de Souk Tleta."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-1.95572, 35.01256],
+          [-1.95435, 35.01245],
+          [-1.95400, 35.01198],
+          [-1.95510, 35.01160],
+          [-1.95625, 35.01185],
+          [-1.95650, 35.01235],
+          [-1.95572, 35.01256]
+        ]]
+      }
+    }
+  ]
+}

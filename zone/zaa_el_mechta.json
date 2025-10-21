@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "El Mechta",
+        "commune": "Beni Boussaid",
+        "superficie_ha": 3.1572,
+        "description": "Zone Agricole Améliorée située dans la commune de Beni Boussaid."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-1.89055, 34.97286],
+          [-1.88870, 34.97274],
+          [-1.88832, 34.97215],
+          [-1.88940, 34.97185],
+          [-1.89110, 34.97190],
+          [-1.89135, 34.97245],
+          [-1.89055, 34.97286]
+        ]]
+      }
+    }
+  ]
+}
