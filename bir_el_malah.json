@@ -1,0 +1,28 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Bir El Malah",
+        "commune": "Msirda Fouaga",
+        "superficie_ha": 2.2466,
+        "description": "Zone Agricole Améliorée située à la commune de Msirda Fouaga."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-2.04333, 35.07246],
+          [-2.04149, 35.07244],
+          [-2.04123, 35.07182],
+          [-2.04130, 35.07168],
+          [-2.04333, 35.07139],
+          [-2.04074, 35.07153],
+          [-2.04130, 35.07137],
+          [-2.04072, 35.07134],
+          [-2.04333, 35.07246]
+        ]]
+      }
+    }
+  ]
+}

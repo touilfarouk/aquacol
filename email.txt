@@ -1,0 +1,138 @@
+can you convert all the  emails from "farouk.touil@bneder.dz to f.touil@bneder.dz" :Abes	Mounir	m.abes@bneder.dz	Départ.Génie Logiciel	Technicien supérieur toute filière
+Aouchar	Nabil	n.aouchar@bneder.dz	B.L Centre (Blida)	Cadre d'études
+AMMOUCHE	Mohamed Anis	m.ammouche@bneder.dz	Départ.Ress Humain.et Aff.Sociales	Administrateur junior
+KATEB	Asma	a.kateb@bneder.dz	Direction Générale	Assistante de direction
+Salamani	M	m.salamani@bneder.dz	Direction des Etudes Form.et Progr	Consultant
+Rachedi	A	a.rachedi@bneder.dz	Direction des Etudes Form.et Progr	Consultant
+MADOUI	Karima	karima.madoui@bneder.dz	S/Direc E.A.D.Rural	Cadre d'études
+Lassoued	Meriem	m.lassoued@bneder.dz	Départ. Doc.et Banq.de Données	Cadre d'études
+Bengussmia	Djamal	d.bengussmia@bneder.dz	B.L Steppes (Djelfa)	Cadre d'études
+Azzoug	Amastel	a.azzoug@bneder.dz	S/Direc E.A.D.Rural	Cadre d'études
+Gherdine	Mohamed Karim	m.gherdine@bneder.dz	B.L Ouest (Oran)	Technicien de maintenance N1
+Bensalem	Mohammed El Amine	m.bensalem@bneder.dz	B.L Ouest (Oran)	Assistant de gestion
+Chaib	Naziha	n.chaib@bneder.dz	Départ. S.I.G	Cadre d'études
+Abbaci	Tahar	t.abbaci@bneder.dz	Départ. S.I.G	Cadre d'études
+Chouaki	Nawel	n.chouaki@bneder.dz	Direction des Etudes Form.et Progr	Cadre d'études Spécialiste
+Bella	Yamina	y.bella@bneder.dz	B.L Région Hauts Plateaux (Sétif)	Secrétaire de Sous Direction N1
+Khelifi	Nassima	n.khelifi@bneder.dz	S/Direc E.A.D.Rural	Cadre d'Etudes Spécialisé N2
+Dif	Nacera	n.dif@bneder.dz	Direction.Admin.et des Finances	Secrétaire
+Kherrour	Nadjib	n.kherrour@bneder.dz	Direction Générale	Auditeur
+Rahim	Saad	s.rahim@bneder.dz	S/Direct E.A.D.Agricole	Cadre d'études
+Hadjami	Djamila	d.hadjami@bneder.dz	S/Direc E.A.D.A	Cadre d'études Junior N2
+Fettaka	Ali	a.fettaka@bneder.dz	Direction des Etudes Form.et Progr	Cadre d'expertise
+		.@bneder.dz		
+Omri	Wissem	w.omri@bneder.dz	Départ.Génie Logiciel	Technicien Supérieur toute filière
+		.@bneder.dz		
+Laoussadi	Adel	a.laoussadi@bneder.dz	B.L Centre (Blida)	Cadre d'études
+Bourelaf	Abdellatif	a.bourelaf@bneder.dz	B.L Centre (Blida)	Cadre d'études
+Chaatal	Merouane	m.chaatal@bneder.dz	B.L Centre (Blida)	Assistant administratif
+ait mouhoub	noureddine	n.ait mouhoub@bneder.dz	Départ.Laboratoire	cadre d'étude
+sadi	meriem	m.sadi@bneder.dz	Départ.Laboratoire	cadre d'etude
+		.@bneder.dz		
+Touil	Farouk	f.touil@bneder.dz	Départ.Génie Logiciel	Technicien d'études N°3
+Djeddi	Faycel	f.djeddi@bneder.dz	S/Direc E.A.D.Rural	
+		.@bneder.dz		
+		.@bneder.dz		
+		.@bneder.dz		
+		.@bneder.dz		
+		.@bneder.dz		
+		.@bneder.dz		
+		.@bneder.dz		
+		.@bneder.dz		
+		.@bneder.dz		
+		.@bneder.dz		
+		.@bneder.dz		
+		.@bneder.dz		
+AYACHI AMOR	Yazid	y.ayachi amor@bneder.dz	Direction Générale	Affaires juridiques et contentieux
+DJOUDI	KARIMA	k.djoudi@bneder.dz	S/Direc E.A.D.Rural	Cadre d'études
+BENHAMZA	Mohammed	m.benhamza@bneder.dz	B.L Steppes (Djelfa)	Cadre d'Etudes Junior N2
+Mekti	Ouassila	o.mekti@bneder.dz	B.L Est (Constantine)	Cadre d'Etudes Senior N4
+GUERROUMI	Naima	n.guerroumi@bneder.dz	Direction des Contrats et du Soutien	?
+Ouhalima	Sofiane	s.ouhalima@bneder.dz	Départ.Génie Logiciel	Cadre d'études
+Djidel	Raihana	r.djidel@bneder.dz	Départ.Laboratoire	Cadre d'Études
+Tifahi	Reda	r.tifahi@bneder.dz	Direction des Contrats et du Soutien	/
+DJIDEL	Hamida	h.djidel@bneder.dz	Départ.Patrimoine.et Moy.Généraux	Chargée du standard
+Hadjab	Malika	m.hadjab@bneder.dz	S/Direc E.A.D.A	Cadre d'Études
+Amouri	Fatiha	f.amouri@bneder.dz	S/Direc E.A.D.Rural	Cadre d'Études
+Djoudi	Mohamed	m.djoudi@bneder.dz	B.L Sud (Ouargla)	Chef de Bureau de Liaison Sud
+Ramdani	Imed	i.ramdani@bneder.dz	Départ.Génie Logiciel	Chef de Département
+BELKHIR	Moussadek	m.belkhir@bneder.dz	S/Direction de la Formation	S/Directeur de la Formation
+LICHANI	Nadji	n.lichani@bneder.dz	S/Direction de la Formation	Administrateur Junior N3
+ABBAS	Said	s.abbas@bneder.dz	S/Direc E.A.D.A	S/Directeur E.A.D.A
+BENAMARA	Ghania Ep DERROUICHE	g.benamara@bneder.dz	S/Direc E.A.D.A	Cadre d'Etudes Spécialisé N2
+MOKHTARI	Said	s.mokhtari@bneder.dz	S/Direc E.A.D.A	Cadre d'Etudes Senior N2
+TABBECH	Ramzi	r.tabbech@bneder.dz	S/Direc E.A.D.A	Cadre d'Etudes Junior N2
+MEZAOUR	Riad	r.mezaour@bneder.dz	S/Direct E.A.D.Agricole	Cadre d'Etudes Junior N2
+GUERROUMI	Nadia	n.guerroumi@bneder.dz	S/Direc E.A.D.A	Cadre d'Etudes Junior N2
+BELHEOUANE	Kaouther	k.belheouane@bneder.dz	S/Direct E.A.D.Agricole	Cadre d'Etudes Junior N2
+BOUZAHER	Sofiane jelal	s.bouzaher@bneder.dz	S/Direc E.A.D.A	Cadre d'Etudes et de Synthèse N2
+BELOUAR	Lamia Née OUNTGHAR	l.belouar@bneder.dz	S/Direc.Progr.et Moy.Téchnique	Secrétaire de Sous Direction N4
+AMIMEUR	Matouk	m.amimeur@bneder.dz	S/Direc.Progr.et Moy.Téchnique	S/Directeur de la P.M.T
+HADJI	Asma	a.hadji@bneder.dz	S/Direc E.A.D.A	Secrétaire de Sous Direction N3
+HACHEMI	Saliha	s.hachemi@bneder.dz	S/Direc E.A.D.Rural	S/Directrice E.A.D.R
+KRIBES	Razika	r.kribes@bneder.dz	S/Direc E.A.D.Rural	Cadre d'Etudes Senior N3
+ENCHIRI	Manel	m.enchiri@bneder.dz	S/Direc E.A.D.Rural	Cadre d'Etudes Junior N2
+BENSAAD	Hafida	h.bensaad@bneder.dz	S/Direc E.A.D.Rural	Cadre d'Etudes Junior N2
+CHIKIROU	Fatiha	f.chikirou@bneder.dz	S/Direc E.A.D.Rural	Cadre d'Etudes et de Synthèse N1
+NEKAI	Nora	n.nekai@bneder.dz	Direction des Etudes Form.et Progr	Secretaire de Direction Générale N1
+IGHALLOUN	Nadia	n.ighalloun@bneder.dz	Direction Générale	Secretaire de Direction Générale N1
+HAMIDOUCHE	Samira	s.hamidouche@bneder.dz	Direction Générale	Assistante DG (Commun & Maketing)
+KIOUANE	Rachida Née GRIOUA	r.kiouane@bneder.dz	Direction Générale	Administrateur Principal N3
+BENMOHAMED	Khaled	k.benmohamed@bneder.dz	Direction Générale	Directeur Général
+AMARA	Ghania	g.amara@bneder.dz	Direction des Etudes Form.et Progr	Assistant de Gestion Principal N2
+KIOUANE	Djallal eddine	d.kiouane@bneder.dz	Direction des Contrats et du Soutien	Directeur des contrats et du Soutien
+BOUDAA	Adel	a.boudaa@bneder.dz	Direction des Contrats et du Soutien	Assistant de Direction
+BENEUS	Djedjiga	d.beneus@bneder.dz	Départ.Ress Humain.et Aff.Sociales	Assistant de Gestion N4
+MEZENNER	Takieddine	t.mezenner@bneder.dz	Départ.Ress Humain.et Aff.Sociales	Administrateur Junior N1
+BOUAKOUK	Abdeldjalil	a.bouakouk@bneder.dz	Départ.Patrimoine.et Moy.Généraux	Administrateur Junior N1
+MECHTAOUI	Linda	l.mechtaoui@bneder.dz	Départ. Doc.et Banq.de Données	Secrétaire de Département N3
+MAHROUG	Djamel	d.mahroug@bneder.dz	Départ.Patrimoine.et Moy.Généraux	Chef de Départ.Patrimoine et Moy Généraux.
+ZENATI	Abderrahim	a.zenati@bneder.dz	Départ.Patrimoine.et Moy.Généraux	Assistant de Gestion Principal N1
+KHODJA	Amar	a.khodja@bneder.dz	Départ.Patrimoine.et Moy.Généraux	Assistant de Gestion N2
+BOUNAB	Mohamed	m.bounab@bneder.dz	Départ.Patrimoine.et Moy.Généraux	Assistant de Gestion N1
+BELASLOUNI	Abdelbassat	a.belaslouni@bneder.dz	Départ.Patrimoine.et Moy.Généraux	Administrateur N1
+DAHMANI	Hassiba	h.dahmani@bneder.dz	Départ.Laboratoire	Chef de Département Labo
+HABBOUCHE	Farida	f.habbouche@bneder.dz	S/Direc E.A.D.Rural	Cadre d'Etudes Senior N2
+TEBBAKH	Hassina	h.tebbakh@bneder.dz	Départ.Laboratoire	Cadre d'Etudes Senior N1
+AGUELMINE	Hassiba	h.aguelmine@bneder.dz	Départ.Laboratoire	Cadre d'Etudes Senior N1
+YOUSFI	Anissa	a.yousfi@bneder.dz	Départ.Laboratoire	Cadre d'Etudes Junior N2
+KHIDER	Fatiha Eps KADI	f.khider@bneder.dz	Départ.Laboratoire	Cadre d'Etudes Junior N2
+BAITICH	Hadjira	h.baitich@bneder.dz	Départ.Laboratoire	Cadre d'Etudes et d'Application
+ZEGHNOUN	FARES	f.zeghnoun@bneder.dz	Départ.Génie Logiciel	Technicien Superieur toutes Filières N1
+HATTOU	Sofiane	s.hattou@bneder.dz	Départ.Génie Logiciel	Chef de déppartement DGL
+CHARMATI	Azzedine	a.charmati@bneder.dz	Départ. Doc.et Banq.de Données	Assistant de Gestion Principal N1
+OUABRI	Ahmed	a.ouabri@bneder.dz	Direction.Admin.et des Finances	Directeur de l'Administration et des Finances
+TIFAHI	Rafik	r.tifahi@bneder.dz	Départ.Finances.et Comptabilité	Caissier
+BENCHOUCHA	Faycal	f.benchoucha@bneder.dz	Départ.Finances.et Comptabilité	Chef de Dép.Finances et Comptabilité
+BENMOUFFOK	Feriel	f.benmouffok@bneder.dz	Départ. S.I.G	Technicien SIG N1
+AMEUR	Dalila	d.ameur@bneder.dz	Départ. S.I.G	Technicien SIG N1
+IHDENE	Sofiane	s.ihdene@bneder.dz	Départ. S.I.G	Chef de Département SIG
+BENHOUHOU	Kamel	k.benhouhou@bneder.dz	Départ. S.I.G	Cadre d'Etudes Senior N2
+HOUMA	Ratiba	r.houma@bneder.dz	Départ. S.I.G	Cadre d'Etudes Junior N2
+BOUCHENAFA	Chakir	c.bouchenafa@bneder.dz	Départ. S.I.G	Agent de Soutien Technique N2
+MAHROUG	Zineb	z.mahroug@bneder.dz	Départ. Doc.et Banq.de Données	Chef Départ Doc et B.Données
+BENTOUMI	Mohammed	m.bentoumi@bneder.dz	B.L Steppes (Djelfa)	Chef de Bureau de Liaison Sud
+DJEDILAT	Lakhdar	l.djedilat@bneder.dz	B.L Steppes (Djelfa)	Cadre d'Etudes Junior N2
+BENTORCHA	Abdelkrim	a.bentorcha@bneder.dz	B.L Steppes (Djelfa)	Cadre d'Etudes Junior N2
+ATTOUT	Amel	a.attout@bneder.dz	B.L Steppes (Djelfa)	Assistant de Direction
+HEBBACHE	Kamel	k.hebbache@bneder.dz	B.L Région Hauts Plateaux (Sétif)	Chef de Bureau de Liaison H.Plateaux
+OUCIEF	Ahmed	a.oucief@bneder.dz	B.L Région Hauts Plateaux (Sétif)	Cadre d'Etudes Spécialisé N2
+MERIDJI	Farouk	f.meridji@bneder.dz	B.L Région Hauts Plateaux (Sétif)	Cadre d'Etudes Junior N2
+GUEDJALI	Djebbar	d.guedjali@bneder.dz	B.L Région Hauts Plateaux (Sétif)	Cadre d'Etudes Junior N2
+BOUDJEMAA	Imane	i.boudjemaa@bneder.dz	B.L Ouest (Oran)	Secrétaire Polyvalente N1
+AOUAM	Abdelkrim	a.aouam@bneder.dz	B.L Ouest (Oran)	Chef de Bureau de Liaison Ouest
+SIRAT	Noureddine	n.sirat@bneder.dz	B.L Ouest (Oran)	Cadre d'Etudes Spécialisé N2
+KHEROUCHE	Abdelmadjid	a.kherouche@bneder.dz	B.L Ouest (Oran)	Cadre d'Etudes Spécialisé N2
+NEGGAZ	Lahouari	l.neggaz@bneder.dz	B.L Ouest (Oran)	Cadre d'Etudes Junior N3
+MOUZIANI	Belaid	b.mouziani@bneder.dz	B.L Ouest (Oran)	Cadre d'Etudes Junior N3
+CHERGUIA	Abdellah	a.cherguia@bneder.dz	B.L Ouest (Oran)	Cadre d'Etudes Junior N2
+MEZOUARI	Amel	m.mezouari@bneder.dz	B.L Est (Constantine)	Technicien SIG N2
+AOUDIA	Aoudia	a.aoudia@bneder.dz	B.L Est (Constantine)	Technicien SIG N2
+MADOUI	Malika	m.madoui@bneder.dz	B.L Est (Constantine)	Secrétaire de Sous Direction N1
+CHAIBI	Abdelhakim	a.chaibi@bneder.dz	B.L Est (Constantine)	Chef de Bureau de Liaison Est
+ADOUI	Hocine	h.adoui@bneder.dz	B.L Est (Constantine)	Cadre d'Etudes Senior N2
+MECHAOUD	Salah	s.mechaoud@bneder.dz	B.L Est (Constantine)	Cadre d'Etudes Senior N1
+GHACHI	Azzouz	a.ghachi@bneder.dz	B.L Est (Constantine)	Cadre d'Etudes et de Synthèse N1
+DAOUDI	Lazhar	l.daoudi@bneder.dz	B.L Est (Constantine)	Assistant de Gestion N4
+HELAL	Faycal	f.helal@bneder.dz	Direction des Etudes Form.et Progr	Directeur des Etudes et de la Formation et de la Programmation
+DRIOUECHE	Moufid	m.drioueche@bneder.dz	B.L Centre (Blida)	Cadre d'Etudes Spécialisé N2
