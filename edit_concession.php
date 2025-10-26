@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Update query with all fields
         $sql = "UPDATE coordinates 
                    SET code_concession=:code_concession,
-                       nom_zone=:nom_zone,
+                       zone=:nom_zone,
                        wilaya_name_ascii=:wilaya_name_ascii,
                        commune_name_ascii=:commune_name_ascii,
                        code_wilaya=:code_wilaya,
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare($sql);
         $result = $stmt->execute([
             ':code_concession'    => $codeConcession,
-            ':nom_zone'           => $nomZone,
+            ':zone'           => $nomZone,
             ':wilaya_name_ascii'  => $wilayaName,
             ':commune_name_ascii' => $communeName,
             ':code_wilaya'        => $codeWilaya,
@@ -221,7 +221,7 @@ try {
                         <div class="col-md-6">
                             <label for="nom_zone" class="form-label">Nom de la zone</label>
                             <input type="text" class="form-control" id="nom_zone" name="nom_zone" 
-                                   value="<?= htmlspecialchars($concession['nom_zone'] ?? '') ?>" required>
+                                   value="<?= htmlspecialchars($concession['zone'] ?? '') ?>" required>
                         </div>
                     </div>
 

@@ -106,7 +106,8 @@ try {
                         <th>ID</th>
                         <th>Code</th>
                         <th>Zone</th>
-                        <th>Type</th>
+                        <!-- <th>Type</th> -->
+                         <!-- nom_zone -->
                         <th>Superficie (m²)</th>
                         <th>Statut</th>
                         <th>Actions</th>
@@ -117,8 +118,8 @@ try {
                     <tr>
                         <td><?= htmlspecialchars($concession['id']) ?></td>
                         <td><?= htmlspecialchars($concession['code_concession']) ?></td>
-                        <td><?= htmlspecialchars($concession['nom_zone']) ?></td>
-                        <td><?= htmlspecialchars($concession['type_concession'] ?? 'Non spécifié') ?></td>
+                        <td><?= htmlspecialchars($concession['zone']) ?></td>
+                        
                         <td><?= number_format($concession['superficie'], 2) ?></td>
                         <td>
                             <?php $statut = $concession['statut'] ?? 'inactive'; ?>

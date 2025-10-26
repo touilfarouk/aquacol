@@ -76,12 +76,12 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand" href="index.html">
+            <a class="navbar-brand" href="client-map.html">
                 <i class="fas fa-fish me-2"></i>
                 <span data-i18n="nav.brand">Gestion des Concessions Aquaculture</span>
             </a>
             <div class="d-flex align-items-center gap-2">
-                <a href="index.html" class="btn btn-outline-light btn-sm me-3">
+                <a href="client-map.html" class="btn btn-outline-light btn-sm me-3">
                     <i class="fas fa-arrow-left me-2"></i><span data-i18n="details.actions.back_to_map">Retour à la carte</span>
                 </a>
                 <button type="button" id="lang-fr" class="btn btn-sm btn-outline-light" onclick="setLang('fr')">Français</button>
@@ -251,7 +251,7 @@
                         <!-- <button onclick="generatePDF()" class="btn btn-success btn-lg me-3">
                             <i class="fas fa-file-pdf me-2"></i><span data-i18n="details.actions.generate_pdf">Générer Fiche Technique PDF</span>
                         </button> -->
-                        <a href="index.html" class="btn btn-outline-success btn-lg">
+                        <a href="client-map.html" class="btn btn-outline-success btn-lg">
                             <i class="fas fa-arrow-left me-2"></i><span data-i18n="details.actions.back_to_map">Retour à la carte</span>
                         </a>
                     </div>
