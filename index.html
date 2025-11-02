@@ -399,6 +399,31 @@
             z-index: 1001;
             transition: opacity 0.3s ease;
         }
+
+        /* Style for select options */
+        .form-select option {
+            background-color: white;
+            color: #2d3748;
+        }
+
+        /* Style for optgroups */
+        .form-select optgroup {
+            font-weight: 600;
+            color: #4a8eff;
+            background-color: #f0f4f8;
+        }
+
+        /* Style for options within optgroups */
+        .form-select optgroup option {
+            color: #4a5568;
+            font-weight: normal;
+        }
+
+        /* Hover state for options */
+        .form-select option:hover {
+            background-color: #4a8eff;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -449,14 +474,14 @@
 
                     <!-- Bir El Malah Zones -->
                     <div class="mb-3">
-                        <label class="form-label" for="bir-el-malah-select">Zones ZAA</label>
+                        <label class="form-label fw-bold text-white" for="bir-el-malah-select">Zones ZAA</label>
                         <div class="input-group">
-                        <select class="form-select" id="bir-el-malah-select" onchange="selectBirElMalahZone()">
-                            <option value="">Sélectionner une zone</option>
-                        </select>
-                        <button type="button" id="toggle-popups-btn" class="btn btn-outline-secondary" title="Afficher les informations de la zone" onclick="toggleZonePopup()" disabled>
-                            <i class="fas fa-info-circle"></i>
-                        </button>
+                            <select class="form-select" id="bir-el-malah-select" onchange="selectBirElMalahZone()">
+                                <option value="">Sélectionner une zone</option>
+                            </select>
+                            <button type="button" id="toggle-popups-btn" class="btn btn-outline-info ms-2" title="Afficher les informations de la zone" onclick="toggleZonePopup()" disabled>
+                                <i class="fas fa-info-circle"></i>
+                            </button>
                         </div>
                     </div>
 
