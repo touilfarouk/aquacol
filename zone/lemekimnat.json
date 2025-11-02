@@ -6,20 +6,23 @@
       "properties": {
         "nom_zaa": "Lemekimnat",
         "commune": "El Outaya",
+        "wilaya": "Biskra",
         "superficie_ha": 34.591,
-        "description": "Zone d’activités aquacoles située dans la commune de El Outaya, Wilaya de Biskra."
+        "description": "Zone d’activités aquacoles située dans la commune de El Outaya, Wilaya de Biskra (Lemekimnat)."
       },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[
-          [5.622919, 34.916875],
-          [5.624772, 34.914914],
-          [5.614642, 34.907622],
-          [5.613531, 34.908847],
-          [5.614256, 34.909358],
-          [5.613358, 34.910322],
-          [5.622919, 34.916875]
-        ]]
+        "coordinates": [
+          [
+            [5.622919, 34.916875],
+            [5.624772, 34.914914],
+            [5.614642, 34.907622],
+            [5.613531, 34.908847],
+            [5.614256, 34.909358],
+            [5.613358, 34.910322],
+            [5.622919, 34.916875]
+          ]
+        ]
       }
     }
   ]

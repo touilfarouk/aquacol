@@ -1,24 +1,27 @@
- {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "type": "Feature",
-            "properties": {
-                "nom_zaa": "Sidi Abderrahmane ZAA P2",
-                "commune": "Sidi Abderrahmane",
-                "superficie_ha": 1.07,
-                "description": "Zone d’activités aquacoles située dans la commune de Sidi Abderrahmane, Wilaya de Chlef."
-            },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [[
-                    [1.08333333, 36.49361111],
-                    [1.08444444, 36.49305556],
-                    [1.08416667, 36.49222222],
-                    [1.0825, 36.4925],
-                    [1.08333333, 36.49361111]
-                ]]
-            }
-        }
-    ]
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Sidi Abderrahmane ZAA P2",
+        "commune": "Sidi Abderrahmane",
+        "wilaya": "Chlef",
+        "superficie_ha": 1.07,
+        "description": "Zone d’activités aquacoles située dans la commune de Sidi Abderrahmane, Wilaya de Chlef (ZAA P2)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [1.08333333, 36.49361111],
+            [1.08444444, 36.49305556],
+            [1.08416667, 36.49222222],
+            [1.0825, 36.4925],
+            [1.08333333, 36.49361111]
+          ]
+        ]
+      }
+    }
+  ]
 }

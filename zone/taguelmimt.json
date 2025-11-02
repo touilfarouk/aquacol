@@ -6,18 +6,21 @@
       "properties": {
         "nom_zaa": "Taguelmimt",
         "commune": "Beni Ksila",
+        "wilaya": "Béjaïa",
         "superficie_ha": 10,
-        "description": "Zone d'activités aquacoles située à Tifrit, commune de Beni Ksila, Wilaya de Béjaïa."
+        "description": "Zone d’activités aquacoles située à Tifrit, commune de Beni Ksila, Wilaya de Béjaïa (Taguelmimt)."
       },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[
-          [4.810000, 36.880000],
-          [4.815000, 36.880000],
-          [4.815000, 36.885000],
-          [4.810000, 36.885000],
-          [4.810000, 36.880000]
-        ]]
+        "coordinates": [
+          [
+            [4.810000, 36.880000],
+            [4.815000, 36.880000],
+            [4.815000, 36.885000],
+            [4.810000, 36.885000],
+            [4.810000, 36.880000]
+          ]
+        ]
       }
     }
   ]

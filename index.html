@@ -1981,7 +1981,7 @@ function createZoneInfoCard(properties, zoneName) {
             return new L.Control.Notice(options);
         };
 
-// Load zones from the zone folder dynamically
+// Load zones from the zone folder dynamically and group by wilaya
         async function loadZones() {
             try {
                 // First, load the list of zone files from server
@@ -1992,6 +1992,10 @@ function createZoneInfoCard(properties, zoneName) {
                 select.innerHTML = '<option value="">Sélectionner une zone</option>';
                 select.innerHTML = '<option value="hors_zone">Hors zone</option>';
                 
+                // Object to store zones grouped by wilaya
+                const zonesByWilaya = {};
+                
+                // First pass: collect all zones and group them by wilaya
                 for (const file of zoneFiles) {
                     try {
                         const response = await fetch(`${API_BASE_URL}/zone/${file}`);
@@ -1999,15 +2003,20 @@ function createZoneInfoCard(properties, zoneName) {
                         
                         if (jsonData.features && jsonData.features.length > 0) {
                             jsonData.features.forEach(feature => {
-                                const option = document.createElement('option');
-                                option.value = feature.properties.nom_zaa;
-                                option.textContent = `${feature.properties.nom_zaa} (${feature.properties.commune})`;
-                                option.dataset.coordinates = JSON.stringify(feature.geometry.coordinates[0]);
-                                option.dataset.description = feature.properties.description;
-                                option.dataset.superficie = feature.properties.superficie_ha;
-                                option.dataset.zoneFile = file;
-                                select.appendChild(option);
-                                 
+                                const wilaya = feature.properties.wilaya || 'Autres';
+                                if (!zonesByWilaya[wilaya]) {
+                                    zonesByWilaya[wilaya] = [];
+                                }
+                                
+                                zonesByWilaya[wilaya].push({
+                                    nom_zaa: feature.properties.nom_zaa,
+                                    commune: feature.properties.commune,
+                                    description: feature.properties.description,
+                                    superficie_ha: feature.properties.superficie_ha,
+                                    coordinates: feature.geometry.coordinates[0],
+                                    zoneFile: file
+                                });
+                                
                                 // Store mapping for later zone loading
                                 zoneFileMap[feature.properties.nom_zaa] = file;
                             });
@@ -2017,7 +2026,31 @@ function createZoneInfoCard(properties, zoneName) {
                     }
                 }
                 
-                console.log('Zones loaded successfully');
+                // Second pass: create optgroups and options
+                Object.keys(zonesByWilaya).sort().forEach(wilaya => {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = wilaya;
+                    
+                    // Sort zones by name within each wilaya
+                    zonesByWilaya[wilaya].sort((a, b) => a.nom_zaa.localeCompare(b.nom_zaa));
+                    
+                    // Add zones to the optgroup
+                    zonesByWilaya[wilaya].forEach(zone => {
+                        const option = document.createElement('option');
+                        option.value = zone.nom_zaa;
+                        option.textContent = `${zone.nom_zaa} (${zone.commune})`;
+                        option.dataset.coordinates = JSON.stringify(zone.coordinates);
+                        option.dataset.description = zone.description;
+                        option.dataset.superficie = zone.superficie_ha;
+                        option.dataset.zoneFile = zone.zoneFile;
+                        
+                        optgroup.appendChild(option);
+                    });
+                    
+                    select.appendChild(optgroup);
+                });
+                
+                console.log('Zones loaded and grouped by wilaya');
             } catch (error) {
                 console.error('Error loading zones:', error);
             }

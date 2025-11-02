@@ -6,18 +6,21 @@
       "properties": {
         "nom_zaa": "Saadoune 01",
         "commune": "El Outaya",
+        "wilaya": "Biskra",
         "superficie_ha": 50,
-        "description": "Zone d’activités aquacoles située dans la commune de El Outaya, Wilaya de Biskra."
+        "description": "Zone d’activités aquacoles située dans la commune de El Outaya, Wilaya de Biskra (Saadoune 01)."
       },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[
-          [5.511236, 34.935678],
-          [5.517194, 34.933822],
-          [5.510614, 34.926422],
-          [5.505922, 34.929075],
-          [5.511236, 34.935678]
-        ]]
+        "coordinates": [
+          [
+            [5.511236, 34.935678],
+            [5.517194, 34.933822],
+            [5.510614, 34.926422],
+            [5.505922, 34.929075],
+            [5.511236, 34.935678]
+          ]
+        ]
       }
     }
   ]
