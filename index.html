@@ -1800,7 +1800,7 @@ function createZoneInfoCard(properties, zoneName) {
         gap: 8px;
         padding-right: 20px;
     `;
-    title.innerHTML = `<i class="fas fa-map-marker-alt" style="color: #ff6b6b;"></i> ${properties.nom_zaa || zoneName || 'Zone sans nom'}`;
+    title.innerHTML = `${properties.nom_zaa || zoneName || 'Zone sans nom'}`;
     
     const content = document.createElement('div');
     content.style.cssText = `
@@ -1811,32 +1811,52 @@ function createZoneInfoCard(properties, zoneName) {
     `;
     
     // Helper function to create info row with icon
-    const createInfoRow = (icon, iconColor, label, value) => {
+    const createInfoRow = (icon, iconColor, label, value, hasNext = false) => {
         if (!value) return '';
         return `
-            <div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; ${hasNext ? 'border-bottom: 1px solid rgba(255, 255, 255, 0.08);' : ''}">
                 <i class="fas fa-${icon}" style="color: ${iconColor}; width: 20px; text-align: center; font-size: 16px;"></i>
                 <span style="flex: 1;font-weight: 500; color: #ffffff;">${label}:</span>
-                <span style=" color: #ffffff;">${value}</span>
+                <span style="color: #ffffff;">${value}</span>
             </div>
         `;
     };
     
-    content.innerHTML = `
-        ${createInfoRow('city', '#4ecdc4', 'Commune', properties.commune || 'Non spécifiée')}
-        ${properties.superficie_ha ? createInfoRow('ruler-combined', '#ff9f43', 'Superficie', `${properties.superficie_ha} ha`) : ''}
-        ${properties.description ? `
-            <div style="margin-top: 8px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: #9c88ff; font-weight: 500;">
+    // Build the content HTML
+    let infoContent = '';
+    
+    // Add Wilaya (always show with border if there's commune or superficie)
+    if (properties.wilaya) {
+        infoContent += createInfoRow('map-marker-alt', '#61dafb', 'Wilaya', properties.wilaya, 
+            !!(properties.commune || properties.superficie_ha));
+    }
+    
+    // Add Commune (show with border if there's superficie)
+    if (properties.commune) {
+        infoContent += createInfoRow('city', '#4ecdc4', 'Commune', properties.commune, !!properties.superficie_ha);
+    }
+    
+    // Add Superficie (show with border if there's description)
+    if (properties.superficie_ha) {
+        infoContent += createInfoRow('ruler-combined', '#ff9f43', 'Superficie', 
+            `${properties.superficie_ha} ha`, !!properties.description);
+    }
+    
+    // Add Description if it exists
+    if (properties.description) {
+        infoContent += `
+           
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: #0dcaf0; font-weight: 500;">
                     <i class="fas fa-info-circle"></i>
                     <span>Description</span>
                 </div>
                 <div style="font-size: 13px; line-height: 1.5; color: #d0d0d0; background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 6px;">
                     ${properties.description}
                 </div>
-            </div>
-        ` : ''}
-    `;
+            `;
+    }
+    
+    content.innerHTML = infoContent;
     
     // Add subtle animation on load
     card.style.opacity = '0';
