@@ -450,9 +450,14 @@
                     <!-- Bir El Malah Zones -->
                     <div class="mb-3">
                         <label class="form-label" for="bir-el-malah-select">Zones ZAA</label>
+                        <div class="input-group">
                         <select class="form-select" id="bir-el-malah-select" onchange="selectBirElMalahZone()">
                             <option value="">Sélectionner une zone</option>
                         </select>
+                        <button type="button" id="toggle-popups-btn" class="btn btn-outline-secondary" title="Afficher les informations de la zone" onclick="toggleZonePopup()" disabled>
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                        </div>
                     </div>
 
                     <!-- Format de coordonnées -->
@@ -700,6 +705,8 @@
         let savedMarkers = []; // Array to store all saved concession markers
         let communesData = []; // Array to store communes data
         let sidebarVisible = true; // Track sidebar visibility state
+        let zoneLayers = []; // Array to store zone layers
+        let popupsVisible = false; // Track if popups are currently visible
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
@@ -1576,33 +1583,336 @@ function createLabelPane() {
         }
 
         // Display zone polygon on map when selected
-        async function displayZonePolygon(zoneFile, zoneCoordinates) {
+        async function displayZonePolygon(zoneFile, zoneName) {
             try {
-                const response = await fetch(`${API_BASE_URL}/zone/${zoneFile}`);
+                // Clear any existing zones and info card
+                zoneLayers.forEach(layer => {
+                    if (map.hasLayer(layer)) {
+                        map.removeLayer(layer);
+                    }
+                });
+                zoneLayers = [];
+                
+                // Remove existing info card if any
+                const existingCard = document.getElementById('zone-info-card');
+                if (existingCard) {
+                    existingCard.remove();
+                }
+                
+                const response = await fetch(`zone/${zoneFile}`);
+                if (!response.ok) throw new Error('Failed to load zone data');
+                
                 const jsonData = await response.json();
 
                 if (jsonData.features && jsonData.features.length > 0) {
-                    jsonData.features.forEach(feature => {
-                        if (feature.geometry && feature.geometry.coordinates) {
-                            // Create polygon from zone boundaries
-                            const zonePolygon = L.polygon(feature.geometry.coordinates[0].map(coord => [coord[1], coord[0]]), {
-                                color: '#00F900',
-                                weight: 3,
-                                fillOpacity: 0.1,
-                                opacity: 0.8
-                            }).addTo(map);
+                    const feature = jsonData.features[0];
+                    if (feature.geometry && feature.geometry.coordinates) {
+                        // Create polygon from zone boundaries
+                        const coordinates = feature.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
+                        const zonePolygon = L.polygon(coordinates, {
+                            color: '#00F900',
+                            weight: 3,
+                            fillOpacity: 0.1,
+                            opacity: 0.8
+                        });
 
-                            // Fit map to show the zone
-                            map.fitBounds(zonePolygon.getBounds().pad(0.1));
+                        // Store the feature data on the polygon
+                        zonePolygon.feature = feature;
+                        
+                        // Create and show zone info card
+                        createZoneInfoCard(feature.properties, zoneName);
+                        
+                        // Add hover effect
+                        zonePolygon.on('mouseover', function() {
+                            this.setStyle({
+                                weight: 4,
+                                fillOpacity: 0.2
+                            });
+                        });
+                        
+                        zonePolygon.on('mouseout', function() {
+                            this.setStyle({
+                                weight: 3,
+                                fillOpacity: 0.1
+                            });
+                        });
+
+                        // Add to map and store reference
+                        zonePolygon.addTo(map);
+                        zoneLayers.push(zonePolygon);
+                        
+                        // Fit map to show the zone with some padding
+                        map.fitBounds(zonePolygon.getBounds().pad(0.1));
+                        
+                        // Enable the info button
+                        const toggleBtn = document.getElementById('toggle-popups-btn');
+                        if (toggleBtn) {
+                            toggleBtn.disabled = false;
+                            // Update the toggle button to show/hide the info card
+                            toggleBtn.onclick = function() {
+                                const infoCard = document.getElementById('zone-info-card');
+                                if (infoCard) {
+                                    const isVisible = infoCard.style.display !== 'none';
+                                    infoCard.style.display = isVisible ? 'none' : 'block';
+                                    toggleBtn.classList.toggle('active', !isVisible);
+                                    toggleBtn.title = isVisible ? 'Afficher les informations' : 'Masquer les informations';
+                                    const icon = toggleBtn.querySelector('i');
+                                    if (icon) icon.className = isVisible ? 'fas fa-info-circle' : 'fas fa-times';
+                                }
+                            };
                         }
-                    });
+                    }
                 }
+                
+                // Show the info card by default when a zone is selected
+                const infoCard = document.getElementById('zone-info-card');
+                if (infoCard) {
+                    infoCard.style.display = 'block';
+                }
+                
             } catch (error) {
                 console.error('Error displaying zone polygon:', error);
+                L.control.notice({position: 'topcenter'})
+                    .show('Erreur lors du chargement de la zone', 3000);
+                
+                // Disable the info button on error
+                const toggleBtn = document.getElementById('toggle-popups-btn');
+                if (toggleBtn) toggleBtn.disabled = true;
             }
         }
+        
+        // Create a zone info card in the top right corner
+        function createZoneInfoCard(properties, zoneName) {
+            // Remove existing card if any
+            const existingCard = document.getElementById('zone-info-card');
+            if (existingCard) {
+                existingCard.remove();
+            }
+            
+            // Create card container
+            const card = document.createElement('div');
+            card.id = 'zone-info-card';
+            card.className = 'zone-info-card';
+            card.style.cssText = `
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                z-index: 1000;
+                background: white;
+                padding: 12px 15px;
+                border-radius: 4px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+                max-width: 280px;
+                font-family: Arial, sans-serif;
+                font-size: 13px;
+                line-height: 1.4;
+                color: #333;
+            `;
+            
+            // Create close button
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '&times;';
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                background: none;
+                border: none;
+                font-size: 16px;
+                cursor: pointer;
+                color: #666;
+                padding: 0 5px;
+                line-height: 1;
+            `;
+            closeBtn.onclick = function() {
+                card.style.display = 'none';
+                const toggleBtn = document.getElementById('toggle-popups-btn');
+                if (toggleBtn) {
+                    popupsVisible = false;
+                    toggleBtn.classList.remove('active');
+                    toggleBtn.title = 'Afficher les informations';
+                    const icon = toggleBtn.querySelector('i');
+                    if (icon) icon.className = 'fas fa-info-circle';
+                }
+            };
+            
+            // Create content
+            const title = document.createElement('div');
+            title.style.fontWeight = 'bold';
+            title.style.marginBottom = '8px';
+            title.style.fontSize = '14px';
+            title.textContent = properties.nom_zaa || zoneName || 'Zone sans nom';
+            
+            const content = document.createElement('div');
+            content.innerHTML = `
+                <div><strong>Commune:</strong> ${properties.commune || 'Non spécifiée'}</div>
+                ${properties.superficie_ha ? `<div><strong>Superficie:</strong> ${properties.superficie_ha} ha</div>` : ''}
+                ${properties.description ? `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">${properties.description}</div>` : ''}
+            `;
+            
+            // Assemble the card
+            card.appendChild(closeBtn);
+            card.appendChild(title);
+            card.appendChild(content);
+            
+            // Add to map container
+            document.getElementById('map').appendChild(card);
+        }
 
-        // Load zones from the zone folder dynamically
+                // Toggle popup for the selected zone
+        function toggleZonePopup() {
+            const select = document.getElementById('bir-el-malah-select');
+            const selectedZone = select.value;
+            const btn = document.getElementById('toggle-popups-btn');
+            
+            if (!selectedZone) {
+                // No zone selected
+                btn.disabled = true;
+                return;
+            }
+            
+            btn.disabled = false;
+            popupsVisible = !popupsVisible;
+            
+            // Find the layer for the selected zone
+            const selectedLayer = zoneLayers.find(layer => 
+                layer.feature && 
+                layer.feature.properties && 
+                layer.feature.properties.nom_zaa === selectedZone
+            );
+            
+            if (!selectedLayer) return;
+            
+            if (popupsVisible) {
+                const props = selectedLayer.feature.properties;
+                const popupContent = `
+                    <div style="min-width: 200px; padding: 10px;">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="mb-2">${props.nom_zaa || 'Zone'}</h6>
+                            ${props.superficie_ha ? `<span class="badge bg-primary">${props.superficie_ha} ha</span>` : ''}
+                        </div>
+                        <div class="border-top pt-2 mt-2">
+                            <div class="mb-1"><strong>Commune:</strong> ${props.commune || 'Non spécifiée'}</div>
+                            ${props.description ? `<div class="small text-muted">${props.description}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                // Bind and open popup
+                selectedLayer.bindPopup(popupContent, {
+                    maxWidth: 300,
+                    autoPan: true,
+                    closeButton: true,
+                    className: 'zone-popup'
+                }).openPopup();
+                
+                // Highlight the zone
+                selectedLayer.setStyle({
+                    weight: 4,
+                    fillOpacity: 0.3
+                });
+                
+                btn.classList.add('active');
+                btn.title = 'Masquer les informations';
+            } else {
+                // Reset style and close popup
+                selectedLayer.setStyle({
+                    weight: 2,
+                    fillOpacity: 0.2
+                });
+                selectedLayer.closePopup();
+                
+                btn.classList.remove('active');
+                btn.title = 'Afficher les informations';
+            }
+            
+            // Update button icon
+            const icon = btn.querySelector('i');
+            icon.className = popupsVisible ? 'fas fa-eye-slash' : 'fas fa-info-circle';
+        }
+
+        // Handle zone selection from dropdown
+        function selectBirElMalahZone() {
+            const select = document.getElementById('bir-el-malah-select');
+            const selectedZone = select.value;
+            const toggleBtn = document.getElementById('toggle-popups-btn');
+            
+            // Reset popup state when changing zones
+            popupsVisible = false;
+            toggleBtn.classList.remove('active');
+            toggleBtn.title = 'Afficher les informations';
+            const icon = toggleBtn.querySelector('i');
+            icon.className = 'fas fa-info-circle';
+            
+            // Clear existing zone layers
+            zoneLayers.forEach(layer => {
+                if (map.hasLayer(layer)) {
+                    map.removeLayer(layer);
+                }
+            });
+            zoneLayers = [];
+            
+            if (!selectedZone) {
+                // No zone selected, disable the info button
+                toggleBtn.disabled = true;
+                return;
+            }
+            
+            // Enable the info button
+            toggleBtn.disabled = false;
+            
+            // Store the selected zone name for display
+            const selectedOption = select.options[select.selectedIndex];
+            const zoneName = selectedOption.textContent;
+            
+            // Display the selected zone
+            displayZonePolygon(selectedZone, zoneName);
+        }
+
+        // Notice control for showing messages
+        L.Control.Notice = L.Control.extend({
+            options: {
+                position: 'topcenter',
+                timeout: 3000
+            },
+
+            onAdd: function(map) {
+                this._container = L.DomUtil.create('div', 'leaflet-notice');
+                this._container.style.padding = '8px 16px';
+                this._container.style.background = 'white';
+                this._container.style.borderRadius = '4px';
+                this._container.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                this._container.style.fontWeight = '500';
+                this._container.style.display = 'none';
+                this._container.style.zIndex = '1000';
+                this._container.style.position = 'absolute';
+                this._container.style.left = '50%';
+                this._container.style.transform = 'translateX(-50%)';
+                this._container.style.top = '10px';
+                this._container.style.maxWidth = '80%';
+                
+                return this._container;
+            },
+
+            show: function(message, timeout) {
+                this._container.innerHTML = message;
+                this._container.style.display = 'block';
+                
+                if (this._timeout) clearTimeout(this._timeout);
+                
+                this._timeout = setTimeout(L.Util.bind(function() {
+                    this._container.style.display = 'none';
+                }, this), timeout || this.options.timeout);
+                
+                return this;
+            }
+        });
+        
+        L.control.notice = function(options) {
+            return new L.Control.Notice(options);
+        };
+
+// Load zones from the zone folder dynamically
         async function loadZones() {
             try {
                 // First, load the list of zone files from server

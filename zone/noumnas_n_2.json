@@ -1,0 +1,24 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Noumnas n°2",
+        "commune": "Tamantit",
+        "superficie_ha": 56,
+        "description": "Zone d’activités aquacoles située dans la commune de Tamantit, Wilaya d’Adrar."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [0.2754027778, 27.67982222],
+          [0.2794819444, 27.67268333],
+          [0.2854055556, 27.67687778],
+          [0.283125, 27.68183056],
+          [0.2754027778, 27.67982222]
+        ]]
+      }
+    }
+  ]
+}
