@@ -1682,84 +1682,153 @@ function createLabelPane() {
         }
         
         // Create a zone info card in the top right corner
-        function createZoneInfoCard(properties, zoneName) {
-            // Remove existing card if any
-            const existingCard = document.getElementById('zone-info-card');
-            if (existingCard) {
-                existingCard.remove();
-            }
-            
-            // Create card container
-            const card = document.createElement('div');
-            card.id = 'zone-info-card';
-            card.className = 'zone-info-card';
-            card.style.cssText = `
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                z-index: 1000;
-                background: white;
-                padding: 12px 15px;
-                border-radius: 4px;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-                max-width: 280px;
-                font-family: Arial, sans-serif;
-                font-size: 13px;
-                line-height: 1.4;
-                color: #333;
-            `;
-            
-            // Create close button
-            const closeBtn = document.createElement('button');
-            closeBtn.innerHTML = '&times;';
-            closeBtn.style.cssText = `
-                position: absolute;
-                top: 5px;
-                right: 5px;
-                background: none;
-                border: none;
-                font-size: 16px;
-                cursor: pointer;
-                color: #666;
-                padding: 0 5px;
-                line-height: 1;
-            `;
-            closeBtn.onclick = function() {
-                card.style.display = 'none';
-                const toggleBtn = document.getElementById('toggle-popups-btn');
-                if (toggleBtn) {
-                    popupsVisible = false;
-                    toggleBtn.classList.remove('active');
-                    toggleBtn.title = 'Afficher les informations';
-                    const icon = toggleBtn.querySelector('i');
-                    if (icon) icon.className = 'fas fa-info-circle';
-                }
-            };
-            
-            // Create content
-            const title = document.createElement('div');
-            title.style.fontWeight = 'bold';
-            title.style.marginBottom = '8px';
-            title.style.fontSize = '14px';
-            title.textContent = properties.nom_zaa || zoneName || 'Zone sans nom';
-            
-            const content = document.createElement('div');
-            content.innerHTML = `
-                <div><strong>Commune:</strong> ${properties.commune || 'Non spécifiée'}</div>
-                ${properties.superficie_ha ? `<div><strong>Superficie:</strong> ${properties.superficie_ha} ha</div>` : ''}
-                ${properties.description ? `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">${properties.description}</div>` : ''}
-            `;
-            
-            // Assemble the card
-            card.appendChild(closeBtn);
-            card.appendChild(title);
-            card.appendChild(content);
-            
-            // Add to map container
-            document.getElementById('map').appendChild(card);
-        }
+function createZoneInfoCard(properties, zoneName) {
+    // Remove existing card if any
+    const existingCard = document.getElementById('zone-info-card');
+    if (existingCard) {
+        existingCard.remove();
+    }
+    
+    // Create card container with dark theme
+    const card = document.createElement('div');
+    card.id = 'zone-info-card';
+    card.className = 'zone-info-card';
+    card.style.cssText = `
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 1000;
+        background: rgb(92 109 127); /* Dark gray background */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 15px;
+        max-width: 358px;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        color: #e0e0e0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    `;
 
-                // Toggle popup for the selected zone
+    // Add hover effect
+    card.onmouseenter = () => {
+        card.style.boxShadow = '0 6px 25px rgba(0, 0, 0, 0.4)';
+    };
+    card.onmouseleave = () => {
+        card.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+    };
+    
+    // Create close button with icon
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '✕';
+    closeBtn.style.cssText = `
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #e0e0e0;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    `;
+    closeBtn.onmouseover = () => {
+        closeBtn.style.background = 'rgba(255, 80, 80, 0.8)';
+        closeBtn.style.color = 'white';
+        closeBtn.style.transform = 'scale(1.1)';
+    };
+    closeBtn.onmouseout = () => {
+        closeBtn.style.background = 'rgba(255, 255, 255, 0.1)';
+        closeBtn.style.color = '#e0e0e0';
+        closeBtn.style.transform = 'scale(1)';
+    };
+    closeBtn.onclick = function() {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+            card.remove();
+            const toggleBtn = document.getElementById('toggle-popups-btn');
+            if (toggleBtn) {
+                popupsVisible = false;
+                toggleBtn.classList.remove('active');
+                toggleBtn.title = 'Afficher les informations';
+                const icon = toggleBtn.querySelector('i');
+                if (icon) icon.className = 'fas fa-info-circle';
+            }
+        }, 200);
+    };
+    
+    // Create title with icon
+    const title = document.createElement('div');
+    title.style.cssText = `
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #61dafb; /* Light blue for title */
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-right: 20px;
+    `;
+    title.innerHTML = `<i class="fas fa-map-marker-alt" style="color: #ff6b6b;"></i> ${properties.nom_zaa || zoneName || 'Zone sans nom'}`;
+    
+    const content = document.createElement('div');
+    content.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 14px;
+    `;
+    
+    // Helper function to create info row with icon
+    const createInfoRow = (icon, iconColor, label, value) => {
+        if (!value) return '';
+        return `
+            <div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                <i class="fas fa-${icon}" style="color: ${iconColor}; width: 20px; text-align: center; font-size: 16px;"></i>
+                <span style="flex: 1;font-weight: 500; color: #ffffff;">${label}:</span>
+                <span style=" color: #ffffff;">${value}</span>
+            </div>
+        `;
+    };
+    
+    content.innerHTML = `
+        ${createInfoRow('city', '#4ecdc4', 'Commune', properties.commune || 'Non spécifiée')}
+        ${properties.superficie_ha ? createInfoRow('ruler-combined', '#ff9f43', 'Superficie', `${properties.superficie_ha} ha`) : ''}
+        ${properties.description ? `
+            <div style="margin-top: 8px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: #9c88ff; font-weight: 500;">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Description</span>
+                </div>
+                <div style="font-size: 13px; line-height: 1.5; color: #d0d0d0; background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 6px;">
+                    ${properties.description}
+                </div>
+            </div>
+        ` : ''}
+    `;
+    
+    // Add subtle animation on load
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(10px)';
+    setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+    }, 10);
+    
+    // Assemble the card
+    card.appendChild(closeBtn);
+    card.appendChild(title);
+    card.appendChild(content);
+    
+    // Add to map container
+    document.getElementById('map').appendChild(card);
+}
         function toggleZonePopup() {
             const select = document.getElementById('bir-el-malah-select');
             const selectedZone = select.value;

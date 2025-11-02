@@ -1,0 +1,24 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "El Barrage",
+        "commune": "Honaine",
+        "superficie_ha": 2.6796,
+        "description": "Zone d’activités aquacoles située dans la commune de Honaine, Wilaya de Tlemcen."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-1.6479, 35.17165],
+          [-1.64886, 35.17141],
+          [-1.64805, 35.16883],
+          [-1.64646, 35.16907],
+          [-1.6479, 35.17165]
+        ]]
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "El-Djenah",
+        "commune": "Sidi Abdelaziz",
+        "wilaya": "Jijel",
+        "superficie_ha": 2.7691,
+        "description": "Zone d’activités aquacoles située dans la commune de Sidi Abdelaziz, Wilaya de Jijel (El-Djenah)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [6.080722, 36.869100],
+            [6.080959, 36.869228],
+            [6.081781, 36.869883],
+            [6.082550, 36.869947],
+            [6.082543, 36.870119],
+            [6.083217, 36.870230],
+            [6.083236, 36.870055],
+            [6.084092, 36.870080],
+            [6.084175, 36.869400],
+            [6.083867, 36.869360],
+            [6.083764, 36.869135],
+            [6.080882, 36.868889],
+            [6.080722, 36.869100]
+          ]
+        ]
+      }
+    }
+  ]
+}

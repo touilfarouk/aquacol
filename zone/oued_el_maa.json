@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Oued El Maa",
+        "commune": "Guediel",
+        "wilaya": "Oran",
+        "superficie_ha": 1.5,
+        "description": "Zone d’activités aquacoles située dans la commune de Guediel, Wilaya d’Oran (Oued El Maa)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0.566944, 35.813333],
+            [0.583333, 35.813333],
+            [0.583333, 35.810278],
+            [0.566944, 35.810278],
+            [0.566944, 35.813333]
+          ]
+        ]
+      }
+    }
+  ]
+}

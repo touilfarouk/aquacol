@@ -1,0 +1,36 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Kissir",
+        "commune": "El Aouana",
+        "wilaya": "Jijel",
+        "superficie_ha": 1.618,
+        "description": "Zone d’activités aquacoles située dans la commune d’El Aouana, Wilaya de Jijel (Kissir)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [5.674897, 36.796658],
+            [5.675044, 36.796309],
+            [5.675235, 36.796359],
+            [5.675511, 36.796203],
+            [5.675737, 36.796273],
+            [5.676213, 36.796556],
+            [5.676547, 36.796853],
+            [5.676680, 36.797087],
+            [5.676658, 36.797314],
+            [5.676466, 36.797386],
+            [5.675422, 36.796806],
+            [5.675347, 36.796651],
+            [5.675356, 36.796567],
+            [5.674897, 36.796658]
+          ]
+        ]
+      }
+    }
+  ]
+}

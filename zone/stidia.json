@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Stidia",
+        "commune": "Stidia",
+        "wilaya": "Mostaganem",
+        "superficie_ha": 2.22,
+        "description": "Zone d’activités aquacoles située dans la commune de Stidia, Wilaya de Mostaganem."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0.228402, 35.969978],
+            [0.228630, 35.969978],
+            [0.228630, 35.970125],
+            [0.228402, 35.970125],
+            [0.228402, 35.969978]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Djamaa",
+        "commune": "Djamaa",
+        "wilaya": "El M’Ghair",
+        "superficie_ha": 30,
+        "description": "Zone d’activités aquacoles située dans la commune de Djamaa, Wilaya d’El M’Ghair (Djamaa)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [5.945069, 33.603181],
+            [5.948198, 33.602509],
+            [5.945520, 33.593781],
+            [5.942439, 33.594509],
+            [5.945069, 33.603181]
+          ]
+        ]
+      }
+    }
+  ]
+}

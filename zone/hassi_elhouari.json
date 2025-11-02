@@ -1,0 +1,31 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Hassi Elhouari",
+        "commune": "Béchar",
+        "superficie_ha": 47.4756,
+        "description": "Zone d’activités aquacoles située dans la commune de Béchar, Wilaya de Béchar."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-1.994506, 31.800283],
+          [-1.997778, 31.803681],
+          [-1.992944, 31.808525],
+          [-1.987319, 31.80769],
+          [-1.988033, 31.806378],
+          [-1.988683, 31.805396],
+          [-1.989786, 31.80455],
+          [-1.989894, 31.80445],
+          [-1.990875, 31.80358],
+          [-1.991033, 31.80347],
+          [-1.991969, 31.80298],
+          [-1.994506, 31.800283]
+        ]]
+      }
+    }
+  ]
+}

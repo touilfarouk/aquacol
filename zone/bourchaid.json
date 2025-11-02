@@ -1,0 +1,30 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Bourchaid",
+        "commune": "El Aouana",
+        "wilaya": "Jijel",
+        "superficie_ha": 1.6573,
+        "description": "Zone d’activités aquacoles située dans la commune d’El Aouana, Wilaya de Jijel (Bourchaid)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [5.648564, 36.774400],
+            [5.649014, 36.773747],
+            [5.649975, 36.773939],
+            [5.650512, 36.774172],
+            [5.650425, 36.774556],
+            [5.649900, 36.774720],
+            [5.648999, 36.774650],
+            [5.648564, 36.774400]
+          ]
+        ]
+      }
+    }
+  ]
+}

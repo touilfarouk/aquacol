@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Anssira",
+        "commune": "El M’Gair",
+        "wilaya": "El M’Ghair",
+        "superficie_ha": 30,
+        "description": "Zone d’activités aquacoles située dans la commune d’El M’Gair, Wilaya d’El M’Ghair (Anssira)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [5.941863, 34.072989],
+            [5.947990, 34.074815],
+            [5.949791, 34.070561],
+            [5.943665, 34.068762],
+            [5.941863, 34.072989]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Hassi El Gara",
+        "commune": "Hassi Gara",
+        "wilaya": "El Meniaa",
+        "superficie_ha": 50,
+        "description": "Zone d’activités aquacoles située dans la commune de Hassi Gara, Wilaya d’El Meniaa."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [2.965444, 30.473405],
+            [2.971361, 30.473750],
+            [2.969622, 30.465178],
+            [2.963811, 30.464719],
+            [2.965444, 30.473405]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Sidi Khaled - Groupement 244",
+        "commune": "Iflissen",
+        "wilaya": "Tizi Ouzou",
+        "superficie_ha": 2,
+        "description": "Zone d’activités aquacoles - Groupement 244 située dans la commune d’Iflissen, Wilaya de Tizi Ouzou."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [4.165553, 36.905765],
+            [4.166384, 36.905550],
+            [4.166398, 36.905283],
+            [4.165537, 36.905292],
+            [4.165553, 36.905765]
+          ]
+        ]
+      }
+    }
+  ]
+}

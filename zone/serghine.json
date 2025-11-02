@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Serghine",
+        "commune": "Serghine",
+        "wilaya": "Tiaret",
+        "superficie_ha": 8,
+        "description": "Zone d’activités aquacoles située dans la commune de Serghine, Wilaya de Tiaret."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [2.466642, 35.261694],
+            [2.467642, 35.261694],
+            [2.467642, 35.260694],
+            [2.466642, 35.260694],
+            [2.466642, 35.261694]
+          ]
+        ]
+      }
+    }
+  ]
+}

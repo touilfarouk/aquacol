@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "S’béat",
+        "commune": "Messad",
+        "wilaya": "Aïn Témouchent",
+        "superficie_ha": 8.0,
+        "description": "Zone d’activités aquacoles située dans la commune de Messad, Wilaya d’Aïn Témouchent (S’béat)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-1.124902, 35.309263],
+            [-1.122562, 35.309068],
+            [-1.123861, 35.306338],
+            [-1.126176, 35.307568],
+            [-1.124902, 35.309263]
+          ]
+        ]
+      }
+    }
+  ]
+}

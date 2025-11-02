@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Oued Damous",
+        "commune": "Damous",
+        "wilaya": "Tipaza",
+        "superficie_ha": 1.5,
+        "description": "Zone d’activités aquacoles située dans la commune de Damous, Wilaya de Tipaza (Oued Damous)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [1.693167, 36.554306],
+            [1.695300, 36.554153],
+            [1.695267, 36.549983],
+            [1.694217, 36.551450],
+            [1.693167, 36.554306]
+          ]
+        ]
+      }
+    }
+  ]
+}

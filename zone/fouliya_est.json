@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Fouliya-Est",
+        "commune": "Guemar",
+        "wilaya": "El Oued",
+        "superficie_ha": 195,
+        "description": "Zone d’activités aquacoles située dans la commune de Guemar, Wilaya d’El Oued (Fouliya-Est)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [6.696747, 33.735689],
+            [6.707472, 33.734636],
+            [6.704988, 33.717178],
+            [6.694281, 33.718242],
+            [6.696747, 33.735689]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Ras Eldjder",
+        "commune": "Besbes",
+        "wilaya": "Ouled Djellal",
+        "superficie_ha": 20,
+        "description": "Zone d’activités aquacoles située dans la commune de Besbes, Wilaya d’Ouled Djellal (Ras Eldjder)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [5.222800, 34.357950],
+            [5.222711, 34.354364],
+            [5.217294, 34.354475],
+            [5.217353, 34.357950],
+            [5.222800, 34.357950]
+          ]
+        ]
+      }
+    }
+  ]
+}

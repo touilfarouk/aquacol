@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom_zaa": "Sidi Khaled - Groupement 166",
+        "commune": "Iflissen",
+        "wilaya": "Tizi Ouzou",
+        "superficie_ha": 2,
+        "description": "Zone d’activités aquacoles - Groupement 166 située dans la commune d’Iflissen, Wilaya de Tizi Ouzou."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+           [4.166459, 36.905633],
+            [4.168035, 36.905633],
+            [4.168035, 36.904711],
+            [4.166459, 36.904711],
+            [4.166459, 36.905633]
+        ]]
+      }
+    }
+  ]
+}
