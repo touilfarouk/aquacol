@@ -792,6 +792,7 @@ function createLabelPane() {
             // Créer la carte centrée sur l'Algérie
             map = L.map('map', {
                 zoomControl: false,
+                attributionControl: false,
                 layers: [baseLayers['Terrain']] // Default = Terrain
             }).setView([36.7538, 3.0588], 12);
 
