@@ -1677,6 +1677,41 @@ function createLabelPane() {
                             fillOpacity: 0.1,
                             opacity: 0.8
                         });
+                        
+                        // Add vertex markers with coordinates
+                        coordinates.forEach((coord, index) => {
+                            // Create a circle marker for the vertex
+                            const marker = L.circleMarker(coord, {
+                                radius: 5,
+                                fillColor: '#ff0000',
+                                color: '#fff',
+                                weight: 1,
+                                opacity: 1,
+                                fillOpacity: 0.8
+                            }).bindPopup(`
+                                <div style="min-width: 180px;">
+                                    <strong>Point ${index + 1}</strong><br>
+                                    Lat: ${coord[0].toFixed(6)}<br>
+                                    Lng: ${coord[1].toFixed(6)}
+                                </div>
+                            `).addTo(map);
+                            
+                            // Add to zone layers for easy management
+                            zoneLayers.push(marker);
+                            
+                            // Add coordinate label
+                            const coordStr = `${coord[0].toFixed(6)}, ${coord[1].toFixed(6)}`;
+                            const label = L.marker(coord, {
+                                icon: L.divIcon({
+                                    className: 'vertex-label',
+                                    html: `<div style="background: rgba(255,255,255,0.95); padding: 0px 14px; border-radius: 4px; font-family: monospace; font-size: 11px; font-weight: bold; border: 1px solid #333; color: #000; white-space: nowrap;">${coordStr}</div>`,
+                                    iconSize: [150, 20],
+                                    iconAnchor: [75, 10]
+                                })
+                            }).addTo(map);
+                            
+                            zoneLayers.push(label);
+                        });
 
                         // Store the feature data on the polygon
                         zonePolygon.feature = feature;
@@ -1703,9 +1738,8 @@ function createLabelPane() {
                         zonePolygon.addTo(map);
                         zoneLayers.push(zonePolygon);
 
-                        // Enable vertex editing (draggable points) and wire Save/Reset (does not break existing behavior)
-        // pass full geojson, feature index (0 for first feature), original filename, and polygon
-        enableZoneEditing(jsonData, 0, zoneFile, zonePolygon);
+                        // Enable vertex editing (draggable points) and wire Save/Reset
+                        enableZoneEditing(jsonData, 0, zoneFile, zonePolygon);
 
                         // Fit map to show the zone with some padding
                         map.fitBounds(zonePolygon.getBounds().pad(0.1));
