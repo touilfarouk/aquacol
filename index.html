@@ -2543,7 +2543,7 @@ function enableZoneEditing(jsonData, featureIndex, zoneFile, polygon) {
 
 	const saveBtn = document.createElement('button');
 	saveBtn.id = 'zone-edit-save';
-	saveBtn.innerText = 'Save';
+	saveBtn.innerText = 'Enregister';
 	saveBtn.disabled = true; // enabled when user drags
 	saveBtn.onclick = async function() {
 		// try server save first
@@ -2579,7 +2579,7 @@ function enableZoneEditing(jsonData, featureIndex, zoneFile, polygon) {
 	const resetBtn = document.createElement('button');
 	resetBtn.className = 'reset';
 	resetBtn.id = 'zone-edit-reset';
-	resetBtn.innerText = 'Reset';
+	resetBtn.innerText = 'Réinitialiser';
 	resetBtn.onclick = function() {
 		// reset polygon to original coords
 		if (!_zoneEditing.originalCoords || !_zoneEditing.polygon) return;
