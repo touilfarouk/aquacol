@@ -2143,63 +2143,94 @@ function createZoneInfoCard(properties, zoneName) {
         }
 
         // Handle Bir El Malah zone selection
-        function selectBirElMalahZone() {
+        async function selectBirElMalahZone() {
             const select = document.getElementById('bir-el-malah-select');
             const selectedOption = select.selectedOptions[0];
             
             if (!selectedOption || !selectedOption.value) {
                 console.log('No zone selected');
+                // Reset form fields
+                document.getElementById('wilaya-select').selectedIndex = 0;
+                document.getElementById('commune-select').innerHTML = '<option value="">Sélectionner une commune</option>';
+                document.getElementById('code-wilaya').value = '';
+                document.getElementById('code-commune').value = '';
                 return;
             }
             
             console.log('Selected zone:', selectedOption.value);
-            console.log('Coordinates data:', selectedOption.dataset.coordinates);
+            console.log('Zone file:', selectedOption.dataset.zoneFile);
             
             try {
-                const coordinates = JSON.parse(selectedOption.dataset.coordinates);
-                const description = selectedOption.dataset.description;
-                const superficie = selectedOption.dataset.superficie;
+                // Get the zone file name from the selected option
+                const zoneFile = selectedOption.dataset.zoneFile;
                 
-                console.log('Parsed coordinates:', coordinates);
-                console.log('Description:', description);
-                console.log('Superficie:', superficie);
+                // Fetch the zone data to get wilaya and commune information
+                const response = await fetch(`${API_BASE_URL}/zone/${zoneFile}`);
+                const zoneData = await response.json();
                 
-                // Convert coordinates to the format expected (first 4 points of the polygon)
-                const coords = coordinates.slice(0, 4).map(coord => [coord[1], coord[0]]);
-                
-                console.log('Converted coords for form:', coords);
-                
-                // Update form inputs with coordinates
-                updateFormInputs(coords);
-                
-                // Update form with zone information
-                const zoneField = document.getElementById('nom-zaa-selected');
-                if (zoneField) {
-                    zoneField.value = selectedOption.value;
-                    console.log('Zone field updated with nom_zaa:', selectedOption.value);
-                }
-                
-                // Display the zone polygon on the map
-                displayZonePolygon(selectedOption.dataset.zoneFile, coordinates);
-                
-                // Check if map is initialized before displaying
-                if (typeof map !== 'undefined' && map) {
-                    console.log('Map is initialized, displaying square');
-                    // Display the square on the map
-                    displaySquareFromCoordinates(coords);
+                if (zoneData && zoneData.features && zoneData.features.length > 0) {
+                    const properties = zoneData.features[0].properties;
+                    console.log('Zone properties:', properties);
                     
-                    // Show coordinates in sidebar
-                    displayCoordinates(coords);
-                } else {
-                    console.error('Map is not initialized');
-                    // Try to reinitialize the map
-                    initMap();
-                    setTimeout(() => {
-                        if (typeof map !== 'undefined' && map) {
-                            displaySquareFromCoordinates(coords);
-                            displayCoordinates(coords);
+                    if (properties.wilaya && properties.commune) {
+                        // Set the wilaya select
+                        const wilayaSelect = document.getElementById('wilaya-select');
+                        let wilayaFound = false;
+                        
+                        // Find and select the matching wilaya
+                        for (let i = 0; i < wilayaSelect.options.length; i++) {
+                            if (wilayaSelect.options[i].text === properties.wilaya) {
+                                wilayaSelect.selectedIndex = i;
+                                wilayaFound = true;
+                                
+                                // Trigger the loadCommunes function to update the commune dropdown
+                                await loadCommunes();
+                                
+                                // After a short delay to allow the communes to load
+                                setTimeout(() => {
+                                    // Set the commune select
+                                    const communeSelect = document.getElementById('commune-select');
+                                    
+                                    // Find and select the matching commune
+                                    for (let j = 0; j < communeSelect.options.length; j++) {
+                                        if (communeSelect.options[j].text === properties.commune) {
+                                            communeSelect.selectedIndex = j;
+                                            // Update the hidden code fields
+                                            updateCommuneCode();
+                                            break;
+                                        }
+                                    }
+                                }, 100);
+                                break;
+                            }
                         }
-                    }, 1000);
+                        
+                        if (!wilayaFound) {
+                            console.warn('Wilaya not found in dropdown:', properties.wilaya);
+                        }
+                    }
+                    
+                    // Update the zone name in the hidden field
+                    const zoneField = document.getElementById('nom-zaa-selected');
+                    if (zoneField) {
+                        zoneField.value = properties.nom_zaa || selectedOption.value;
+                    }
+                    
+                    // Get coordinates from the zone data
+                    const coordinates = zoneData.features[0].geometry.coordinates[0];
+                    const coords = coordinates.slice(0, 4).map(coord => [coord[1], coord[0]]);
+                    
+                    // Update form inputs with coordinates
+                    updateFormInputs(coords);
+                    
+                    // Display the zone polygon on the map
+                    displayZonePolygon(zoneFile, coordinates);
+                    
+                    // Display the square on the map if it's initialized
+                    if (typeof map !== 'undefined' && map) {
+                        displaySquareFromCoordinates(coords);
+                        displayCoordinates(coords);
+                    }
                 }
                 
                 console.log('Zone selection completed');
