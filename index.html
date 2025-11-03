@@ -424,6 +424,42 @@
             background-color: #4a8eff;
             color: white;
         }
+
+        /* Zone editing UI */
+.zone-vertex {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #ff6b6b;
+	border: 2px solid white;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+	transform: translate(-50%, -50%);
+}
+
+.zone-edit-btn {
+	position: absolute;
+	right: 10px;
+	z-index: 1001;
+	display: inline-flex;
+	gap: 8px;
+}
+
+.zone-edit-btn button {
+	background: #2563eb;
+	color: white;
+	border: none;
+	padding: 8px 10px;
+	border-radius: 6px;
+	cursor: pointer;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.zone-edit-btn button.reset {
+	background: #6b7280;
+}
+.zone-edit-btn button:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
     </style>
 </head>
 <body>
@@ -1666,7 +1702,11 @@ function createLabelPane() {
                         // Add to map and store reference
                         zonePolygon.addTo(map);
                         zoneLayers.push(zonePolygon);
-                        
+
+                        // Enable vertex editing (draggable points) and wire Save/Reset (does not break existing behavior)
+        // pass full geojson, feature index (0 for first feature), original filename, and polygon
+        enableZoneEditing(jsonData, 0, zoneFile, zonePolygon);
+
                         // Fit map to show the zone with some padding
                         map.fitBounds(zonePolygon.getBounds().pad(0.1));
                         
@@ -2422,6 +2462,168 @@ function createZoneInfoCard(properties, zoneName) {
             form.submit();
             document.body.removeChild(form);
         }
+
+        // --- zone editing state ---
+let _zoneEditing = {
+	jsonData: null,    // full geojson object
+	featureIndex: 0,
+	zoneFile: null,
+	polygon: null,
+	markers: [],
+	originalCoords: null
+};
+
+function clearZoneEditing() {
+	// remove markers
+	_zoneEditing.markers.forEach(m => {
+		try { map.removeLayer(m); } catch(e) {}
+	});
+	_zoneEditing.markers = [];
+
+	// remove floating buttons
+	const btnWrap = document.getElementById('zone-edit-btn-wrap');
+	if (btnWrap) btnWrap.remove();
+
+	_zoneEditing.jsonData = null;
+	_zoneEditing.zoneFile = null;
+	_zoneEditing.polygon = null;
+	_zoneEditing.originalCoords = null;
+}
+
+// enable draggable vertex editing for the given polygon and keep json in sync
+function enableZoneEditing(jsonData, featureIndex, zoneFile, polygon) {
+	clearZoneEditing();
+
+	_zoneEditing.jsonData = jsonData;
+	_zoneEditing.featureIndex = featureIndex;
+	_zoneEditing.zoneFile = zoneFile;
+	_zoneEditing.polygon = polygon;
+
+	// store original coordinates (array of [lng,lat] pairs)
+	const original = jsonData.features[featureIndex].geometry.coordinates[0].map(pt => [pt[0], pt[1]]);
+	_zoneEditing.originalCoords = original;
+
+	// create draggable markers for each vertex
+	const latlngs = polygon.getLatLngs()[0];
+	latlngs.forEach((latlng, i) => {
+		const m = L.marker(latlng, {
+			draggable: true,
+			icon: L.divIcon({className: 'zone-vertex', iconSize: [12,12]})
+		}).addTo(map);
+
+		m.on('drag', () => {
+			// update polygon coordinates from markers
+			const newCoords = _zoneEditing.markers.map(mm => {
+				const ll = mm.getLatLng();
+				return [ll.lat, ll.lng];
+			});
+			// Leaflet expects [lat,lng], polygon set as array of arrays
+			polygon.setLatLngs([newCoords.map(c => L.latLng(c[0], c[1]))]);
+
+			// update underlying GeoJSON (lng,lat)
+			_zoneEditing.jsonData.features[featureIndex].geometry.coordinates[0] =
+				newCoords.map(c => [c[1], c[0]]);
+
+			// enable save button
+			const saveBtn = document.getElementById('zone-edit-save');
+			if (saveBtn) saveBtn.disabled = false;
+		});
+
+		_zoneEditing.markers.push(m);
+	});
+
+	// add floating Save / Reset UI
+	const wrapper = document.createElement('div');
+	wrapper.id = 'zone-edit-btn-wrap';
+	wrapper.className = 'zone-edit-btn';
+	wrapper.style.top = '336px';
+	wrapper.style.right = '16px';
+    
+	document.querySelector('.map-container').appendChild(wrapper);
+
+	const saveBtn = document.createElement('button');
+	saveBtn.id = 'zone-edit-save';
+	saveBtn.innerText = 'Save';
+	saveBtn.disabled = true; // enabled when user drags
+	saveBtn.onclick = async function() {
+		// try server save first
+		try {
+			const resp = await fetch(`${API_BASE_URL}/save_zone.php`, {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({ file: zoneFile, data: _zoneEditing.jsonData })
+			});
+			if (!resp.ok) throw new Error('Save failed');
+			const rjson = await resp.json();
+			if (rjson && (rjson.success || rjson.saved)) {
+				saveBtn.innerText = 'Saved';
+				saveBtn.disabled = true;
+				setTimeout(() => saveBtn.innerText = 'Save', 1500);
+				return;
+			}
+			throw new Error('Save endpoint returned error');
+		} catch (err) {
+			// fallback: download updated geojson
+			const blob = new Blob([JSON.stringify(_zoneEditing.jsonData, null, 2)], {type: 'application/json'});
+			const a = document.createElement('a');
+			a.href = URL.createObjectURL(blob);
+			a.download = zoneFile || 'zone-updated.json';
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+			saveBtn.innerText = 'Downloaded';
+			setTimeout(()=> saveBtn.innerText = 'Save', 1500);
+		}
+	};
+
+	const resetBtn = document.createElement('button');
+	resetBtn.className = 'reset';
+	resetBtn.id = 'zone-edit-reset';
+	resetBtn.innerText = 'Reset';
+	resetBtn.onclick = function() {
+		// reset polygon to original coords
+		if (!_zoneEditing.originalCoords || !_zoneEditing.polygon) return;
+		const latlngs = _zoneEditing.originalCoords.map(pt => [pt[1], pt[0]]); // lat,lng
+		_zoneEditing.polygon.setLatLngs([latlngs]);
+		_zoneEditing.jsonData.features[_zoneEditing.featureIndex].geometry.coordinates[0] =
+			_zoneEditing.originalCoords.map(pt => [pt[0], pt[1]]);
+		// update markers positions
+		_zoneEditing.markers.forEach((m, idx) => {
+			const ll = L.latLng(latlngs[idx][0], latlngs[idx][1]);
+			m.setLatLng(ll);
+		});
+		const sb = document.getElementById('zone-edit-save');
+		if (sb) sb.disabled = true;
+	};
+
+	wrapper.appendChild(saveBtn);
+	wrapper.appendChild(resetBtn);
+}
+
+// --- small change inside displayZonePolygon (replace/add the zonePolygon.addTo/map push area) ---
+/*
+	Find the block where you have:
+		zonePolygon.addTo(map);
+		zoneLayers.push(zonePolygon);
+		and map.fitBounds(...)
+	Replace or add after that a call to enableZoneEditing(jsonData, 0, zoneFile, zonePolygon)
+	(note: pass the jsonData and featureIndex — here we use features[0] so index=0)
+*/
+// ...existing code...
+// Example insertion point:
+        // Add to map and store reference
+        zonePolygon.addTo(map);
+        zoneLayers.push(zonePolygon);
+
+        // Enable vertex editing (draggable points) and wire Save/Reset (does not break existing behavior)
+        // pass full geojson, feature index (0 for first feature), original filename, and polygon
+        enableZoneEditing(jsonData, 0, zoneFile, zonePolygon);
+
+        // Fit map to show the zone with some padding
+        map.fitBounds(zonePolygon.getBounds().pad(0.1));
+        // ...existing code...
+
+        // ...existing code...
     </script>
 </body>
 </html>
