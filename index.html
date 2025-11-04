@@ -893,12 +893,23 @@ function createLabelPane() {
                 return;
             }
             
-            // Créer la carte centrée sur l'Algérie
+            // Create map centered on Algeria with bounds that show the entire country
+            const algeriaBounds = L.latLngBounds(
+                [18.968147, -8.6845],  // Southwest corner (Lat, Lng)
+                [37.2962, 11.9994]     // Northeast corner (Lat, Lng)
+            );
+            
             map = L.map('map', {
                 zoomControl: false,
                 attributionControl: false,
-                layers: [baseLayers['Terrain']] // Default = Terrain
-            }).setView([36.7538, 3.0588], 12);
+                layers: [baseLayers['Terrain']], // Default = Terrain
+                maxBounds: algeriaBounds,
+                maxZoom: 18,
+                minZoom: 5
+            });
+            
+            // Fit the map to show all of Algeria
+            map.fitBounds(algeriaBounds);
 
             // Add zoom control
             L.control.zoom({
