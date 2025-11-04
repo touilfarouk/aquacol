@@ -47,18 +47,21 @@
 						<a href="#intro">1. Introduction</a>
 						<a href="#interface">2. Interface Carte</a>
 						<a href="#vertices">3. Gestion des Vertices</a>
-						<a href="#features">4. Fonctionnalités</a>
-						<a href="#usage">5. Utilisation</a>
-						<a href="#notes">6. Notes techniques</a>
+						<a href="#zones">4. Gestion des Zones</a>
+						<a href="#concessions">5. Gestion des Concessions</a>
+						<a href="#features">6. Fonctionnalités</a>
+						<a href="#usage">7. Utilisation</a>
+						<a href="#notes">8. Notes techniques</a>
 					</nav>
 				</div>
 
 				<div class="section">
 					<h6>Ressources</h6>
 					<ul class="list-unstyled small">
-						<li><strong>Template:</strong> generate_docs.md</li>
-						<li><strong>Pandoc:</strong> utilisé pour PDF (si installé)</li>
-						<li><strong>API:</strong> endpoints sous /api.php, /get_coordinates.php</li>
+						<li><strong>Fichiers de zone:</strong> /zone/*.json</li>
+						<li><strong>API Endpoints:</strong> /api.php, /get_coordinates.php</li>
+						<li><strong>Données géographiques:</strong> /data/communes.json</li>
+						<li><strong>Documentation:</strong> documentation.html</li>
 					</ul>
 				</div>
 			</aside>
@@ -97,33 +100,93 @@
 					<p><img id="s_vertex" class="screenshot" src="screenshots/vertex.png" alt="Capture d'écran: édition vertices (vertex.png)"></p>
 				</article>
 
-				<article id="features" class="section">
-					<h2 class="h5">4. Fonctionnalités Principales</h2>
+				<article id="zones" class="section">
+					<h2 class="h5">4. Gestion des Zones</h2>
+					<p>Le système permet une gestion avancée des zones :</p>
 					<ul>
-						<li><strong>Gestion des zones</strong> : création, affichage, édition, export.</li>
-						<li><strong>Édition des vertices</strong> : drag & drop, affichage coordonnées, sauvegarde.</li>
-						<li><strong>Interface utilisateur</strong> : formulaire de saisie, multilingue (FR/AR), affichage des concessions sauvegardées.</li>
+						<li><strong>Chargement dynamique</strong> des zones depuis des fichiers GeoJSON</li>
+						<li><strong>Visualisation interactive</strong> avec surbrillance au survol</li>
+						<li><strong>Édition des vertices</strong> par glisser-déposer</li>
+						<li><strong>Sauvegarde automatique</strong> des modifications</li>
+						<li><strong>Informations détaillées</strong> au clic sur une zone</li>
+					</ul>
+				</article>
+
+				<article id="concessions" class="section">
+					<h2 class="h5">5. Gestion des Concessions</h2>
+					<p>Fonctionnalités complètes pour la gestion des concessions :</p>
+					<ul>
+						<li><strong>Création</strong> de nouvelles concessions avec coordonnées précises</li>
+						<li><strong>Visualisation</strong> des concessions existantes sur la carte</li>
+						<li><strong>Recherche</strong> par wilaya, commune, ou référence</li>
+						<li><strong>Génération</strong> de fiches techniques et d'états de paiement</li>
+						<li><strong>Export</strong> des données au format PDF</li>
+					</ul>
+				</article>
+
+				<article id="features" class="section">
+					<h2 class="h5">6. Fonctionnalités Techniques</h2>
+					<ul>
+						<li><strong>Interface utilisateur</strong> : formulaire de saisie intuitif, multilingue (FR/AR)</li>
+						<li><strong>Géolocalisation</strong> : support des formats de coordonnées (Décimal, DMS, UTM)</li>
+						<li><strong>Cartographie</strong> : couches multiples, fonds de carte personnalisables</li>
+						<li><strong>Sécurité</strong> : validation des entrées, protection contre les injections</li>
+						<li><strong>Performance</strong> : chargement asynchrone des données, mise en cache</li>
 					</ul>
 				</article>
 
 				<article id="usage" class="section">
-					<h2 class="h5">5. Utilisation</h2>
+					<h2 class="h5">7. Guide d'Utilisation</h2>
+					<h6>Création d'une nouvelle concession</h6>
 					<ol>
-						<li>Sélectionner une zone depuis la liste (ou "Hors zone").</li>
-						<li>Visualiser la zone et modifier ses vertices si nécessaire.</li>
-						<li>Cliquer <em>Enregistrer</em> pour persister (via API save_zone.php) — sinon télécharger la GeoJSON modifiée.</li>
-						<li>Utiliser le formulaire sur la gauche pour renseigner les métadonnées (wilaya, commune, superficie...).</li>
-						<li>Générer la documentation / PDF via le bouton <em>Générer PDF</em> ou imprimer la page.</li>
+						<li>Sélectionner une zone existante ou choisir "Hors zone"</li>
+						<li>Cliquer sur la carte pour positionner la concession ou entrer manuellement les coordonnées</li>
+						<li>Remplir le formulaire avec les informations de la concession</li>
+						<li>Cliquer sur <em>Enregistrer</em> pour sauvegarder</li>
+					</ol>
+
+					<h6 class="mt-4">Édition d'une concession existante</h6>
+					<ol>
+						<li>Sélectionner la concession dans la liste des concessions</li>
+						<li>Modifier les coordonnées ou les informations du formulaire</li>
+						<li>Cliquer sur <em>Mettre à jour</em> pour sauvegarder les modifications</li>
+					</ol>
+
+					<h6 class="mt-4">Génération de documents</h6>
+					<ol>
+						<li>Sélectionner une concession existante</li>
+						<li>Cliquer sur <em>Fiche Technique</em> ou <em>État de Paiement</em></li>
+						<li>Le document sera généré au format PDF</li>
 					</ol>
 				</article>
 
 				<article id="notes" class="section">
-					<h2 class="h5">6. Notes techniques</h2>
+					<h2 class="h5">8. Notes Techniques</h2>
+					<h6>Spécifications techniques</h6>
 					<ul>
-						<li>Système de coordonnées : WGS84 (EPSG:4326).</li>
-						<li>Formats de coordonnées pris en charge : décimal, DMS, UTM (conversion simplifiée).</li>
-						<li>Génération PDF côté serveur : <code>generate_docs.php</code> (Pandoc) or <code>TCPDF</code> script previously available.</li>
-						<li>Les fichiers de zones GeoJSON sont chargés depuis <code>/zone/*.json</code> et listés par <code>list_zone_files.php</code>.</li>
+						<li><strong>Système de coordonnées :</strong> WGS84 (EPSG:4326)</li>
+						<li><strong>Formats supportés :</strong> Décimal, DMS, UTM</li>
+						<li><strong>Technologies :</strong> HTML5, CSS3, JavaScript (ES6+), Leaflet.js, Bootstrap 5</li>
+						<li><strong>Compatibilité :</strong> Tous les navigateurs modernes (Chrome, Firefox, Safari, Edge)</li>
+					</ul>
+
+					<h6 class="mt-4">Structure des dossiers</h6>
+					<pre>
+/aquaculture/
+├── /zone/           # Fichiers GeoJSON des zones
+├── /data/           # Données de référence (communes, wilayas)
+├── /screenshots/    # Captures d'écran pour la documentation
+├── api.php          # API principale
+├── index.html       # Application principale
+└── documentation.html # Cette documentation
+					</pre>
+
+					<h6 class="mt-4">API Endpoints</h6>
+					<ul>
+						<li><code>GET /api.php?action=list_concessions</code> - Liste des concessions</li>
+						<li><code>POST /api.php?action=save_concession</code> - Sauvegarder une concession</li>
+						<li><code>GET /get_coordinates.php</code> - Obtenir des coordonnées</li>
+						<li><code>GET /list_zone_files.php</code> - Lister les fichiers de zone</li>
 					</ul>
 				</article>
 			</section>
@@ -131,7 +194,7 @@
 	</main>
 
 	<footer class="doc-container text-center small py-4">
-		<div>© Système de Gestion des Concessions Aquaculture</div>
+		<div> Système de Gestion des Concessions Aquaculture</div>
 	</footer>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
