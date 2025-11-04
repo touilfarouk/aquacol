@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Documentation - Système de Gestion des Concessions Aquaculture</title>
+
+	<!-- Bootstrap + Font Awesome (reuse CDN used in project) -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+	<style>
+		:root { --brand:#4a8eff; --muted:#6b7280; }
+		body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background:#f8fafc; color:#222; }
+		header.doc-header { background: linear-gradient(135deg,var(--brand),#6b9cff); color:white; padding:24px 0; margin-bottom:18px; }
+		.doc-container { max-width:1100px; margin:0 auto; padding:18px; }
+		.section { margin-bottom:28px; background:white; border-radius:8px; padding:18px; box-shadow:0 2px 10px rgba(15,23,42,0.04); }
+		.screenshot { border:1px solid #e9eef8; border-radius:6px; width:100%; max-height:520px; object-fit:contain; display:block; margin-bottom:12px; }
+		.toc a { display:block; padding:6px 0; color:var(--brand); text-decoration:none; }
+		.controls { display:flex; gap:8px; align-items:center; }
+		@media print {
+			nav, .controls { display:none !important; }
+			body { background: white; }
+		}
+	</style>
+</head>
+<body>
+	<header class="doc-header">
+		<div class="container doc-container d-flex justify-content-between align-items-center">
+			<div>
+				<h1 class="h3 mb-1">Documentation Technique</h1>
+				<div class="small">Système de Gestion des Concessions Aquaculture — Documentation utilisateur & technique</div>
+			</div>
+			<div class="controls">
+				<button class="btn btn-light" id="printBtn" title="Imprimer"><i class="fas fa-print"></i> Imprimer</button>
+				<a class="btn btn-primary" href="generate_docs.php" id="generatePdf" title="Générer PDF côté serveur"><i class="fas fa-file-pdf"></i> Générer PDF</a>
+			</div>
+		</div>
+	</header>
+
+	<main class="doc-container">
+		<div class="row">
+			<aside class="col-md-3 mb-3">
+				<div class="section">
+					<h5>Table des matières</h5>
+					<nav class="toc">
+						<a href="#intro">1. Introduction</a>
+						<a href="#interface">2. Interface Carte</a>
+						<a href="#vertices">3. Gestion des Vertices</a>
+						<a href="#features">4. Fonctionnalités</a>
+						<a href="#usage">5. Utilisation</a>
+						<a href="#notes">6. Notes techniques</a>
+					</nav>
+				</div>
+
+				<div class="section">
+					<h6>Ressources</h6>
+					<ul class="list-unstyled small">
+						<li><strong>Template:</strong> generate_docs.md</li>
+						<li><strong>Pandoc:</strong> utilisé pour PDF (si installé)</li>
+						<li><strong>API:</strong> endpoints sous /api.php, /get_coordinates.php</li>
+					</ul>
+				</div>
+			</aside>
+
+			<section class="col-md-9">
+				<article id="intro" class="section">
+					<h2 class="h5">1. Introduction</h2>
+					<p>Le Système de Gestion des Concessions Aquaculture est une application web permettant la gestion, l'édition et la visualisation des zones de concessions aquacoles. Cette documentation présente les écrans principaux, l'édition des vertices, et les fonctionnalités disponibles.</p>
+				</article>
+
+				<article id="interface" class="section">
+					<h2 class="h5">2. Interface Carte</h2>
+					<p>L'interface affiche une carte interactive avec : sélection des couches (Satellite/Carte), visualisation des concessions et interactions (placer un marqueur, afficher popup).</p>
+
+					<!-- screenshot map -->
+					<p><img id="s_map" class="screenshot" src="screenshots/map.png" alt="Capture d'écran: carte (map.png)"></p>
+
+					<ul>
+						<li>Sélection des couches dans le panneau "Couches".</li>
+						<li>Zoom et navigation standard Leaflet.</li>
+						<li>Cliquer sur la carte pour placer un marqueur et générer automatiquement un carré de test (coordonnées).</li>
+					</ul>
+				</article>
+
+				<article id="vertices" class="section">
+					<h2 class="h5">3. Gestion des Vertices</h2>
+					<p>Les vertices (sommets) des polygones de zone sont modifiables directement :</p>
+					<ul>
+						<li>Chaque vertex est matérialisé par un point draggable.</li>
+						<li>En déplaçant un vertex, la géométrie du polygone est mise à jour en temps réel.</li>
+						<li>Un panneau d'édition (Enregistrer / Réinitialiser) apparaît pour persister ou annuler les modifications.</li>
+						<li>Clique sur un vertex : copie rapide des coordonnées dans le presse-papiers (si supporté par le navigateur).</li>
+					</ul>
+
+					<!-- screenshot vertices -->
+					<p><img id="s_vertex" class="screenshot" src="screenshots/vertex.png" alt="Capture d'écran: édition vertices (vertex.png)"></p>
+				</article>
+
+				<article id="features" class="section">
+					<h2 class="h5">4. Fonctionnalités Principales</h2>
+					<ul>
+						<li><strong>Gestion des zones</strong> : création, affichage, édition, export.</li>
+						<li><strong>Édition des vertices</strong> : drag & drop, affichage coordonnées, sauvegarde.</li>
+						<li><strong>Interface utilisateur</strong> : formulaire de saisie, multilingue (FR/AR), affichage des concessions sauvegardées.</li>
+					</ul>
+				</article>
+
+				<article id="usage" class="section">
+					<h2 class="h5">5. Utilisation</h2>
+					<ol>
+						<li>Sélectionner une zone depuis la liste (ou "Hors zone").</li>
+						<li>Visualiser la zone et modifier ses vertices si nécessaire.</li>
+						<li>Cliquer <em>Enregistrer</em> pour persister (via API save_zone.php) — sinon télécharger la GeoJSON modifiée.</li>
+						<li>Utiliser le formulaire sur la gauche pour renseigner les métadonnées (wilaya, commune, superficie...).</li>
+						<li>Générer la documentation / PDF via le bouton <em>Générer PDF</em> ou imprimer la page.</li>
+					</ol>
+				</article>
+
+				<article id="notes" class="section">
+					<h2 class="h5">6. Notes techniques</h2>
+					<ul>
+						<li>Système de coordonnées : WGS84 (EPSG:4326).</li>
+						<li>Formats de coordonnées pris en charge : décimal, DMS, UTM (conversion simplifiée).</li>
+						<li>Génération PDF côté serveur : <code>generate_docs.php</code> (Pandoc) or <code>TCPDF</code> script previously available.</li>
+						<li>Les fichiers de zones GeoJSON sont chargés depuis <code>/zone/*.json</code> et listés par <code>list_zone_files.php</code>.</li>
+					</ul>
+				</article>
+			</section>
+		</div>
+	</main>
+
+	<footer class="doc-container text-center small py-4">
+		<div>© Système de Gestion des Concessions Aquaculture</div>
+	</footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+		// Hide missing screenshots gracefully
+		['s_map','s_vertex'].forEach(id => {
+			const img = document.getElementById(id);
+			if (!img) return;
+			img.addEventListener('error', () => {
+				img.style.display = 'none';
+				const p = document.createElement('div');
+				p.className = 'text-muted small';
+				p.textContent = 'Capture non trouvée: placez les fichiers dans /screenshots (map.png, vertex.png)';
+				img.parentNode.insertBefore(p, img.nextSibling);
+			});
+		});
+	</script>
+</body>
+</html>
