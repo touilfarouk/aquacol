@@ -101,16 +101,37 @@
 				</article>
 
 				<article id="zones" class="section">
-					<h2 class="h5">4. Gestion des Zones</h2>
-					<p>Le système permet une gestion avancée des zones :</p>
-					<ul>
-						<li><strong>Chargement dynamique</strong> des zones depuis des fichiers GeoJSON</li>
-						<li><strong>Visualisation interactive</strong> avec surbrillance au survol</li>
-						<li><strong>Édition des vertices</strong> par glisser-déposer</li>
-						<li><strong>Sauvegarde automatique</strong> des modifications</li>
-						<li><strong>Informations détaillées</strong> au clic sur une zone</li>
-					</ul>
-				</article>
+    <h2 class="h5">4. Gestion des Zones</h2>
+    <p>Le système offre une interface complète pour la gestion des zones d'aquaculture :</p>
+    
+    <h6 class="mt-4">Accès à la Gestion des Zones</h6>
+    <p>Pour accéder à l'interface de gestion des zones :</p>
+    <ol>
+        <li>Cliquez sur le bouton <strong>Gestion des Zones</strong> dans la barre de navigation supérieure</li>
+        <li>Ou accédez directement à <code>zone_management.php</code></li>
+    </ol>
+
+    <h6 class="mt-4">Fonctionnalités Principales</h6>
+    <ul>
+        <li><strong>Visualisation Interactive</strong> : Affichage des zones avec surbrillance au survol et informations détaillées au clic</li>
+        <li><strong>Édition des Vertices</strong> : Modification précise des limites de zone par glisser-déposer des points</li>
+        <li><strong>Gestion des Couches</strong> : Activation/désactivation des différentes couches de la carte</li>
+        <li><strong>Système de Coordonnées</strong> : Affichage des coordonnées en temps réel lors de l'édition</li>
+    </ul>
+
+    <h6 class="mt-4">Édition d'une Zone</h6>
+    <ol>
+        <li>Sélectionnez une zone dans la liste ou cliquez directement sur la carte</li>
+        <li>Utilisez les poignées de sélection pour modifier la forme de la zone</li>
+        <li>Les coordonnées sont mises à jour en temps réel</li>
+        <li>Cliquez sur <strong>Enregistrer</strong> pour valider les modifications</li>
+    </ol>
+
+    <div class="alert alert-info mt-3">
+        <i class="fas fa-info-circle me-2"></i>
+        Les zones sont sauvegardées au format GeoJSON et peuvent être exportées pour une utilisation dans d'autres applications SIG.
+    </div>
+</article>
 
 				<article id="concessions" class="section">
 					<h2 class="h5">5. Gestion des Concessions</h2>
