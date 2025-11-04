@@ -1201,18 +1201,24 @@ function createLabelPane() {
         // Créer le contenu du popup
         function createPopupContent(coords) {
             const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
-            const colors = ['#e53e3e', '#38a169', '#3182ce', '#d69e2e'];
+            // Google Material Design colors
+            const colors = [
+                '#e53935', // Red 600 (Point A - NO)
+                '#43a047', // Green 600 (Point B - NE)
+                '#1e88e5', // Blue 600 (Point C - SE)
+                '#fdd835'  // Yellow 600 (Point D - SO)
+            ];
             
             // Store original decimal coordinates
             originalCoords = [...coords];
             
             let content = `
-                <div style="width: 445px !important; min-width: 250px; font-family: 'Roboto', sans-serif;">
-                    <h6 style="margin: 0 0 12px 0; color: #1A73E8; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-map-marker-alt"></i>
+                <div style="width: 305px !important; font-family: 'Roboto', sans-serif; padding: 4px 0;">
+                    <h6 style="margin: 0 0 10px 0; color: #1a73e8; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; padding: 0 12px;">
+                        <i class="fas fa-map-marker-alt" style="color: #1a73e8;"></i>
                         <span>Coordonnées géographiques</span>
                     </h6>
-                    <div style="font-family: 'Courier New', monospace; font-size: 0.8rem;">
+                    <div style="font-family: 'Roboto Mono', 'Courier New', monospace; font-size: 0.8rem;">
             `;
             
             coords.forEach((coord, index) => {
@@ -1226,9 +1232,9 @@ function createLabelPane() {
                 }
                 
                 content += `
-                <div style="display: flex; align-items: center; margin-bottom: 6px; padding: 6px; background: #f8f9fa; border-radius: 4px; border-left: 3px solid ${colors[index]};">
-                    <span style="color: #5f6368; flex-grow: 1;">
-                        <strong>${labels[index].split(' ')[0]}:</strong> ${formatted}
+                <div style="display: flex; align-items: center; margin: 0 8px 6px; padding: 8px; background: #f8f9fa; border-radius: 6px; border-left: 4px solid ${colors[index]}; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+                    <span style="color: #202124; font-weight: 500; font-size: 0.8rem; flex-grow: 1;">
+                        <strong style="color: ${colors[index]};">${labels[index].split(' ')[0]}:</strong> ${formatted}
                     </span>
                 </div>`;
             });
@@ -1237,7 +1243,7 @@ function createLabelPane() {
             const formatNames = { decimal: 'DD', dms: 'DMS', utm: 'UTM' };
             content += `
                     </div>
-                    <div style="text-align: right; margin-top: 8px;">
+                    <div style="text-align: right; margin: 8px 12px 0 0;">
                         <span style="color: #5f6368; font-size: 0.7rem; opacity: 0.8;">${formatNames[currentFormat]}</span>
                     </div>
                 </div>`;
