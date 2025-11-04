@@ -1161,25 +1161,89 @@ function createLabelPane() {
             return [lat, lng];
         }
 
+        // Store original coordinates in decimal format
+        let originalCoords = [];
+
+        // Convert DMS to Decimal Degrees
+        function dmsToDecimal(degrees, minutes, seconds, direction) {
+            let decimal = parseFloat(degrees) + (parseFloat(minutes) / 60) + (parseFloat(seconds) / 3600);
+            if (direction === 'S' || direction === 'W') {
+                decimal = -decimal;
+            }
+            return decimal;
+        }
+
+        // Parse DMS string to decimal
+        function parseDMS(dmsString) {
+            // Handle format like "36°45'30.0\"N 3°01'00.0\"E"
+            const dmsRegex = /(\d+)°(\d+)'([\d.]+)\"([NSEW])\s+(\d+)°(\d+)'([\d.]+)\"([NSEW])/;
+            const match = dmsString.match(dmsRegex);
+            
+            if (match) {
+                const latDeg = match[1];
+                const latMin = match[2];
+                const latSec = match[3];
+                const latDir = match[4];
+                
+                const lngDeg = match[5];
+                const lngMin = match[6];
+                const lngSec = match[7];
+                const lngDir = match[8];
+                
+                const lat = dmsToDecimal(latDeg, latMin, latSec, latDir);
+                const lng = dmsToDecimal(lngDeg, lngMin, lngSec, lngDir);
+                return [lat, lng];
+            }
+            
+            return null;
+        }
+
         // Créer le contenu du popup
         function createPopupContent(coords) {
             const labels = ['A (NO)', 'B (NE)', 'C (SE)', 'D (SO)'];
+            const colors = ['#e53e3e', '#38a169', '#3182ce', '#d69e2e'];
+            
+            // Store original decimal coordinates
+            originalCoords = [...coords];
+            
             let content = `
-                <div style="width: 445px !important; min-width: 250px;">
-                    <h6 style="margin-bottom: 10px; color: #667eea;">
-                        <i class="fas fa-square"></i> Coordonnées géographiques
+                <div style="width: 445px !important; min-width: 250px; font-family: 'Roboto', sans-serif;">
+                    <h6 style="margin: 0 0 12px 0; color: #1A73E8; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Coordonnées géographiques</span>
                     </h6>
-                    <div style="font-family: 'Courier New', monospace; font-size: 0.75rem;">
+                    <div style="font-family: 'Courier New', monospace; font-size: 0.8rem;">
             `;
             
             coords.forEach((coord, index) => {
                 const formatted = formatCoordinate(coord[0], coord[1], currentFormat);
-                content += `<div style="width: 445px !important; min-width: 250px;"><strong>${labels[index]}:</strong> ${formatted}</div>`;
+                
+                // Update form inputs with decimal coordinates
+                const input = document.querySelector(`input[name="coordonnee_${String.fromCharCode(97 + index)}"]`);
+                if (input) {
+                    input.value = `${coord[0]} ${coord[1]}`; // Store decimal values
+                    input.dataset.displayValue = formatted; // Store display value
+                }
+                
+                content += `
+                <div style="display: flex; align-items: center; margin-bottom: 6px; padding: 6px; background: #f8f9fa; border-radius: 4px; border-left: 3px solid ${colors[index]};">
+                    <span style="color: #5f6368; flex-grow: 1;">
+                        <strong>${labels[index].split(' ')[0]}:</strong> ${formatted}
+                    </span>
+                </div>`;
             });
             
-            content += `</div></div>`;
+            // Add format indicator
+            const formatNames = { decimal: 'DD', dms: 'DMS', utm: 'UTM' };
+            content += `
+                    </div>
+                    <div style="text-align: right; margin-top: 8px;">
+                        <span style="color: #5f6368; font-size: 0.7rem; opacity: 0.8;">${formatNames[currentFormat]}</span>
+                    </div>
+                </div>`;
+                
             return content;
-}
+        }
 
 
         // Mettre à jour les champs du formulaire
@@ -1189,7 +1253,10 @@ function createLabelPane() {
             coords.forEach((coord, index) => {
                 const input = document.querySelector(`input[name="${fields[index]}"]`);
                 if (input) {
-                    input.value = formatCoordinate(coord[0], coord[1], currentFormat);
+                    // Store decimal values in the input value
+                    input.value = `${coord[0]} ${coord[1]}`;
+                    // Store display value in data attribute
+                    input.dataset.displayValue = formatCoordinate(coord[0], coord[1], currentFormat);
                 }
             });
         }
@@ -1242,18 +1309,28 @@ function createLabelPane() {
                 const value = input.value.trim();
                 
                 if (value) {
+                    // If the input has a display value (DMS format), parse it
+                    if (input.dataset.displayValue) {
+                        const parsed = parseDMS(input.dataset.displayValue);
+                        if (parsed) {
+                            coords.push(parsed);
+                            continue;
+                        }
+                    }
+                    
+                    // Fallback to direct parsing
                     const parsed = parseCoordinateInput(value, currentFormat);
                     if (parsed && !isNaN(parsed[0]) && !isNaN(parsed[1])) {
                         coords.push(parsed);
                     } else {
-                        return null; // Coordonnée invalide
+                        return null; // Invalid coordinate
                     }
                 } else {
-                    return null; // Champ vide
+                    return null; // Empty field
                 }
             }
             
-            return coords;
+            return coords.length === 4 ? coords : null;
         }
 
         // Changer le format des coordonnées
