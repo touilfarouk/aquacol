@@ -83,6 +83,43 @@
         .coordinate-input {
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
+            color: #2c5282; /* Dark blue color for the input text */
+            font-weight: 500;
+            background-color: #f7fafc; /* Light blue-gray background */
+            border: 1px solid #cbd5e0; /* Light border */
+            border-radius: 4px;
+            padding: 4px 8px;
+        }
+
+        /* Style for the input placeholders */
+        .coordinate-input::placeholder {
+            color: #718096; /* Gray color for placeholder */
+            opacity: 1; /* Ensure full opacity */
+            font-weight: normal;
+        }
+
+        /* Different colors for each coordinate input */
+        input[name="coordonnee_a"] {
+            border-left: 3px solid #e53e3e; /* Red border for Point A */
+        }
+
+        input[name="coordonnee_b"] {
+            border-left: 3px solid #38a169; /* Green border for Point B */
+        }
+
+        input[name="coordonnee_c"] {
+            border-left: 3px solid #3182ce; /* Blue border for Point C */
+        }
+
+        input[name="coordonnee_d"] {
+            border-left: 3px solid #d69e2e; /* Yellow border for Point D */
+        }
+
+        /* Focus state */
+        .coordinate-input:focus {
+            outline: none;
+            border-color: #4a8eff;
+            box-shadow: 0 0 0 2px rgba(74, 142, 255, 0.2);
         }
 
         .coordinate-help {
@@ -401,28 +438,52 @@
         }
 
         /* Style for select options */
+        .form-select {
+            font-size: 0.85rem;
+        }
+
+        /* Style for select options */
         .form-select option {
             background-color: white;
-            color: #2d3748;
+            color: #202124; /* Google's text color */
+            font-size: 0.9em;
+            padding: 8px 12px;
         }
 
         /* Style for optgroups */
         .form-select optgroup {
             font-weight: 600;
-            color: #4a8eff;
-            background-color: #f0f4f8;
+            color: #1a73e8; /* Google Blue 600 */
+            background-color: #f8f9fa; /* Google Grey 50 */
+            font-size: 0.9em;
+            padding: 6px 8px;
         }
 
         /* Style for options within optgroups */
         .form-select optgroup option {
-            color: #4a5568;
+            color: #5f6368; /* Google Grey 700 */
             font-weight: normal;
+            padding-left: 24px;
+            font-size: 0.9em;
         }
 
         /* Hover state for options */
         .form-select option:hover {
-            background-color: #4a8eff;
-            color: white;
+            background-color: #e8f0fe; /* Google Light Blue 50 */
+            color: #1a73e8; /* Google Blue 600 */
+        }
+
+        /* Focus state */
+        .form-select:focus {
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 1px #1a73e8;
+        }
+
+        /* Selected option */
+        .form-select option:checked {
+            background-color: #e8f0fe; /* Google Light Blue 50 */
+            color: #1a73e8; /* Google Blue 600 */
+            font-weight: 500;
         }
 
         /* Zone editing UI */
